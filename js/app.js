@@ -29,7 +29,7 @@ SonataApp.config(function($routeProvider) {
 				controller  : 'MainController'
 			})
 			.when('', {
-				templateUrl : 'js/views/home.html',
+				templateUrl : 'js/views/dashboard.html',
 				controller  : 'MainController'
 			})
 			.when('/signup', {
@@ -42,7 +42,7 @@ SonataApp.config(function($routeProvider) {
 			})
 			
 		$routeProvider.otherwise({
-			templateUrl:'js/views/home.html',
+			templateUrl:'js/views/dashboard.html',
 			controller :'MainController'
 		});
 	console.log($routeProvider);
