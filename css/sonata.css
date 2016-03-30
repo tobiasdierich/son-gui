@@ -2,6 +2,13 @@ body{
 background: #efefef;
 font-family: 'Roboto', sans-serif!important;
 }
+    [ac-chart] {
+            float:left;
+            width: 48%;
+            height: 400px;
+            margin: 0 1%;
+        }
+
 .side-nav .collapsible li {
     padding: 0;
     width: 100%;
@@ -17,16 +24,19 @@ ul#slide-out {
 #slide-out li.active a {
     color: white!important;
 }
+.side-nav .fa{
+    font-size: 17px;
+}
 .side-nav.fixed a {
     display: block;
     padding: 0 15px;
-    color: #FFFFFF;
+    color: rgba(255,255,255,0.5);
 }
 .side-nav li:hover {
 	background-color: none!important;
 }
 .side-nav li:hover a{
-	color:#FFFFFF;
+	color:rgba(255,255,255,0.8);
 }
 .nav-wrapper {
     background: #262B33;
@@ -53,4 +63,7 @@ img {
 }
 .side-nav li:hover, .side-nav li.active {
     background-color: #1f242a;
+}
+.cursored{
+    cursor: pointer;
 }

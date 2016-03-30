@@ -1,5 +1,4 @@
-[![Build Status](http://jenkins.sonata-nfv.eu/buildStatus/icon?job=son-gui)](http://jenkins.sonata-nfv.eu/job/son-gui)
-# son-gui 
+# son-gui  [![Build Status](http://jenkins.sonata-nfv.eu/buildStatus/icon?job=son-gui)](http://jenkins.sonata-nfv.eu/job/son-gui) 
 
 Gatekeeper GUI designed to cover the needs of the two user groups, service developers and platform administrators in supporting the process of DevOps in SONATA. Gatekeeper GUI is an API management and visualization tool that on one hand enables SONATA developers to manage their services throughout their whole lifecycle, while on the other hand offer Service Platform administrator the ability to provision, monitor and monetize platform resourcess.
 
@@ -16,7 +15,7 @@ sudo docker build -t sonata-gui .
 
 Run Docker container
 ```
-sudo docker run -d -p 4000:80 pkark/sonata-gui
+sudo docker run -d -p 80:80 sonata-gui
 ```
 
 ###Lead Developers
