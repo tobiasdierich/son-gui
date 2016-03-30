@@ -2,23 +2,19 @@ SonataApp.controller('LoginController',['$rootScope','$http','$scope',function($
 
           $rootScope.user_email = '';
           $rootScope.password = '';
-
+        $scope.failedMessageVisibility = 0;
 
           $scope.submitlogin = function(){
-            
+            $scope.failedMessageVisibility = 0;
               	var url = 'https://api.github.com';
-				var resp = $scope.httpGet(url, {Accept: "application/json", "Authorization": "Basic " + 
-					btoa($scope.user_email+':'+$scope.password)}); 
-              	
-              	if(resp==1)
-              		location.hash = '/home';
-
+				        $scope.httpGet(url,{Accept: "application/json", "Authorization": "Basic " + 
+					                              btoa($scope.user_email+':'+$scope.password)}); 
             
           }
 
 $scope.httpGet = function(url,headers){
 	
-    var resp = '';
+    
     $.ajax({
         type: 'GET',
         headers: headers,
@@ -27,14 +23,15 @@ $scope.httpGet = function(url,headers){
     })
     .done(function(data, textStatus, jqXHR) {
         $rootScope.gitResp = data;
-        resp = 1;
+        $rootScope.resp = 1;
+        location.hash = '/home';
 
     })
     .fail(function(jqXHR, textStatus, errorThrown) {
-        
-        resp = 0;
+        $scope.failedMessageVisibility = 1;
+        $rootScope.resp = 0;
     });
-    return resp;
+    
 }
 
 
