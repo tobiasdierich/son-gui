@@ -1,4 +1,12 @@
-SonataApp.controller('MainController', function($scope, $routeParams, $location, $http) {
+SonataApp.controller('MainController',['$rootScope','$scope',function($rootScope,$scope, $routeParams, $location, $http) {
+		console.log('MainController');
+		
+		
+		if($rootScope.gitResp==''){
+			location.hash='/login';
+		}else {
+			$scope.is_user_logged_in = true;
+		}
 
             $scope.urls = {
                                    
@@ -7,6 +15,6 @@ SonataApp.controller('MainController', function($scope, $routeParams, $location,
             console.log('Sonata');
             
 
-    });
+    }]);
 
 

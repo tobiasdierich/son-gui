@@ -10,7 +10,7 @@ SonataApp.config(function($routeProvider) {
 			})
 			.when('/user/settings', {
 				templateUrl : 'js/views/settings/user_settings.html',
-				controller  : 'UserSettingsController'
+				controller  : 'MainController'
 			})
 			.when('/catalogue/userServices', {
 				templateUrl : 'js/views/catalogue/user_services.html',
@@ -32,12 +32,22 @@ SonataApp.config(function($routeProvider) {
 				templateUrl : 'js/views/home.html',
 				controller  : 'MainController'
 			})
+			.when('/signup', {
+				templateUrl : 'js/views/signup.html',
+				controller  : 'MainController'
+			})
+			.when('/login', {
+				templateUrl : 'js/views/login.html',
+				controller  : 'MainController'
+			})
 			
 		$routeProvider.otherwise({
 			templateUrl:'js/views/home.html',
 			controller :'MainController'
 		});
 	console.log($routeProvider);
+
+
 
 	});
 
