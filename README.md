@@ -15,7 +15,7 @@ sudo docker build -t sonata-gui .
 
 Run Docker container
 ```
-sudo docker run -d -p 4000:80 pkark/sonata-gui
+sudo docker run -d -p 80:80 sonata-gui
 ```
 
 ###Lead Developers
