@@ -149,10 +149,7 @@ $scope.drawGauges = function(){
           data.setValue(1, 1, parseFloat($scope.container.currentCPUUsage));
           chart.draw(data, options);
         }, 1000);
-        setInterval(function() {
-          data.setValue(2, 1, 60 + Math.round(20 * Math.random()));
-          chart.draw(data, options);
-        }, 26000);
+       
       }
 }
 
