@@ -143,12 +143,12 @@ $scope.drawGauges = function(){
           $scope.getCurrentMemory();          
           data.setValue(0, 1, parseFloat($scope.container.currentMemoryUsage));
           chart.draw(data, options);
-        }, 1000);
+        }, 4000);
         setInterval(function() {
           $scope.getCurrentCPU(); 
           data.setValue(1, 1, parseFloat($scope.container.currentCPUUsage));
           chart.draw(data, options);
-        }, 1000);
+        }, 4000);
        
       }
 }
@@ -457,7 +457,7 @@ $scope.drawTheChart = function(data_array,options,element){
             var options = {
               title: 'Disk',
               hAxis: {title: 'Time',  titleTextStyle: {color: '#333'}},
-              vAxis: {minValue: 0}
+              vAxis: {title: 'MB',minValue: 0}
             };
             
             
