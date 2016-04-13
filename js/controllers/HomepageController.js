@@ -3,7 +3,7 @@ SonataApp.controller('HomepageController',['$rootScope','$scope','$routeParams',
 
 $.ajax({
   type: "POST",
-  url: 'http://83.235.169.221:8080/api/v1/prometheus/metrics/data',
+  url: 'http://sp.int.sonata-nfv.eu:8000/api/v1/prometheus/metrics/data',
   data: {
         "name": "vms_sum",
         "start": "2016-03-28T00:00:00.000Z",
@@ -165,7 +165,7 @@ $.ajax({
           x+=1;
           data.addRows([[x,Math.random()*100]]);
           chart.draw(data,options);
-        }, 100);
+        }, 100000000);
     	}
 	}
 

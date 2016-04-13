@@ -10,12 +10,18 @@ SonataApp.controller('MainController',['$rootScope','$scope',function($rootScope
 			$rootScope.is_user_logged_in = true;
 		}
 
+
             $scope.urls = {
                                    
             };
 
             console.log('Sonata');
             
+
+
+            $scope.changeHash = function(newHash){
+            	location.hash = newHash;
+            }
 
     }]);
 

@@ -40,6 +40,18 @@ SonataApp.config(function($routeProvider) {
 				templateUrl : 'js/views/login.html',
 				controller  : 'MainController'
 			})
+			.when('/monitoring/platform',{
+				templateUrl	: 'js/views/monitoring/service_platform.html',
+				controller 	: 'MainController'
+			})
+			.when('/vm/:name',{
+				templateUrl	: 'js/views/monitoring/vm.html',
+				controller 	: 'MainController'
+			})
+			.when('/container/:id',{
+				templateUrl	: 'js/views/monitoring/container.html',
+				controller 	: 'MainController'
+			})
 			
 		$routeProvider.otherwise({
 			templateUrl:'js/views/dashboard.html',
