@@ -3,7 +3,7 @@ SonataApp.controller('HomepageController',['$rootScope','$scope','$routeParams',
 
 $.ajax({
   type: "POST",
-  url: 'http://sp.int.sonata-nfv.eu:8000/api/v1/prometheus/metrics/data',
+  url: $scope.api_url,
   data: {
         "name": "vms_sum",
         "start": "2016-03-28T00:00:00.000Z",

@@ -10,11 +10,11 @@ SonataApp.controller('ContainerMonitoring',['$rootScope','$scope','$routeParams'
 $scope.getContainer = function(){
   $http({
           method  : 'POST',
-          url     : 'http://sp.int.sonata-nfv.eu:8000/api/v1/prometheus/metrics/data',
+          url     : $scope.api_url,
           data:  {
                   "name": "cnt_mem_perc",
-                  "start": ""+ $scope.ten_m_before.toISOString(),
-                  "end": ""+$scope.current_time.toISOString(),
+                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
+                  "end": ""+new Date().toISOString(),
                   "step": "10m",
                   "labels": [{"labeltag":"id","labelid":$routeParams.id}]
                     },
@@ -33,7 +33,7 @@ $scope.getCurrentMemory = function(){
   
    $http({
           method  : 'POST',
-          url     : 'http://sp.int.sonata-nfv.eu:8000/api/v1/prometheus/metrics/data',
+          url     : $scope.api_url,
           data:  {
                   "name": "cnt_mem_perc",
                   "start": ""+ new Date().toISOString(),
@@ -57,7 +57,7 @@ $scope.getCurrentCPU = function(){
   
    $http({
           method  : 'POST',
-          url     : 'http://sp.int.sonata-nfv.eu:8000/api/v1/prometheus/metrics/data',
+          url     : $scope.api_url,
           data:  {
                   "name": "cnt_cpu_perc",
                   "start": ""+ new Date().toISOString(),
@@ -80,7 +80,7 @@ $scope.getCPU_History = function(){
   
    $http({
           method  : 'POST',
-          url     : 'http://sp.int.sonata-nfv.eu:8000/api/v1/prometheus/metrics/data',
+          url     : $scope.api_url,
           data:  {
                   "name": "cnt_cpu_perc",
 
@@ -175,7 +175,7 @@ $scope.drawTheChart = function(data_array,options,element){
 
         $http({
           method  : 'POST',
-          url     : 'http://sp.int.sonata-nfv.eu:8000/api/v1/prometheus/metrics/data',
+          url     : $scope.api_url,
           data:  {
                   "name": "cnt_cpu_perc",
 
@@ -237,7 +237,7 @@ $scope.drawTheChart = function(data_array,options,element){
 
         $http({
           method  : 'POST',
-          url     : 'http://sp.int.sonata-nfv.eu:8000/api/v1/prometheus/metrics/data',
+          url     : $scope.api_url,
           data:  {
                   "name": "cnt_mem_perc",
                   "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
@@ -299,7 +299,7 @@ $scope.drawTheChart = function(data_array,options,element){
         var tend = new Date().toISOString();
         $http({
           method  : 'POST',
-          url     : 'http://sp.int.sonata-nfv.eu:8000/api/v1/prometheus/metrics/data',
+          url     : $scope.api_url,
           data:  {
                   "name": "cnt_net_rx_MB",
                   "start": ""+ tstart,
@@ -316,7 +316,7 @@ $scope.drawTheChart = function(data_array,options,element){
 
                         $http({
                       method  : 'POST',
-                      url     : 'http://sp.int.sonata-nfv.eu:8000/api/v1/prometheus/metrics/data',
+                      url     : $scope.api_url,
                       data:  {
                               "name": "cnt_net_tx_MB",
                               "start": ""+ tstart,
@@ -406,7 +406,7 @@ $scope.drawTheChart = function(data_array,options,element){
 
         $http({
           method  : 'POST',
-          url     : 'http://sp.int.sonata-nfv.eu:8000/api/v1/prometheus/metrics/data',
+          url     : $scope.api_url,
           data    : {
                   "name": "cnt_block_in_MB",
                   "start": ""+the_start,
@@ -422,7 +422,7 @@ $scope.drawTheChart = function(data_array,options,element){
 
              $http({
           method  : 'POST',
-          url     : 'http://sp.int.sonata-nfv.eu:8000/api/v1/prometheus/metrics/data',
+          url     : $scope.api_url,
           data    : {
                   "name": "cnt_block_ou_MB",
                   "start": ""+the_start,
