@@ -67,3 +67,22 @@ img {
 .cursored{
     cursor: pointer;
 }
+
+.virtual-machine .entire {
+    background: #E4E4E4;
+    padding: 10px;
+    margin: 10px;
+}
+.virtual-machine .entire i.fa.fa-desktop {
+    text-align: center;
+    width: 100%;
+    font-size: 37px;
+}
+.virtual-machine .entire .name{
+    text-align: center;
+}
+
+.virtual-machine:hover {
+    color: #216500;
+    transition: all 500ms ease-in-out;
+}
