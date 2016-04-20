@@ -1,8 +1,10 @@
   <div class="row" ng-controller="AllServicesController">
         <div class="col s12">
           <div class="card-panel">
-            <div class="card-content">
-        
+            <div class="card-content" ng-init="getServices()">
+<!--             <pre ng-repeat="servicee in services">
+{{servicee | json}}
+</pre> -->
             <div class="input-field col s3">
               <input class="form-control" id="searchbar" ng-model="expression" placeholder="search..." />
             </div>
@@ -16,20 +18,20 @@
               <th data-field="name">Name</th>
               <th data-field="version">Version</th>
               <th data-field="description">Description</th>
-              <th data-field="status">Status</th>
-              <th data-field="situation">Graphs</th>
+<!--               <th data-field="status">Status</th>
+<th data-field="situation">Graphs</th> -->
               
           </tr>
         </thead>
 
         <tbody>
-          <tr ng-repeat="service in userServices | filter:expression">
+          <tr ng-repeat="service in services | filter:expression">
              <td> <input type="checkbox" class="filled-in" id="service_{{service.id}}" ng-model="service.checked" ng-click="remakeChecked(service)" /><label for="service_{{service.id}}"></label></td>
               <td>{{service.name}}</td>
               <td>{{service.version}}</td>
               <td>{{service.description}}</td>
-              <td>{{service.status}}</td>
-              <td><i ng-click="openServiceGraphs(service)" class="Small material-icons cursored">insert_chart</i></td>
+              <!--  <td>{{service.status}}</td> -->
+             <!--  <td><i ng-click="openServiceInfo(service)" class="Small material-icons cursored">info_outline</i></td>  -->
           </tr>
          
 

@@ -4,6 +4,26 @@ SonataApp.controller('AllServicesController',['$rootScope','$http','$scope',func
            $scope.selected_services = new Array();
            $scope.remove_class_btn='disabled';
            
+           $scope.getServices = function(){
+            console.log('dasdasdasdsadsa');
+             $http({
+                method  : 'GET',
+                url     : 'http://sp.int.sonata-nfv.eu:32001/services',
+                headers : { 'Content-Type': 'application/json' }  // set the headers so angular passing info as form data (not request payload)
+               })
+                .success(function(data) {
+                  console.log(data);
+                  $scope.services = data;
+                 /*$scope.services = JSON.parse(jQuery.parseJSON(data));
+
+                 console.log(typeof($scope.services));
+                 console.log(jQuery.parseJSON(data));
+                 */ 
+                })
+                .error(function(data){
+                  alert(data);
+                })
+           }
 
            $scope.userServices.push({
            	'id':1,
@@ -46,6 +66,14 @@ SonataApp.controller('AllServicesController',['$rootScope','$http','$scope',func
             'status':'Service Status Five',
            });
 
+           $scope.openServiceInfo = function(service){
+             $('#modal1').openModal();
+             console.log(service);
+             $scope.modal = {};
+             $scope.modal.content = {};
+             $scope.modal.content.title=service.name;
+             $scope.modal.content.service = service;
+           }
 
           $scope.openServiceGraphs = function(service){
              $('#modal1').openModal();
