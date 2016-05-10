@@ -1,3 +1,9 @@
+if(!String.prototype.startsWith){
+    String.prototype.startsWith = function (str) {
+        return !this.indexOf(str);
+    }
+}
+
 var SonataApp = angular.module('SonataApp', ['ngRoute','ui.materialize']);
    
 
@@ -18,6 +24,10 @@ SonataApp.config(function($routeProvider) {
 			})
 			.when('/catalogue/allServices', {
 				templateUrl : 'js/views/catalogue/all_services.html',
+				controller  : 'MainController'
+			})
+			.when('/catalogue/packages', {
+				templateUrl : 'js/views/catalogue/packages.html',
 				controller  : 'MainController'
 			})
 			.when('/instances/overview', {
@@ -42,6 +52,14 @@ SonataApp.config(function($routeProvider) {
 			})
 			.when('/monitoring/platform',{
 				templateUrl	: 'js/views/monitoring/service_platform.html',
+				controller 	: 'MainController'
+			})
+			.when('/monitoring/vnfs',{
+				templateUrl	: 'js/views/monitoring/vnfs.html',
+				controller 	: 'MainController'
+			})
+			.when('/vnf/:name',{
+				templateUrl	: 'js/views/monitoring/vnf.html',
 				controller 	: 'MainController'
 			})
 			.when('/vm/:name',{
