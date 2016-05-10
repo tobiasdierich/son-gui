@@ -327,8 +327,6 @@ $scope.drawTheChart = function(data_array,options,element){
                      })
                       .success(function(data) {
 
-                          console.log("RX");
-                          console.log($scope.rx);
                           $scope.tx = data;
                           $scope.kam = [['Time', 'Rx','Tx']];
 
@@ -404,8 +402,9 @@ $scope.drawTheChart = function(data_array,options,element){
             
             $scope.vm.disk_total = 0;
             data.metrics.result.forEach( function(element, index) {
+              var m = element.metric.file_system;              
               
-              if(element.metric.file_system=="/dev/vda1"){
+              if(m.startsWith('/dev/disk')){
 
                 $scope.vm.disk_total = parseFloat(element.values[0][1]);
 
@@ -427,7 +426,8 @@ $scope.drawTheChart = function(data_array,options,element){
                     
                     data.metrics.result.forEach( function(element, index) {
 
-                        if(element.metric.file_system=="/dev/vda1"){
+                        var k = element.metric.file_system;     
+                        if(k.startsWith("/dev/disk")){
                           $scope.kam = [['Time', 'Usage','Total']];
                           element.values.forEach( function(value, index) {
 
@@ -446,9 +446,7 @@ $scope.drawTheChart = function(data_array,options,element){
               vAxis: {minValue: 0,maxValue:$scope.vm.disk_total}
             };
             
-            console.log('manos');
-            console.log($scope.kam);
-              $scope.drawTheChart($scope.kam,options,'disk_chart');
+                          $scope.drawTheChart($scope.kam,options,'disk_chart');
 
                    
 

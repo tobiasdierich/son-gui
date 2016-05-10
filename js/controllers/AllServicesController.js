@@ -5,13 +5,13 @@ SonataApp.controller('AllServicesController',['$rootScope','$http','$scope',func
            $scope.remove_class_btn='disabled';
            
            $scope.getServices = function(){
-            console.log('dasdasdasdsadsa');
              $http({
                 method  : 'GET',
                 url     : 'http://sp.int.sonata-nfv.eu:32001/services',
                 headers : { 'Content-Type': 'application/json' }  // set the headers so angular passing info as form data (not request payload)
                })
                 .success(function(data) {
+                  
                   console.log(data);
                   $scope.services = data;
                  /*$scope.services = JSON.parse(jQuery.parseJSON(data));
@@ -21,50 +21,10 @@ SonataApp.controller('AllServicesController',['$rootScope','$http','$scope',func
                  */ 
                 })
                 .error(function(data){
-                  alert(data);
+                  console.error(data);
                 })
            }
 
-           $scope.userServices.push({
-           	'id':1,
-            'checked':false,
-           	'name':'Service One',
-           	'version':'Service version',
-           	'description':'Service Description',
-           	'status':'Service Status',
-           });
-           $scope.userServices.push({
-           	'id':2,
-            'checked':false,
-           	'name':'Service Two',
-           	'version':'Service version Two',
-           	'description':'Service Description Two',
-           	'status':'Service Status Two',
-           });
-           $scope.userServices.push({
-           	'id':3,
-            'checked':false,
-           	'name':'Service Three',
-           	'version':'Service version Three',
-           	'description':'Service Description Three',
-           	'status':'Service Status Three',
-           });
-           $scope.userServices.push({
-            'id':4,
-            'checked':false,
-            'name':'Service Four',
-            'version':'Service version Four',
-            'description':'Service Description Four',
-            'status':'Service Status Four',
-           });
-           $scope.userServices.push({
-            'id':5,
-            'checked':false,
-            'name':'Service Five',
-            'version':'Service version Five',
-            'description':'Service Description Five',
-            'status':'Service Status Five',
-           });
 
            $scope.openServiceInfo = function(service){
              $('#modal1').openModal();
@@ -72,6 +32,7 @@ SonataApp.controller('AllServicesController',['$rootScope','$http','$scope',func
              $scope.modal = {};
              $scope.modal.content = {};
              $scope.modal.content.title=service.name;
+
              $scope.modal.content.service = service;
            }
 
