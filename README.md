@@ -22,6 +22,5 @@ sudo docker run -d -p 80:80 sonata-gui
 
 The following lead developers are responsible for this repository and have admin rights. They can, for example, merge pull requests.
 
-
- * Panos Trakadas (trakadasp)
- * Panos Karkazis (pkarkazis)
+ * Panos Trakadas  (trakadasp)
+ * Panos Karkazis  (pkarkazis)
