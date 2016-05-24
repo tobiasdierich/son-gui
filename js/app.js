@@ -5,8 +5,6 @@ if(!String.prototype.startsWith){
 }
 
 var SonataApp = angular.module('SonataApp', ['ngRoute','ui.materialize']);
-   
-
 
 SonataApp.config(function($routeProvider) {
 		$routeProvider
