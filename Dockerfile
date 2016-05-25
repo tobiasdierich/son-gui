@@ -2,7 +2,8 @@ FROM ubuntu:14.04
 
 # Install apache
 RUN apt-get update && apt-get install -y apache2 && \
-install -y nodejs nodejs-legacy npm libfontconfig1 && \
+apt-get install -y nodejs nodejs-legacy npm libfontconfig1 && \
+npm install -g  grunt && \
 npm cache clean
 
 COPY ./ /var/www/html/
