@@ -1,0 +1,14 @@
+<div class="row" ng-init="init()" ng-controller="MonitoringServicePlatform">
+  <div class="row">
+    <input type="text" ng-model="expression" placeholder="Search" />
+  </div>
+  <div class="row">
+  
+    <div ng-repeat="vm in vms | filter:expression" class="col s12 m2 virtual-machine" ng-click="changeHash('/vm/'+vm.metric.exported_instance)">
+      <div class="col s12 entire cursored">
+        <i class="fa fa-desktop" aria-hidden="true"></i>
+        <span class="name col s12">{{vm.metric.exported_instance}}</span>
+      </div>
+    </div>
+  </div>
+</div>
