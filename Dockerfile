@@ -9,6 +9,7 @@ npm cache clean
 COPY ./ /var/www/html/
 RUN ls -la /var/www/html/*
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+RUN sed -i 's_DocumentRoot /var/www/html_DocumentRoot /var/www/html/app_' /etc/apache2/sites-enabled/000-default.conf
 
 ADD run.sh /run.sh
 RUN chmod 0755 /run.sh
