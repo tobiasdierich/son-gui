@@ -4,7 +4,8 @@ FROM ubuntu:14.04
 RUN apt-get update && apt-get install -y apache2 && \
 apt-get install -y nodejs nodejs-legacy npm libfontconfig1 && \
 npm install -g  grunt && \
-npm cache clean
+npm cache clean && \
+npm install
 
 COPY ./ /var/www/html/
 RUN ls -la /var/www/html/*
