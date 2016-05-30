@@ -12,7 +12,7 @@ SonataApp.controller('MonitoringServicePlatform',['$rootScope','$scope','$routeP
 
         $http({
           method  : 'POST',
-          url     : 'http://143.233.127.27:8000/api/v1/prometheus/metrics/data',
+          url     : $scope.apis.monitoring,
           data:  {
           "name": "vm_mem_perc",
           "start": ""+new Date().toISOString(),
