@@ -15,12 +15,12 @@ sudo docker build -t sonata-gui .
 
 Run Docker container
 ```
-sudo docker run -d -p 80:80 sonata-gui
+sudo docker run -d -p 80:80 -e "MON_URL=sp.int2.sonata-nfv.eu:8000" -e "GK_URL=sp.int.sonata-nfv.eu:32001" sonata-gui
 ```
 
 ###Lead Developers
 
 The following lead developers are responsible for this repository and have admin rights. They can, for example, merge pull requests.
 
- * Panos Trakadas (trakadasp)
- * Panos Karkazis (pkarkazis)
+ * Panos Trakadas  (trakadasp)
+ * Panos Karkazis  (pkarkazis)
