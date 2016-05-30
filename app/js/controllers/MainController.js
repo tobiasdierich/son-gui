@@ -24,8 +24,8 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
                   $scope.apis = {
 						'monitoring':'http://'+data.MON_URL+'/api/v1/prometheus/metrics/data',
 						'gatekeeper':{
-							'services':'http://sp.int.sonata-nfv.eu:32001/services',
-							'packages':'http://sp.int.sonata-nfv.eu:32001/packages'
+							'services':'http://'+data.GK_URL+'/services',
+							'packages':'http://'+data.GK_URL+'/packages'
 						}
 					}
 					$rootScope.apis = $scope.apis;
