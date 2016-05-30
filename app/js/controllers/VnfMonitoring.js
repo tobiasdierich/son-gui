@@ -10,7 +10,7 @@ SonataApp.controller('VnfMonitoring',['$rootScope','$scope','$routeParams','$loc
 $scope.getVM = function(){
   $http({
           method  : 'POST',
-          url     : $scope.api_url,
+          url     : $scope.apis.monitoring,
           data:  {
                   "name": "vm_mem_perc",
                   "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
@@ -34,7 +34,7 @@ $scope.getCurrentMemory = function(){
   
    $http({
           method  : 'POST',
-          url     : $scope.api_url,
+          url     : $scope.apis.monitoring,
           data:  {
                   "name": "vm_mem_perc",
                   "start": ""+ new Date().toISOString(),
@@ -57,7 +57,7 @@ $scope.getCurrentCPU = function(){
   
    $http({
           method  : 'POST',
-          url     : $scope.api_url,
+          url     : $scope.apis.monitoring,
           data:  {
                   "name": "vm_cpu_perc",
                   "start": ""+ new Date().toISOString(),
@@ -79,7 +79,7 @@ $scope.getCPU_History = function(){
   
    $http({
           method  : 'POST',
-          url     : $scope.api_url,
+          url     : $scope.apis.monitoring,
           data:  {
                   "name": "vm_cpu_perc",
 
@@ -174,7 +174,7 @@ $scope.drawTheChart = function(data_array,options,element){
 
         $http({
           method  : 'POST',
-          url     : $scope.api_url,
+          url     : $scope.apis.monitoring,
           data:  {
                   "name": "vm_cpu_perc",
 
@@ -236,7 +236,7 @@ $scope.drawTheChart = function(data_array,options,element){
 
         $http({
           method  : 'POST',
-          url     : $scope.api_url,
+          url     : $scope.apis.monitoring,
           data:  {
                   "name": "vm_mem_perc",
                   "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
@@ -298,7 +298,7 @@ $scope.drawTheChart = function(data_array,options,element){
         var tend = new Date().toISOString();
         $http({
           method  : 'POST',
-          url     : $scope.api_url,
+          url     : $scope.apis.monitoring,
           data:  {
                   "name": "vm_net_rx_MB",
                   "start": ""+ tstart,
@@ -315,7 +315,7 @@ $scope.drawTheChart = function(data_array,options,element){
 
                         $http({
                       method  : 'POST',
-                      url     : $scope.api_url,
+                      url     : $scope.apis.monitoring,
                       data:  {
                               "name": "vm_net_tx_MB",
                               "start": ""+ tstart,
@@ -390,7 +390,7 @@ $scope.drawTheChart = function(data_array,options,element){
 
         $http({
           method  : 'POST',
-          url     : $scope.api_url,
+          url     : $scope.apis.monitoring,
           data:  {
                   "name": "vm_disk_total_1k_blocks",
                   "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
@@ -412,7 +412,7 @@ $scope.drawTheChart = function(data_array,options,element){
 
                  $http({
                     method  : 'POST',
-                    url     : $scope.api_url,
+                    url     : $scope.apis.monitoring,
                     data:  {
                             "name": "vm_disk_used_1k_blocks",
                             "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
@@ -475,7 +475,7 @@ $scope.drawTheChart = function(data_array,options,element){
 
       $http({
           method  : 'POST',
-          url     : $scope.api_url,
+          url     : $scope.apis.monitoring,
           data:  {
                   "name": "cnt_mem_perc",
                   "start": ""+ $scope.ten_m_before.toISOString(),

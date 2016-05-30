@@ -3,7 +3,7 @@ SonataApp.controller('HomepageController',['$rootScope','$scope','$routeParams',
 
 $.ajax({
   type: "POST",
-  url: $scope.api_url,
+  url: $scope.apis.monitoring,
   data: {
         "name": "vms_sum",
         "start": "2016-03-28T00:00:00.000Z",

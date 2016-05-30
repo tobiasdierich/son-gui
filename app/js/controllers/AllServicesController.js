@@ -5,30 +5,26 @@ SonataApp.controller('AllServicesController',['$rootScope','$http','$scope',func
            $scope.remove_class_btn='disabled';
            
            $scope.getServices = function(){
+              console.info('Get Services call started. Url:'+$scope.apis.gatekeeper.services);
              $http({
                 method  : 'GET',
-                url     : 'http://sp.int.sonata-nfv.eu:32001/services',
-                headers : { 'Content-Type': 'application/json' }  // set the headers so angular passing info as form data (not request payload)
+                url     : $scope.apis.gatekeeper.services,
+                headers : { 'Content-Type': 'application/json' }
                })
                 .success(function(data) {
                   
-                  console.log(data);
+                  console.info('Get Services From Url: '+$scope.apis.gatekeeper.services);
                   $scope.services = data;
-                 /*$scope.services = JSON.parse(jQuery.parseJSON(data));
 
-                 console.log(typeof($scope.services));
-                 console.log(jQuery.parseJSON(data));
-                 */ 
                 })
                 .error(function(data){
-                  console.error(data);
+                    console.error('Get Services Failed. Get Url: '+$scope.apis.gatekeeper.services);
                 })
            }
 
 
            $scope.openServiceInfo = function(service){
              $('#modal1').openModal();
-             console.log(service);
              $scope.modal = {};
              $scope.modal.content = {};
              $scope.modal.content.title=service.name;
@@ -38,7 +34,6 @@ SonataApp.controller('AllServicesController',['$rootScope','$http','$scope',func
 
           $scope.openServiceGraphs = function(service){
              $('#modal1').openModal();
-             console.log(service);
              $scope.modal = {};
              $scope.modal.content = {};
              $scope.modal.content.title=service.name;

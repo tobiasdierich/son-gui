@@ -1,11 +1,43 @@
-SonataApp.controller('MainController',['$rootScope','$scope',function($rootScope,$scope, $routeParams, $location, $http) {
+SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$location', '$http',function($rootScope,$scope, $routeParams, $location, $http) {
 		console.log('MainController');
-		$rootScope.gitResp = '';
 		
 		
-		$scope.api_url = 'http://sp.int2.sonata-nfv.eu:8000/api/v1/prometheus/metrics/data';
-		/*$scope.api_url = 'http://143.233.127.27:8000/api/v1/prometheus/metrics/data';*/
+		
+		/*$scope.apis.monitoring = 'http://sp.int2.sonata-nfv.eu:8000/api/v1/prometheus/metrics/data';*/
+		
 		$scope.todos = new Array();
+
+
+		 $scope.getServices = function(){
+
+            console.info('Get Enviroment variables call started.');
+             $http({
+                method  : 'GET',
+                url     : 'variables.php',
+                headers : { 'Content-Type': 'application/json' }
+               })
+                .success(function(data) {
+                  
+                  console.info('Enviroment variables received');
+                  console.log(data);
+
+                  $scope.apis = {
+						'monitoring':'http://'+data.MON_URL+'/api/v1/prometheus/metrics/data',
+						'gatekeeper':{
+							'services':'http://sp.int.sonata-nfv.eu:32001/services',
+							'packages':'http://sp.int.sonata-nfv.eu:32001/packages'
+						}
+					}
+					$rootScope.apis = $scope.apis;
+
+                })
+                .error(function(data){
+                    console.error('Get Enviroment variables Failed.');
+                })
+           }
+
+        $scope.getServices();
+
 		
 
 		if($rootScope.resp!=1){
@@ -15,17 +47,13 @@ SonataApp.controller('MainController',['$rootScope','$scope',function($rootScope
 		}
 
 
-            $scope.urls = {
-                                   
-            };
-
-            console.log('Sonata');
+         
             
 
 
-            $scope.changeHash = function(newHash){
-            	location.hash = newHash;
-            }
+    $scope.changeHash = function(newHash){
+    	location.hash = newHash;
+    }
 
 	$rootScope.checkIfFilesAreThere = function(){
 

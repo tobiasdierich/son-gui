@@ -17,7 +17,7 @@ SonataApp.controller('VnfsController',['$rootScope','$scope','$routeParams','$lo
 
         $http({
           method  : 'POST',
-          url     : $scope.api_url,
+          url     : $scope.apis.monitoring,
           data:  {
           "name": "vm_mem_perc",
           "start": ""+new Date().toISOString(),

@@ -1,12 +1,14 @@
 SonataApp.controller('PackagesController',['$rootScope','$http','$scope',function($rootScope,$http,$scope){
 
            $scope.getPackages = function(){
+            console.info('Get Packages call started. Url:'+$scope.apis.gatekeeper.packages);
              $http({
                 method  : 'GET',
-                url     : 'http://sp.int.sonata-nfv.eu:32001/packages',
+                url     : $scope.apis.gatekeeper.packages,
                 headers : {"Content-Type":"application/zip"}
                })
                 .success(function(data) {
+                  console.info('Get Packages From Url: '+$scope.apis.gatekeeper.packages);
                   var blob=new Blob([data], {
                               type: 'application/zip' //or whatever you need, should match the 'accept headers' above
                           });
@@ -14,25 +16,18 @@ SonataApp.controller('PackagesController',['$rootScope','$http','$scope',functio
                   $scope.pack.href = window.URL.createObjectURL(blob);
                   $scope.pack.filename = "packages.zip";
                   $scope.pack.show = true;
-var zip = new JSZip();
-zip.file("Hello.txt", "Hello World\n");
-var img = zip.folder("images");
-zip.file(data, {base64: true});
-zip.generateAsync({type:"blob"})
-.then(function(content) {
-    // see FileSaver.js
-    saveAs(content, "example.zip");
-});
-
-
-
-                 /*$scope.services = JSON.parse(jQuery.parseJSON(data));
-
-                 console.log(typeof($scope.services));
-                 console.log(jQuery.parseJSON(data));
-                 */ 
+                  var zip = new JSZip();
+                  zip.file("Hello.txt", "Hello World\n");
+                  var img = zip.folder("images");
+                  zip.file(data, {base64: true});
+                  zip.generateAsync({type:"blob"})
+                  .then(function(content) {
+                      
+                      saveAs(content, "example.zip");
+                    });
                 })
                 .error(function(data){
+                  console.error('Get Packages Failed. Get Url: '+$scope.apis.gatekeeper.packages);
                   console.error(data);
                 })
            }
