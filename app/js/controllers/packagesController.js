@@ -10,7 +10,7 @@ SonataApp.controller('PackagesController',['$rootScope','$http','$scope',functio
                 .success(function(data) {
                   console.info('Get Packages From Url: '+$scope.apis.gatekeeper.packages);
                   var blob=new Blob([data], {
-                              type: 'application/zip' //or whatever you need, should match the 'accept headers' above
+                              type: 'application/zip'
                           });
                   $scope.pack = {};
                   $scope.pack.href = window.URL.createObjectURL(blob);
@@ -21,8 +21,7 @@ SonataApp.controller('PackagesController',['$rootScope','$http','$scope',functio
                   var img = zip.folder("images");
                   zip.file(data, {base64: true});
                   zip.generateAsync({type:"blob"})
-                  .then(function(content) {
-                      
+                  .then(function(content) {                      
                       saveAs(content, "example.zip");
                     });
                 })

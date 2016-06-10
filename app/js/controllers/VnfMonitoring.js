@@ -24,8 +24,8 @@ $scope.getVM = function(){
 
            $scope.vnf.exported_instance = data.metrics.result[0].metric.exported_instance;
            $scope.vnf.instance          = data.metrics.result[0].metric.instance;
-           $scope.vnf.group= data.metrics.result[0].metric.group;
-           $scope.vnf.id = data.metrics.result[0].metric.id;
+           $scope.vnf.group             = data.metrics.result[0].metric.group;
+           $scope.vnf.id                = data.metrics.result[0].metric.id;
             
           });
 }

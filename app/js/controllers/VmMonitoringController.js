@@ -475,16 +475,27 @@ $scope.drawTheChart = function(data_array,options,element){
           method  : 'POST',
           url     : $scope.apis.monitoring,
           data:  {
-                  "name": "cnt_mem_perc",
+                  "name": "cnt_created",
                   "start": ""+ $scope.ten_m_before.toISOString(),
                   "end": ""+$scope.current_time.toISOString(),
                   "step": "20m",
                   "labels": [{"labeltag":"exported_job", "labelid":"containers"},{"labeltag":"exported_instance","labelid":$routeParams.name}]
                     },
-          headers : { 'Content-Type': 'application/json' }
+          headers : { 'Content-Type': 'application/json','Accept':'application/json' }
          })
           .success(function(data) {
+            console.log('Containers');
+            console.log(data);
             $scope.containers = data.metrics.result;
+
+            $scope.containers.forEach(function(container,index){
+              var ttime = container.values[0][0];
+              var timestamp = ttime.toString();
+                timestamp = timestamp.replace('.','');
+                container.created_date = new Date(parseInt(timestamp)); 
+                container.status = 'Active'; //Todo later (Read status from a new xhr request)
+            })
+
           });
 
 

@@ -23,7 +23,11 @@
 
         <tbody>
           <tr ng-repeat="service in services | filter:expression">
-             <td> <input type="checkbox" class="filled-in" id="service_{{service.id}}" ng-model="service.checked" ng-click="remakeChecked(service)" /><label for="service_{{service.id}}"></label></td>
+             <td> 
+                <button class="btn waves-effect waves-light" ng-click="deploy_service(service.uuid)" type="submit" name="action"> Deploy
+                  <i class="material-icons right">send</i>
+                </button>
+             </td>
               <td>{{service.name}}</td>
               <td>{{service.version}}</td>
               <td>{{service.description}}</td>

@@ -1,0 +1,29 @@
+  <div class="row" ng-controller="FunctionsController" ng-init="getFunctions()">
+        <div class="col s12">
+          <div class="card-panel">
+         
+            <div class="card-content" >
+            <div class="row">
+              
+              <table class="bordered responsive-table">
+               <thead>
+                <tr>
+                  <th data-field="name">Name</th>
+                  <th data-field="vendor">Vendor</th>
+                  <th data-field="status">Status</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                  <tr ng-repeat="function in functions">
+                    <td>{{function.name}}</td>
+                    <td>{{function.vendor}}</td>
+                    <td>{{function.status}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>

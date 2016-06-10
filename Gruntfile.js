@@ -420,6 +420,22 @@ module.exports = function (grunt) {
         configFile: 'test/karma_check_browsers-conf.js',
         singleRun: true
       },
+      monitoring_check:{
+        configFile: 'test/karma_check_monitoring_server-conf.js',
+        singleRun: true
+      },
+      gatekeeper_services_check:{
+        configFile: 'test/karma_check_gatekeeper_services-conf.js',
+        singleRun: true
+      },
+      gatekeeper_packages_check:{
+        configFile: 'test/karma_check_gatekeeper_packages-conf.js',
+        singleRun: true
+      },
+      gatekeeper_functions_check:{
+        configFile: 'test/karma_check_gatekeeper_functions-conf.js',
+        singleRun: true
+      },
       check_libs:{
         configFile: 'test/karma_check_libs-conf.js',
         singleRun: true
@@ -432,6 +448,54 @@ module.exports = function (grunt) {
   });
 
   
+  grunt.registerTask('check_monitoring_server', 'Monitoring', function (target) {
+     grunt.option('force', true);
+    if (target === 'dist') {
+      return grunt.task.run(['build', 'connect:dist:keepalive']);
+    }
+
+    grunt.task.run([
+      'karma:monitoring_check'
+    ]);
+
+  });
+  grunt.registerTask('gatekeeper_services_check', 'Monitoring', function (target) {
+     grunt.option('force', true);
+    if (target === 'dist') {
+      return grunt.task.run(['build', 'connect:dist:keepalive']);
+    }
+
+    grunt.task.run([
+      'karma:gatekeeper_services_check'
+    ]);
+
+  });
+  grunt.registerTask('gatekeeper_packages_check', 'Monitoring', function (target) {
+     grunt.option('force', true);
+    if (target === 'dist') {
+      return grunt.task.run(['build', 'connect:dist:keepalive']);
+    }
+
+    grunt.task.run([
+      'karma:gatekeeper_packages_check'
+    ]);
+
+  });
+  grunt.registerTask('gatekeeper_functions_check', 'Monitoring', function (target) {
+     grunt.option('force', true);
+    if (target === 'dist') {
+      return grunt.task.run(['build', 'connect:dist:keepalive']);
+    }
+
+    grunt.task.run([
+      'karma:gatekeeper_functions_check'
+    ]);
+
+  });
+  
+
+
+
   grunt.registerTask('check_browsers', 'Cross browser checking', function (target) {
     if (target === 'dist') {
       return grunt.task.run(['build', 'connect:dist:keepalive']);
