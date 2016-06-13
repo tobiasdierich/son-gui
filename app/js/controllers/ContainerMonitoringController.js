@@ -157,9 +157,10 @@ $scope.drawTheChart = function(data_array,options,element){
 
        var data = google.visualization.arrayToDataTable(data_array);
        var options = options;
+       if(element!=''){
        var chart = new google.visualization.AreaChart(document.getElementById(element));
        chart.draw(data, options);
-       
+       }
 
 }
 

@@ -48,23 +48,29 @@
         <div class="col s12" ng-show="containers.length">
         	<div class="card-panel">
         		<h5 class="center-align">Containers</h5>
-   			 <table class="bordered">
+            <div class="row" style="overflow: hidden;">
+   			 <table class="bordered responsive-table">
 		        <thead>
 		          	<tr>
-		              <th data-field="id">ID</th>
-		              <th data-field="id">Image Name</th>
-		              <th data-field="status">Status</th>
+		              <th data-field="id">Name</th>
+                  <th data-field="status">Status</th>
+                  <th data-field="created">Created</th>
+		              <th data-field="image_name">Image Name</th>
+		              <th data-field="extra_info">Info</th>
 		          	</tr>
 		        </thead>
 
 		        <tbody>
 		          <tr ng-repeat="container in containers">
-		            <td>{{container.metric.id}}</td>
+		            <td>{{container.metric.name}}</td>
+                <td>{{container.status}}</td>
+                <td>{{container.created_date}}</td>
 		            <td>{{container.metric.image_name}}</td>
-		            <td><i ng-click="changeHash('/container/'+container.metric.id)" class="Small material-icons cursored">insert_chart</i></td>
+		            <td><i ng-show="container.status=='Active'"   ng-click="changeHash('/container/'+container.metric.id)" class="Small material-icons cursored">insert_chart</i></td>
 		          </tr>
 		        </tbody>
       		</table>
+          </div>
       		</div>
    		</div>
 </div>

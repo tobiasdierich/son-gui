@@ -4,6 +4,27 @@ SonataApp.controller('AllServicesController',['$rootScope','$http','$scope',func
            $scope.selected_services = new Array();
            $scope.remove_class_btn='disabled';
            
+
+           $scope.deploy_service = function(id){
+            console.info('A service with uuid:'+id+' is going to be instatiated');
+            $http({
+                method  : 'POST',
+                url     : $scope.apis.gatekeeper.requests,
+                headers : { 'Content-Type': 'application/json' },
+                data:{
+                    'name':id
+                  }
+               })
+                .success(function(data) {
+                 console.log(data);
+                 })
+                .error(function(data){
+                    console.error('Get Services Failed. Get Url: '+$scope.apis.gatekeeper.services);
+                })
+           }
+           
+
+
            $scope.getServices = function(){
               console.info('Get Services call started. Url:'+$scope.apis.gatekeeper.services);
              $http({
@@ -15,7 +36,7 @@ SonataApp.controller('AllServicesController',['$rootScope','$http','$scope',func
                   
                   console.info('Get Services From Url: '+$scope.apis.gatekeeper.services);
                   $scope.services = data;
-
+                  console.log(data);
                 })
                 .error(function(data){
                     console.error('Get Services Failed. Get Url: '+$scope.apis.gatekeeper.services);

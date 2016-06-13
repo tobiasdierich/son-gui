@@ -19,15 +19,21 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
                 .success(function(data) {
                   
                   console.info('Enviroment variables received');
-                  console.log(data);
+                  //console.log(data);
 
                   $scope.apis = {
 						'monitoring':'http://'+data.MON_URL+'/api/v1/prometheus/metrics/data',
 						'gatekeeper':{
 							'services':'http://'+data.GK_URL+'/services',
-							'packages':'http://'+data.GK_URL+'/packages'
+							'packages':'http://'+data.GK_URL+'/packages',
+							'functions':'http://'+data.GK_URL+'/functions',
+							'requests':'http://'+data.GK_URL+'/requests',
+
 						}
 					}
+				
+
+
 					$rootScope.apis = $scope.apis;
 
                 })
@@ -36,6 +42,8 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
                 })
            }
 
+
+     if(typeof $rootScope.apis )
         $scope.getServices();
 
 		

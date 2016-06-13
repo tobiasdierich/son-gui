@@ -8,8 +8,7 @@ SonataApp.controller('MonitoringServicePlatform',['$rootScope','$scope','$routeP
 
 
     $rootScope.getVms = function(){
-
-
+      if($scope.apis)
         $http({
           method  : 'POST',
           url     : $scope.apis.monitoring,
