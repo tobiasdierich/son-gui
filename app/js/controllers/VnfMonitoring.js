@@ -404,8 +404,8 @@ $scope.drawTheChart = function(data_array,options,element){
             
             $scope.vnf.disk_total = 0;
             data.metrics.result.forEach( function(element, index) {
-              
-              if(element.metric.file_system=="/dev/vda1"){
+              var m= element.metric.file_system;
+              if(m.startsWith("/dev")){
 
                 $scope.vnf.disk_total = parseFloat(element.values[0][1]);
 
@@ -426,8 +426,8 @@ $scope.drawTheChart = function(data_array,options,element){
                       
                     
                     data.metrics.result.forEach( function(element, index) {
-
-                        if(element.metric.file_system=="/dev/vda1"){
+                        var m= element.metric.file_system;
+                        if(m.startsWith("/dev")){
                           $scope.kam = [['Time', 'Usage','Total']];
                           element.values.forEach( function(value, index) {
 
