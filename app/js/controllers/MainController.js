@@ -21,8 +21,14 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
                   console.info('Enviroment variables received');
                   //console.log(data);
 
+                  $scope.configuration = {
+                  	'logs_range':'86400' //time range (minutes before)
+                  }
+
                   $scope.apis = {
 						'monitoring':'http://'+data.MON_URL+'/api/v1/prometheus/metrics/data',
+						'logs':'http://'+data.LOGS_URL+'/search/universal/relative?',
+						'vims':'http://'+data.VIMS_URL+'/vims',
 						'gatekeeper':{
 							'services':'http://'+data.GK_URL+'/services',
 							'packages':'http://'+data.GK_URL+'/packages',
@@ -47,8 +53,8 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
         $scope.getServices();
 
 		
-
-		if($rootScope.resp!=1){
+    var debug=true;
+   	if(debug==false && $rootScope.resp!=1){
 			location.hash='/login';
 		}else {
 			$rootScope.is_user_logged_in = true;

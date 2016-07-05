@@ -46,4 +46,35 @@
             <div id="cnt_disk_chart"></div>
           </div>
         </div>
+
+        <div class="row">
+
+
+         <div class="col s12" ng-show="logs.length">
+          <div class="card-panel">
+            <h5 class="center-align">Logs</h5>
+            <div class="row" style="overflow: hidden;">
+         <table class="bordered responsive-table">
+            <thead>
+                <tr>
+                  <th style="min-width: 250px" data-field="id">Date/Time</th>
+                  <th data-field="created">Message</th>
+
+                </tr>
+            </thead>
+
+            <tbody>
+              <tr ng-repeat="log in logs">
+                <td>{{log.message.timestamp | date:'yyyy-MM-dd HH:mm:ss Z'}}</td>
+                <td>{{log.message.message}}</td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+          </div>
+      </div>
+      </div>
+
+
+
 </div>
