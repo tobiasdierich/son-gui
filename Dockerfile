@@ -12,6 +12,19 @@ RUN sed -i 's_DocumentRoot /var/www/html_DocumentRoot /var/www/html/app_' /etc/a
 WORKDIR "/var/www/html"
 #RUN npm cache clean && npm install
 
+ENV  APACHE_RUN_USER=www-data \
+        APACHE_RUN_GROUP=www-data \
+        APACHE_LOG_DIR=/var/log/apache2 \
+        APACHE_LOCK_DIR=/var/lock/apache2 \
+        APACHE_RUN_DIR=/var/run/apache2 \
+        APACHE_PID_FILE=/var/run/apache2.pid 
+
+COPY ./scripts/* /scripts/
+
+RUN chmod +x /scripts/*
+
+CMD ["/scripts/boot.sh"]
+
 
 #ADD run.sh /run.sh
 RUN chmod 0755 /var/www/html/run.sh
