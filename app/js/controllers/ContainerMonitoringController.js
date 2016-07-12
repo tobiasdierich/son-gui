@@ -29,6 +29,27 @@ $scope.getContainer = function(){
           });
 }
 
+
+$scope.getLogs = function(){
+  
+  console.log('*LOGS*');
+
+      $http({
+          method  : 'GET',
+          url     : $scope.apis.logs+'query=container_id%3D'+$routeParams.id+'&range='+$scope.configuration.logs_range+'&fields=source%2Ccommand%2Ccontainer_id%2Ccontainer_name%2Ccreated%2Cimage_id%2Cimage_name%2Clevel%2Cmessage',
+          headers : {'accept': 'application/json', 'Content-Type': 'application/json','Authorization': 'Basic YWRtaW46czBuQHRA' }
+         })
+          .success(function(data) {
+              
+              console.log('**LOGS');
+              console.log(data); 
+              $scope.logs=data.messages;
+
+          });
+
+
+}
+
 $scope.getCurrentMemory = function(){
   
    $http({
@@ -493,7 +514,7 @@ $scope.drawTheChart = function(data_array,options,element){
       $scope.drawDiskChart();
       $scope.getCurrentMemory();
       $scope.getCPU_History();
-
+      $scope.getLogs();
 
       
       setInterval(function() {

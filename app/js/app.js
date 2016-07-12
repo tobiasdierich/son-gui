@@ -34,6 +34,10 @@ SonataApp.config(function($routeProvider) {
 				templateUrl : 'js/views/catalogue/functions.html',
 				controller  : 'MainController'
 			})
+			.when('/vim_settings', {
+				templateUrl : 'js/views/settings/vim.html',
+				controller  : 'MainController'
+			})
 			.when('/instances/overview', {
 				templateUrl : 'js/views/instances/overview.html',
 				controller  : 'MainController'

@@ -304,7 +304,7 @@ $scope.drawTheChart = function(data_array,options,element){
                   "start": ""+ tstart,
                   "end": ""+tend,
                   "step": "1s",
-                  "labels": [{"labeltag":"exported_instance","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0:"}]
+                  "labels": [{"labeltag":"exported_instance","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0"}]
                   },
           headers : { 'Content-Type': 'application/json' }
          })
@@ -321,7 +321,7 @@ $scope.drawTheChart = function(data_array,options,element){
                               "start": ""+ tstart,
                               "end": ""+tend,
                               "step": "1s",
-                              "labels": [{"labeltag":"exported_instance","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0:"}]
+                              "labels": [{"labeltag":"exported_instance","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0"}]
                               },
                       headers : { 'Content-Type': 'application/json' }
                      })
