@@ -81,7 +81,7 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
         $scope.getServices();
 
 		
-    var debug=true;
+    var debug=false;
    	if(debug==false && $rootScope.resp!=1){
 			location.hash='/login';
 		}else {
