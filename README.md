@@ -40,7 +40,6 @@ sudo docker run -d -p 80:80 -e "MON_URL=sp.int2.sonata-nfv.eu:8000" -e "GK_URL=s
 ## License
 SONATA gui is published under Apache 2.0 license. Please see the LICENSE file for more details.
 
----
 #### Lead Developers
 The following lead developers are responsible for this repository and have admin rights. They can, for example, merge pull requests.
 
