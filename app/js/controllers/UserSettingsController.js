@@ -28,7 +28,7 @@ partner consortium (www.sonata-nfv.eu).
 
 SonataApp.controller('UserSettingsController', function($scope, $routeParams, $location, $http) {
 
-     
+     (function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
  	$scope.$on('$viewContentLoaded', function(event) {
   	
     	$('select').material_select();

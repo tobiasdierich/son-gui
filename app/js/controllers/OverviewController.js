@@ -28,6 +28,7 @@ partner consortium (www.sonata-nfv.eu).
 
 SonataApp.controller('OverviewController',['$rootScope','$scope','$routeParams','$location','$http',function($rootScope,$scope, $routeParams, $location, $http){
   console.log('OverviewController Called');
+  (function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
   $scope.vCPUschart = function(){
 
     google.charts.setOnLoadCallback(drawChart);

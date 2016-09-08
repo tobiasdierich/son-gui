@@ -27,10 +27,20 @@ partner consortium (www.sonata-nfv.eu).
 */
 
 SonataApp.controller('DashboardController',['$rootScope','$scope','$routeParams','$location','$http',function($rootScope,$scope, $routeParams, $location, $http){
-
+(function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
 	
   //GET ALL VIMS
+  $scope.selected_vim = 0;
   $scope.vims = new Array();
+
+  $scope.select = {
+    choices:[]
+  };
+            /*value: 0,
+            choices: []
+        };*/
+
+
   $scope.FindAllVims = function(){
 
      $http({
@@ -46,13 +56,21 @@ SonataApp.controller('DashboardController',['$rootScope','$scope','$routeParams'
           headers : { 'Content-Type': 'application/json' }
          })
           .success(function(data) {
+              
 
               data.metrics.result.forEach(function(element,index){
                 element.id = index;
+                if(index==0)
+                $scope.select.value = element.metric.exported_instance;
+              
                 $scope.vims.push(element);
+                $scope.select.choices.push(element);
+                $scope.changeVisibleVim();
               });
+
           }).then(function(){
             $scope.setVims();
+
           })
   };
 
@@ -74,8 +92,9 @@ $scope.getVmsState = function(vim){
           headers : { 'Content-Type': 'application/json' }
          })
           .success(function(data) {
+
             vim.states = data.metrics.result;
-            console.log(vim.states);
+            
 
             google.charts.setOnLoadCallback(drawChart);
       function drawChart() {
@@ -97,14 +116,19 @@ $scope.getVmsState = function(vim){
           
         };
 
-        var chart = new google.visualization.PieChart(document.getElementById('stateChart'));
+        var chart = new google.visualization.PieChart(document.getElementById('stateChart_'+vim.id)); 
 
         chart.draw(final_data, kloptions);
+
+
+
       }
 
           })
 
 }
+
+
 
 $scope.getAllVms = function(vim){
 
@@ -135,16 +159,34 @@ var vim = vim;
 
               vm.metric.last_updated = timestamp;
              
-            })
+            });
+           $('select').material_select();
+
           })
 
 
 }
 
+ 
+$scope.changeVisibleVim = function(){
+  $scope.vims.forEach(function(vim,index){
+    if(vim.metric.exported_instance==$scope.select.value)
+      vim.visible=1;
+    else
+      vim.visible=0;
+  });
 
+  /**/
+}
 
 $scope.setVims = function(){
   $scope.vims.forEach(function(vim,index){
+    vim.index_num = index;
+
+    if(index==0)
+      vim.visible = 1;
+    else
+      vim.visible = 0;
     $scope.getAllVms(vim);
     $scope.getVmsState(vim);
   })
@@ -166,7 +208,7 @@ $scope.setVims = function(){
             vim.totalCoresUsed.push(data.metrics.result[0].values);
             
             vim.currently_usedCores = parseFloat(data.metrics.result[0].values[0][1]);              
-          
+            console.log(vim.metric.exported_instance+"Cores:"+vim.currently_usedCores);
           }).then(function(){
 
               $scope.vims.forEach(function(vim,index){
@@ -188,8 +230,8 @@ $scope.setVims = function(){
 
                   vim.currently_totalCores = parseFloat(data.metrics.result[0].values[0][1]);              
           
-                  $scope.coresChart(vim);    
-
+                  $scope.coresChart(vim);
+             
 
 
 
@@ -215,6 +257,8 @@ $scope.setVims = function(){
 
           });
             });
+          
+          
   });
 
 
@@ -346,7 +390,7 @@ $scope.setVims = function(){
                       ];
                       var options = {
                         width: 400, height: 120,
-                        redFrom: vim.currently_Totalinstances-10, redTo: vim.currently_Totalinstances,
+                        redFrom: 0.8*vim.currently_Totalinstances, redTo: vim.currently_Totalinstances,
                         minorTicks: 25,
                         max:vim.currently_Totalinstances
                       };
@@ -478,7 +522,39 @@ $scope.coresChart = function(vim){
 
 
 
+$scope.statesChart = function(vim){
+      var vim = vim;
+      
+      google.charts.setOnLoadCallback(drawChart());
+      
+      function drawChart() {
+        var data = [
+          ['Time', 'Used', 'Total']];
 
+          vim.totalInstancesUsed[0].forEach(function(metric,index){
+            
+            var timestamp = metric[0].toString();
+            timestamp = timestamp.replace('.','');
+            timestamp = new Date(parseInt(timestamp));
+
+
+            data.push(new Array(timestamp,parseFloat(metric[1]),parseFloat(vim.maxTotalInstances[0][index][1])));
+          });
+        
+
+        var options = {
+          title: 'Instances',
+          curveType: 'function',
+          legend: { position: 'bottom' }
+        };
+
+    $scope.drawTheChart(data,options,'vim_instances_chart_'+vim.id);
+  }
+
+
+
+
+}
 
 $scope.instancesChart = function(vim){
       var vim = vim;
@@ -576,9 +652,18 @@ $scope.init = function(){
 
   $scope.FindAllVims();
 
+  $(document).ready(function(){
+    $('ul.tabs').tabs();
+
+  });
+
 }
 
 
 
 
 }]);
+
+$(document).ready(function(){
+    
+  });

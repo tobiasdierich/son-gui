@@ -74,6 +74,10 @@ SonataApp.config(function($routeProvider) {
 				templateUrl : 'js/views/instances/user_services.html',
 				controller  : 'MainController'
 			})
+			.when('/alerts', {
+				templateUrl : 'js/views/alerts.html',
+				controller  : 'MainController'
+			})
 			.when('', {
 				templateUrl : 'js/views/dashboard.html',
 				controller  : 'MainController'

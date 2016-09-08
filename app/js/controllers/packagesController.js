@@ -27,6 +27,15 @@ partner consortium (www.sonata-nfv.eu).
 */
 
 SonataApp.controller('PackagesController',['$rootScope','$http','$scope',function($rootScope,$http,$scope){
+(function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
+           $scope.openServiceInfo = function(package){
+             $('#modal1').openModal();
+             $scope.modal = {};
+             $scope.modal.content = {};
+             $scope.modal.content.title=package.name;
+
+             $scope.modal.content.package = package;
+           }
 
            $scope.getPackages = function(){
             console.info('Get Packages call started. Url:'+$scope.apis.gatekeeper.packages);
@@ -36,7 +45,11 @@ SonataApp.controller('PackagesController',['$rootScope','$http','$scope',functio
                 headers : {"Content-Type":"application/zip"}
                })
                 .success(function(data) {
+                  
                   console.info('Get Packages From Url: '+$scope.apis.gatekeeper.packages);
+                  console.log(data);
+                  $scope.packages = data;
+                  /*
                   var blob=new Blob([data], {
                               type: 'application/zip'
                           });
@@ -51,7 +64,7 @@ SonataApp.controller('PackagesController',['$rootScope','$http','$scope',functio
                   zip.generateAsync({type:"blob"})
                   .then(function(content) {                      
                       saveAs(content, "example.zip");
-                    });
+                    });*/
                 })
                 .error(function(data){
                   console.error('Get Packages Failed. Get Url: '+$scope.apis.gatekeeper.packages);

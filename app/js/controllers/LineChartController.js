@@ -27,7 +27,7 @@ partner consortium (www.sonata-nfv.eu).
 */
 
 SonataApp.controller('LineChartController',['$rootScope','$scope','$routeParams','$location','$http',function($rootScope,$scope, $routeParams, $location, $http){
-	
+	(function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
 	$scope.getLineGraph = function(service){
     console.log('Get Line Graph Called');
     console.log(service);

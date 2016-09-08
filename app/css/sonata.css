@@ -27,9 +27,15 @@ partner consortium (www.sonata-nfv.eu).
 */
 
 body{
-background: #efefef;
-font-family: 'Roboto', sans-serif!important;
+    background: #efefef;
+    font-family: 'Roboto', sans-serif!important;
+    font-weight: 300;
 }
+h5{
+    font-weight: 300;
+}
+
+
     [ac-chart] {
             float:left;
             width: 48%;

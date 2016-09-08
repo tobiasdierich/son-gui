@@ -30,24 +30,58 @@ partner consortium (www.sonata-nfv.eu).
 	
 	<div class="row" ng-init="init()" ng-controller="DashboardController">
   
-          <div class="card-panel" ng-repeat="vim in vims">            
+
+
+
+
+  <!-- <div class="row" ng-show="vim.length">
+    <div class="col s12">
+      <ul class="tabs">
+        <li class="tab col s3" ng-repeat="vim in vims"><a href="#{{vim.metric.exported_instance}}">{{vim.metric.exported_instance}}</a></li>
+      </ul>
+    </div>
+    <div id="{{vim.metric.exported_instance}}" class="col s12">{{vim.metric.exported_instance}}</div>
+    
+  </div>
+ -->
+          <div class="card-panel">
+            <div class="row">
+              
+                <!-- <div class="input-field col s4">
+                  <select ng-change="changeVisibleVim()" ng-model="selected_vim">                    
+                    <option ng-repeat="vim in vims" value="{{vim.index_num}}">{{vim.metric.exported_instance}}</option>
+                  </select>
+                  <label>Choose a Vim</label>
+                </div> -->
+             
+
+                    <select id="select_vim" ng-model="select.value" material-select ng-change="changeVisibleVim()">
+                        <option ng-repeat="value in select.choices">{{value.metric.exported_instance}}</option>
+                    </select>
+                    <!-- <h5>You selected: <b>{{select.value}}</b></h5> -->
+
+
+            </div>
+          </div>
+
+          <div class="card-panel" ng-repeat="vim in vims" ng-show="vim.visible">            
               	<div class="row">
                 <h5>Vim Name: {{vim.metric.exported_instance}}</h5>
                 <h6>Floating Ips Used  {{vim.totalIpsUsed+'/'+vim.maxTotalIps}}</h6>    
                   <div class="col s12 gauges_row">
                   <h6>Last Metrics</h6>
-                    <div class="col s12 m4"><div id="vim_ram_gauge_{{vim.id}}"></div></div>                  
-                    <div class="col s12 m4 center-align"><div id="vim_cores_gauge_{{vim.id}}"></div></div>  
-                    <div class="col s12 m4 center-align"><div id="vim_instances_gauge_{{vim.id}}"></div></div>  
+                    <div class="col s12 m4"><div id="vim_ram_gauge_{{vim.id}}" style="width: 100%"></div></div>                  
+                    <div class="col s12 m4 center-align"><div id="vim_cores_gauge_{{vim.id}}" style="width: 100%"></div></div>  
+                    <div class="col s12 m4 center-align"><div id="vim_instances_gauge_{{vim.id}}" style="width: 100%"></div></div>  
                   </div>
                   
 
 
                   <div class="col s12">
                   <h6>Charts</h6>
-                    <div class="col s12 m4"><div id="vim_ram_chart_{{vim.id}}"></div></div>                  
-                    <div class="col s12 m4"><div id="vim_cores_chart_{{vim.id}}"></div></div>  
-                    <div class="col s12 m4"><div id="vim_instances_chart_{{vim.id}}"></div></div>  
+                    <div class="col s12 l4"><div id="vim_ram_chart_{{vim.id}}"></div></div>                  
+                    <div class="col s12 l4"><div id="vim_cores_chart_{{vim.id}}"></div></div>  
+                    <div class="col s12 l4"><div id="vim_instances_chart_{{vim.id}}"></div></div>  
                   </div>               
                   
                   
@@ -68,7 +102,7 @@ partner consortium (www.sonata-nfv.eu).
                     </table>
                     </div>
                     <div class="col s6"> 
-                      <div id="stateChart"></div>
+                      <div id="stateChart_{{vim.id}}"></div>
                     </div>
                   </div>
                   <table class="bordered responsive-table">
@@ -108,3 +142,8 @@ partner consortium (www.sonata-nfv.eu).
   margin:0 auto!important;
 }
 </style>
+<script>
+/*$(document).ready(function() {
+    
+  });*/
+  </script>

@@ -27,7 +27,7 @@ partner consortium (www.sonata-nfv.eu).
 */
 
 SonataApp.controller('AllServicesController',['$rootScope','$http','$scope',function($rootScope,$http,$scope){
-
+            (function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
            $scope.userServices = new Array();
            $scope.selected_services = new Array();
            $scope.remove_class_btn='disabled';
@@ -64,6 +64,14 @@ SonataApp.controller('AllServicesController',['$rootScope','$http','$scope',func
                   
                   console.info('Get Services From Url: '+$scope.apis.gatekeeper.services);
                   $scope.services = data;
+
+
+                   $scope.services.forEach( function(service, index) {
+                    service.checked = 0; 
+                  });
+
+
+
                   console.log(data);
                 })
                 .error(function(data){
@@ -97,7 +105,7 @@ SonataApp.controller('AllServicesController',['$rootScope','$http','$scope',func
           $scope.remakeChecked = function(service){
 
             $scope.selected_services = new Array();
-            $scope.userServices.forEach( function(service, index) {
+            $scope.services.forEach( function(service, index) {
               if(service.checked){
                 $scope.selected_services.push(service);
               }

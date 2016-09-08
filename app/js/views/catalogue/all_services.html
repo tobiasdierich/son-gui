@@ -41,7 +41,7 @@ partner consortium (www.sonata-nfv.eu).
          <table class="striped responsive-table">
         <thead>
           <tr>
-              <th data-field="checkbox"></th>
+              <th data-field="checkbox"></th> 
               <th data-field="name">Name</th>
               <th data-field="version">Version</th>
               <th data-field="description">Description</th>
@@ -52,9 +52,7 @@ partner consortium (www.sonata-nfv.eu).
         <tbody>
           <tr ng-repeat="service in services | filter:expression">
              <td> 
-                <button class="btn waves-effect waves-light" ng-click="deploy_service(service.uuid)" type="submit" name="action"> Deploy
-                  <i class="material-icons right">send</i>
-                </button>
+                <input type="checkbox" class="filled-in" id="{{service.name}}" ng-model="service.checked" ng-change="remakeChecked(service)" /><label for="{{service.name}}"></label>
              </td>
               <td>{{service.name}}</td>
               <td>{{service.version}}</td>
@@ -84,6 +82,30 @@ partner consortium (www.sonata-nfv.eu).
                     <strong>Updated_at</strong>: {{modal.content.service.updated_at | date}}<br/>
 
 
+                  </div>
+                </div>
+
+                <div ng-show="modal.content.service.network_functions.length">
+                <div class="col s12">
+                  <div class="card-panel">
+                  <h5>VNFs</h5>
+                  <table class="striped responsive-table">
+                    <thead>
+                      <th>Vnf ID</th>
+                      <th>Vnf Name</th>
+                      <th>Vnf Vendor</th>
+                      <th>Vnf Version</th>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="vnf in modal.content.service.network_functions">
+                        <td>{{vnf.vnf_id}}</td>
+                        <td>{{vnf.vnf_name}}</td>
+                        <td>{{vnf.vnf_vendor}}</td>
+                        <td>{{vnf.vnf_version}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  </div>
                   </div>
                 </div>
           </div>

@@ -29,10 +29,10 @@ partner consortium (www.sonata-nfv.eu).
 <div class="row" ng-init="init()" ng-controller="VmMonitoring">
 		<div class="col s12">
 			<div class="card-panel">
-				<strong>VM Name:</strong>{{vm.exported_instance}}<br/>
-				<strong>Instance:</strong>{{vm.instance}}<br/>
-				<strong>Group:</strong>{{vm.group}}<br/>
-				<strong>ID:</strong>{{vm.id}}<br/>
+				<strong>VM Name:</strong> {{vm.exported_instance}}<br/>
+				<strong>Instance:</strong> {{vm.instance}}<br/>
+				<strong>Group:</strong> {{vm.group}}<br/>
+				<strong>ID:</strong> {{vm.id}}<br/>
 
 			</div>
 		</div>
@@ -48,27 +48,33 @@ partner consortium (www.sonata-nfv.eu).
    				
    			</div>
    		</div>
-    	<div class="col s6">
+    	<div class="col s12">
           <div class="card-panel">
             <span class="card-title">CPUs</span>
             <div id="cpu_chart"></div>
           </div>
         </div>
-        <div class="col s6">
+        <div class="col s12">
+          <div class="card-panel">
+            <span class="card-title">Rx/Tx Packages Per Second</span>
+            <div id="rx_tx_pps_chart"></div>
+          </div>
+        </div>
+        <div class="col s12">
+          <div class="card-panel">
+            <span class="card-title">Rx/Tx Bits Per Second</span>
+            <div id="rx_tx_chart"></div>
+          </div>
+        </div>
+        <div class="col s12">
           <div class="card-panel">
             <span class="card-title">MEMORY</span>
             <div id="mem_chart"></div>
           </div>
-        </div>
-        <div class="col s6">
+        </div>        
+        <div class="col s12">
           <div class="card-panel">
-            <span class="card-title">Rx/Tx</span>
-            <div id="rx_tx_chart"></div>
-          </div>
-        </div>
-        <div class="col s6">
-          <div class="card-panel">
-            <span class="card-title">Disk</span>
+            <span class="card-title">Hard Disk</span>
             <div id="disk_chart"></div>
           </div>
         </div>

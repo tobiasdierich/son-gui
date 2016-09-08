@@ -26,71 +26,9 @@ acknowledge the contributions of their colleagues of the SONATA
 partner consortium (www.sonata-nfv.eu).
 */
 
-SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$location', '$http',function($rootScope,$scope, $routeParams, $location, $http) {
-		console.log('MainController');
-		
-		
-		
-		/*$scope.apis.monitoring = 'http://sp.int2.sonata-nfv.eu:8000/api/v1/prometheus/metrics/data';*/
-		
-		$scope.todos = new Array();
-
-		(function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
-		 $scope.getServices = function(){
-
-            console.info('Get Enviroment variables call started.');
-             $http({
-                method  : 'GET',
-                url     : 'variables.php',
-                headers : { 'Content-Type': 'application/json' }
-               })
-                .success(function(data) {
-                  
-                  console.info('Enviroment variables received');
-                  //console.log(data);
-
-                  $scope.configuration = {
-                  	'logs_range':'86400' //time range (minutes before)
-                  }
-
-                  $scope.apis = {
-						'monitoring':'http://'+data.MON_URL+'/api/v1/prometheus/metrics/data',
-						'logs':'http://'+data.LOGS_URL+'/search/universal/relative?',
-						'vims':'http://'+data.VIMS_URL+'/vims',
-						'gatekeeper':{
-							'services':'http://'+data.GK_URL+'/services',
-							'packages':'http://'+data.GK_URL+'/packages',
-							'functions':'http://'+data.GK_URL+'/functions',
-							'requests':'http://'+data.GK_URL+'/requests',
-
-						}
-					}
-				
-
-
-					$rootScope.apis = $scope.apis;
-
-                })
-                .error(function(data){
-                    console.error('Get Enviroment variables Failed.');
-                })
-           }
-
-
-     if(typeof $rootScope.apis )
-        $scope.getServices();
-
-		
-    var debug=false;
-   	if(debug==false && $rootScope.resp!=1){
-			location.hash='/login';
-		}else {
-			$rootScope.is_user_logged_in = true;
-		}
-
-
-   $scope.alerts_visibility = 0;
-            
+SonataApp.controller('AlertsController',['$rootScope','$http','$scope',function($rootScope,$http,$scope){
+            (function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
+           
 
 
 
@@ -101,7 +39,7 @@ $scope.getAlerts = function(){
           url     : $scope.apis.monitoring,
           data:  {
                   "name": "ALERTS",
-                  "start": ""+ new Date(new Date().getTime() - 1*60000).toISOString(),
+                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
                   "step": "1s",
                   "labels": [{}]
@@ -116,7 +54,8 @@ $scope.getAlerts = function(){
               
               data.metrics.result.forEach(function(alert,index){
                   
-                  var al = alert.metric;                  
+                  var al = alert.metric;
+                  
 
                   alert.values.reverse();
                   var timest = 0;
@@ -129,7 +68,11 @@ $scope.getAlerts = function(){
                     }
                     
 
-                    
+                     /*al.value = 1;
+                     al.timestamp = timest;*/
+                      /*al.value     = alert.values[alert.values.length-1][1];
+                      al.timestamp = alert.values[alert.values.length-1][0];*/
+
                   });
 
                   if(timest!=0){
@@ -139,11 +82,38 @@ $scope.getAlerts = function(){
                   else 
                     al.value = 0;
 
-                 
+                  
+
+                  if(al.alertname.indexOf('cpu') !== -1 ){
+                    al.alertname+= " core: "+al.core;
+                  }
+                  
+
+                  al.timestamp = al.timestamp.toString();
+                  al.timestamp = al.timestamp.replace('.','');
+                  console.log("timestamp:"+al.timestamp);
+                  /*if(al.timestamp.length==12)
+                    al.timestamp=al.timestamp+'0';*/
+                  al.timestamp = new Date(parseInt(al.timestamp));
                   
                   if(al.value==1 && al.alertstate=='firing'){
                     
-                    $scope.alerts_visibility=1;
+                    if(al.exported_job=='vnf'){
+                      al.next_state = '/vnf/'+al.id;
+                    }
+                    else if(al.exported_job=='vm'){
+                      al.next_state = '/vm/'+al.id;
+                    }
+                    else if(al.exported_job=='container' || al.exported_job=='containers'){
+                      al.next_state = '/container/'+al.id;
+                    }
+                    else{
+                      al.next_state = '/alerts';
+                    }
+
+
+
+                    $scope.alerts.push(al);
 
                   }
               });
@@ -154,22 +124,16 @@ $scope.getAlerts = function(){
 }
 
 
-	setInterval(function() {
+    $scope.changeState = function(next_state){
+      location.hash="#"+next_state;
+    }
+    $scope.init = function(){
+        $scope.getAlerts();
+        setInterval(function() {
           $scope.getAlerts();
         }, 6000);
-
-
-
-    $scope.changeHash = function(newHash){
-    	location.hash = newHash;
     }
+      
 
-	$rootScope.checkIfFilesAreThere = function(){
-
-		return 1;	
-	}         
-    
-
-    }]);
-
-
+           
+}]);
