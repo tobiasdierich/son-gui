@@ -1,16 +1,20 @@
 FROM ubuntu:14.04
 
 # Install apache
-RUN apt-get update && apt-get install -y apache2 && \
+RUN apt-get update && apt-get install -y apache2 git && \
 apt-get install -y nodejs nodejs-legacy npm libfontconfig1 php5 && \
-npm install -g  grunt
+npm install -g grunt && \
+npm install -g bower
 
 COPY ./ /var/www/html/
 RUN ls -la /var/www/html/*
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 RUN sed -i 's_DocumentRoot /var/www/html_DocumentRoot /var/www/html/app_' /etc/apache2/sites-enabled/000-default.conf
 WORKDIR "/var/www/html"
-#RUN npm cache clean && npm install
+RUN echo '{ "allow_root": true }' > /root/.bowerrc
+RUN bower install
+
+#RUN bower install && npm install
 
 ENV  APACHE_RUN_USER=www-data \
         APACHE_RUN_GROUP=www-data \
