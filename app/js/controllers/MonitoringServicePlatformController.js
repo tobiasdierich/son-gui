@@ -28,6 +28,9 @@ partner consortium (www.sonata-nfv.eu).
 
 SonataApp.controller('MonitoringServicePlatform',['$rootScope','$scope','$routeParams','$location','$http',function($rootScope,$scope, $routeParams, $location, $http){
 	
+
+    
+     
   $scope.vms = "5";
   $scope.changeUrl = function(a){
     location.hash = a;
@@ -64,10 +67,8 @@ SonataApp.controller('MonitoringServicePlatform',['$rootScope','$scope','$routeP
 };
     $scope.init = function(){
       
-    	$scope.getVms();
-    	
+      $scope.getVms();
+      
     }
-
-     
     
 }]);

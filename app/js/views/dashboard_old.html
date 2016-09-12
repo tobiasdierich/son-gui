@@ -1,0 +1,151 @@
+<!--
+Copyright (c) 2015 SONATA-NFV [, ANY ADDITIONAL AFFILIATION]
+ALL RIGHTS RESERVED.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Neither the name of the SONATA-NFV [, ANY ADDITIONAL AFFILIATION]
+nor the names of its contributors may be used to endorse or promote 
+products derived from this software without specific prior written 
+permission.
+
+This work has been performed in the framework of the SONATA project,
+funded by the European Commission under Grant number 671517 through 
+the Horizon 2020 and 5G-PPP programmes. The authors would like to 
+acknowledge the contributions of their colleagues of the SONATA 
+partner consortium (www.sonata-nfv.eu).
+-->
+
+<div>
+	
+	<div class="row" ng-init="init()" ng-controller="DashboardController">
+  
+
+
+
+
+  <!-- <div class="row" ng-show="vim.length">
+    <div class="col s12">
+      <ul class="tabs">
+        <li class="tab col s3" ng-repeat="vim in vims"><a href="#{{vim.metric.exported_instance}}">{{vim.metric.exported_instance}}</a></li>
+      </ul>
+    </div>
+    <div id="{{vim.metric.exported_instance}}" class="col s12">{{vim.metric.exported_instance}}</div>
+    
+  </div>
+ -->
+          <div class="card-panel">
+            <div class="row">
+              
+                <!-- <div class="input-field col s4">
+                  <select ng-change="changeVisibleVim()" ng-model="selected_vim">                    
+                    <option ng-repeat="vim in vims" value="{{vim.index_num}}">{{vim.metric.exported_instance}}</option>
+                  </select>
+                  <label>Choose a Vim</label>
+                </div> -->
+             
+
+                    <select id="select_vim" ng-model="select.value" material-select ng-change="changeVisibleVim()">
+                        <option ng-repeat="value in select.choices">{{value.metric.exported_instance}}</option>
+                    </select>
+                    <!-- <h5>You selected: <b>{{select.value}}</b></h5> -->
+
+
+            </div>
+          </div>
+
+          <div  ng-repeat="vim in vims" ng-show="vim.visible">            
+            <div class="card-panel">
+              	<div class="row">
+                <h5>Vim Name: {{vim.metric.exported_instance}}</h5>
+                <h6>Floating Ips Used  {{vim.totalIpsUsed+'/'+vim.maxTotalIps}}</h6>    
+                </div>
+            </div>
+
+          <div class="row">            
+            <div class="card-panel">
+              <div class="card-content">
+              <table class="centered" style="max-width: 100%;width: 100%">
+                      <tr>
+                        <td style="width: 33.3%"><div id="vim_ram_gauge_{{vim.id}}" style="width: 100%"></div></td>
+                        <td style="width: 33.3%"><div id="vim_cores_gauge_{{vim.id}}" style="width: 100%"></div></td>
+                        <td style="width: 33.3%"><div id="vim_instances_gauge_{{vim.id}}" style="width: 100%"></div></td>
+                      </tr>
+                      <tr>
+                        <td style="width: 33.3%"><div id="vim_ram_chart_{{vim.id}}" style="max-width: 100%"></div></td>
+                        <td style="width: 33.3%"><div id="vim_cores_chart_{{vim.id}}" style="max-width: 100%"></div></td>
+                        <td style="width: 33.3%"><div id="vim_instances_chart_{{vim.id}}" style="max-width: 100%"></div></td>
+                      </tr>
+                    </table>
+              </div>
+            </div>
+          </div>
+                 
+                  
+                  
+            <div class="card-panel">
+                <div class="row">
+                                
+                  
+                  
+                  <div class="col s12" style="margin-top:30px">
+                  <h5 class="center-align">VMs</h5>
+                 <div class="col s12">
+                  <div class="col s6">
+                    <table>
+                      <thead>
+                        <th>State</th>
+                        <th>Number</th>
+                      </thead>
+                      <tbody>
+                        <tr ng-repeat="state in vim.states">
+                          <td>{{state.metric.state}}</td><td>{{state.values[0][1]}}</td></tr>
+                        
+                      </tbody>
+                    </table>
+                    </div>
+                    <div class="col s6"> 
+                      <div id="stateChart_{{vim.id}}"></div>
+                    </div>
+                  </div>
+                  <table class="bordered responsive-table">
+                    <thead>
+                      <th>Created</th>
+                      <th>Uuid</th>
+                      <th>Tenant id</th>
+                      <th>Name</th>
+                      <th>Last Updated</th>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="vm in vim.all_vms.metrics.result">
+                        <td>{{vm.metric.created | date}}</td>
+                        <td>{{vm.metric.uuid}}</td>
+                        <td>{{vm.metric.tenant_id}}</td>
+                        <td>{{vm.metric.name}}</td>
+                        <td>{{vm.metric.last_updated  | date:'yyyy-MM-dd HH:mm:ss Z'}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  </div>
+
+
+                
+                </div> 
+            </div>
+          </div>
+        
+
+
+      </div>
+    
+</div>

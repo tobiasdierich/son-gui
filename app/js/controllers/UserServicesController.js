@@ -27,7 +27,7 @@ partner consortium (www.sonata-nfv.eu).
 */
 
 SonataApp.controller('UserServicesController',['$rootScope','$http','$scope',function($rootScope,$http,$scope){
-
+(function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
            $scope.userServices = new Array();
            $scope.selected_services = new Array();
            $scope.remove_class_btn='disabled';
