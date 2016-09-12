@@ -52,7 +52,7 @@ partner consortium (www.sonata-nfv.eu).
         <tbody>
           <tr ng-repeat="service in services | filter:expression">
              <td> 
-                <input type="checkbox" class="filled-in" id="{{service.name}}" ng-model="service.checked" ng-change="remakeChecked(service)" /><label for="{{service.name}}"></label>
+                <input type="checkbox" class="filled-in" id="{{service.name+service.version}}" ng-model="service.checked" ng-change="remakeChecked(service)" /><label for="{{service.name+service.version}}"></label>
              </td>
               <td>{{service.name}}</td>
               <td>{{service.version}}</td>

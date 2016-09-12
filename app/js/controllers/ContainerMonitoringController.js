@@ -60,7 +60,6 @@ $scope.getContainer = function(){
 
 $scope.getLogs = function(){
   
-  console.log('*LOGS*');
 
       $http({
           method  : 'GET',
@@ -69,8 +68,6 @@ $scope.getLogs = function(){
          })
           .success(function(data) {
               
-              console.log('**LOGS');
-              console.log(data); 
               $scope.logs=data.messages;
 
           });
@@ -120,6 +117,8 @@ $scope.getCurrentCPU = function(){
 
             $scope.container.currentCPUUsage = data.metrics.result[0].values[0][1];
            
+           if($scope.container.currentCPUUsage>99)
+            $scope.container.currentCPUUsage=100;
             
           });
 }
@@ -133,9 +132,9 @@ $scope.getCPU_History = function(){
           data:  {
                   "name": "cnt_cpu_perc",
 
-                  "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
+                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
-                  "step": "1m",
+                  "step": "10s",
                   "labels": [{"labeltag":"id","labelid":$routeParams.id}]
                     },
           headers : { 'Content-Type': 'application/json' }
@@ -192,12 +191,12 @@ $scope.drawGauges = function(){
           $scope.getCurrentMemory();          
           data.setValue(0, 1, parseFloat($scope.container.currentMemoryUsage));
           chart.draw(data, options);
-        }, 4000);
+        }, 30000);
         setInterval(function() {
           $scope.getCurrentCPU(); 
           data.setValue(1, 1, parseFloat($scope.container.currentCPUUsage));
           chart.draw(data, options);
-        }, 4000);
+        }, 30000);
        
       }
 }
@@ -229,9 +228,9 @@ $scope.drawTheChart = function(data_array,options,element){
           data:  {
                   "name": "cnt_cpu_perc",
 
-                  "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
+                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
-                  "step": "1s",
+                  "step": "30s",
                   "labels": [{"labeltag":"id","labelid":$routeParams.id}]
                     },
           headers : { 'Content-Type': 'application/json' }
@@ -244,9 +243,11 @@ $scope.drawTheChart = function(data_array,options,element){
             var timestamp = element[0].toString();
             timestamp = timestamp.replace('.','');
             
-            timestamp = new Date(parseInt(timestamp));
+                timestamp = new Date(parseInt(timestamp));
 
-            m.push([timestamp,parseFloat(element[1])]);
+                if(element[1]>99)
+                  element[1]=100;
+               m.push([timestamp,parseFloat(element[1])]);
 
             });
 
@@ -290,9 +291,9 @@ $scope.drawTheChart = function(data_array,options,element){
           url     : $scope.apis.monitoring,
           data:  {
                   "name": "cnt_mem_perc",
-                  "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
+                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
-                  "step": "1m",
+                  "step": "30s",
                   "labels": [{"labeltag":"id","labelid":$routeParams.id}]
                     },
           headers : { 'Content-Type': 'application/json' }
@@ -345,7 +346,7 @@ $scope.drawTheChart = function(data_array,options,element){
        google.charts.setOnLoadCallback(drawChart);
 
       function drawChart() {        
-        var tstart = new Date(new Date().getTime() - 1*60000).toISOString();
+        var tstart = new Date(new Date().getTime() - 20*60000).toISOString();
         var tend = new Date().toISOString();
         $http({
           method  : 'POST',
@@ -354,7 +355,7 @@ $scope.drawTheChart = function(data_array,options,element){
                   "name": "cnt_net_rx_MB",
                   "start": ""+ tstart,
                   "end": ""+tend,
-                  "step": "1s",
+                  "step": "30s",
                   "labels": [{"labeltag":"id","labelid":$routeParams.id}]
                   },
           headers : { 'Content-Type': 'application/json' }
@@ -371,15 +372,13 @@ $scope.drawTheChart = function(data_array,options,element){
                               "name": "cnt_net_tx_MB",
                               "start": ""+ tstart,
                               "end": ""+tend,
-                              "step": "1s",
+                              "step": "30s",
                               "labels": [{"labeltag":"id","labelid":$routeParams.id}]
                               },
                       headers : { 'Content-Type': 'application/json' }
                      })
                       .success(function(data) {
 
-                          console.log("RX");
-                          console.log($scope.rx);
                           $scope.tx = data;
                           $scope.kam = [['Time', 'Rx','Tx']];
 
@@ -451,7 +450,7 @@ $scope.drawTheChart = function(data_array,options,element){
 
 
        
-          var the_start = new Date(new Date().getTime() - 10*60000).toISOString();
+          var the_start = new Date(new Date().getTime() - 20*60000).toISOString();
           var the_end = new Date().toISOString();
 
         $http({
@@ -461,7 +460,7 @@ $scope.drawTheChart = function(data_array,options,element){
                   "name": "cnt_block_in_MB",
                   "start": ""+the_start,
                   "end": ""+the_end,
-                  "step": "1m",
+                  "step": "30s",
                   "labels": [{"labeltag":"id","labelid":$routeParams.id}]
                     },
           headers : { 'Content-Type': 'application/json' }
@@ -477,7 +476,7 @@ $scope.drawTheChart = function(data_array,options,element){
                   "name": "cnt_block_ou_MB",
                   "start": ""+the_start,
                   "end": ""+the_end,
-                  "step": "1m",
+                  "step": "30s",
                   "labels": [{"labeltag":"id","labelid":$routeParams.id}]
                     },
           headers : { 'Content-Type': 'application/json' }
@@ -487,7 +486,7 @@ $scope.drawTheChart = function(data_array,options,element){
             var the_out = data;
 
              $scope.kam = [['Time', 'In','Out']];
-             console.log("THE IN");
+             
              var l = the_in.metrics.result[0].values.length;
              i=0;
              while(i<l){
@@ -549,7 +548,7 @@ $scope.drawTheChart = function(data_array,options,element){
           $scope.drawCPUChart();
           $scope.drawMEMChart();          
           
-        }, 10000);
+        }, 30000);
       
       //drawCPUS
       //drawMEMS

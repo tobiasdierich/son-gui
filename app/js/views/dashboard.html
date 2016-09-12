@@ -26,68 +26,85 @@ acknowledge the contributions of their colleagues of the SONATA
 partner consortium (www.sonata-nfv.eu).
 -->
 
-<div>
-	
-	<div class="row" ng-init="init()" ng-controller="DashboardController">
-  
 
+	<div class="row"  ng-controller="DashboardController" ng-init="init()">
+          
 
+          <div class="row matab">
 
+            <h5 ng-hide="selected_vim.name">Select a VIM</h5>
+          <div class="col s12 m2 virtual-machine" ng-repeat="vim in vims" ng-click="changeVisibleVim(vim.metric.exported_instance)">
+                  <div class="col s12 entire cursored" ng-class="vim.selected_visible">                  
+                  <i class="fa fa-desktop" aria-hidden="true"></i>
+                    <span class="name col s12"><strong>{{vim.metric.exported_instance}}</strong></span>
+                    <span class="name col s12">{{vim.vim_tenant}}</span>
+                   
+                  </div>
+          </div>
+          </div>
 
-  <!-- <div class="row" ng-show="vim.length">
-    <div class="col s12">
-      <ul class="tabs">
-        <li class="tab col s3" ng-repeat="vim in vims"><a href="#{{vim.metric.exported_instance}}">{{vim.metric.exported_instance}}</a></li>
-      </ul>
-    </div>
-    <div id="{{vim.metric.exported_instance}}" class="col s12">{{vim.metric.exported_instance}}</div>
-    
-  </div>
- -->
-          <div class="card-panel">
-            <div class="row">
+        
+
+          <div ng-show="selected_vim.name">     
+           <div class="card-panel">
+                <div class="row">
+                <h5>VIM Name: {{selected_vim.name}}</h5>
+                <h6>Floating IPs Used:  {{selected_vim.totalIpsUsed+'/'+selected_vim.maxTotalIps}}</h6>    
+                </div>
+            </div>
+
+            <div class="card-panel">
+                <div class="row gauges_row">
+                  <table style="width: 100%">
+                    <tr>
+                    <td style="width: 33%"><div id="vim_ram_gauge" style="width: 100%"></div></td>
+                    <td style="width: 33%"><div id="vim_instances_gauge" style="width: 100%"></div>
+                  </td>
+                    <td style="width: 33%"><div id="vim_cores_gauge" style="width: 100%"></div></td>
+                    </tr>
+                  </table> 
+                </div>
+            </div>
+          
+          <div class="row">            
+            <div class="card-panel">
+              <div class="card-content">
               
-                <!-- <div class="input-field col s4">
-                  <select ng-change="changeVisibleVim()" ng-model="selected_vim">                    
-                    <option ng-repeat="vim in vims" value="{{vim.index_num}}">{{vim.metric.exported_instance}}</option>
-                  </select>
-                  <label>Choose a Vim</label>
-                </div> -->
-             
+              <table style="width: 100%">
+                <tr>
+                  <td style="width: 100%">
+                  <div id="vim_ram_chart" style="max-width: 100%"></div>
+                  </td>
+                </tr>
+              </table>
+              <table  style="width: 100%">
+                <tr>
+                  <td style="width: 100%">
+                  <div id="vim_instances_chart" style="max-width: 100%"></div>
+                  </td>
+                </tr>
+              </table>
+              <table  style="width: 100%">
+                <tr>
+                  <td style="width: 100%">
+                    <div id="vim_cores_chart" style="max-width: 100%"></div>
+                  </td>
+                </tr>
+              </table>
 
-                    <select id="select_vim" ng-model="select.value" material-select ng-change="changeVisibleVim()">
-                        <option ng-repeat="value in select.choices">{{value.metric.exported_instance}}</option>
-                    </select>
-                    <!-- <h5>You selected: <b>{{select.value}}</b></h5> -->
-
-
+              
+              </div>
             </div>
           </div>
 
-          <div class="card-panel" ng-repeat="vim in vims" ng-show="vim.visible">            
-              	<div class="row">
-                <h5>Vim Name: {{vim.metric.exported_instance}}</h5>
-                <h6>Floating Ips Used  {{vim.totalIpsUsed+'/'+vim.maxTotalIps}}</h6>    
-                  <div class="col s12 gauges_row">
-                  <h6>Last Metrics</h6>
-                    <div class="col s12 m4"><div id="vim_ram_gauge_{{vim.id}}" style="width: 100%"></div></div>                  
-                    <div class="col s12 m4 center-align"><div id="vim_cores_gauge_{{vim.id}}" style="width: 100%"></div></div>  
-                    <div class="col s12 m4 center-align"><div id="vim_instances_gauge_{{vim.id}}" style="width: 100%"></div></div>  
-                  </div>
-                  
-
-
-                  <div class="col s12">
-                  <h6>Charts</h6>
-                    <div class="col s12 l4"><div id="vim_ram_chart_{{vim.id}}"></div></div>                  
-                    <div class="col s12 l4"><div id="vim_cores_chart_{{vim.id}}"></div></div>  
-                    <div class="col s12 l4"><div id="vim_instances_chart_{{vim.id}}"></div></div>  
-                  </div>               
+           <div class="card-panel">
+                <div class="row">
+                                
                   
                   
                   <div class="col s12" style="margin-top:30px">
                   <h5 class="center-align">VMs</h5>
-                 <div class="col s12">
+                 <div class="col s12" ng-show="selected_vim.states.length">
                   <div class="col s6">
                     <table>
                       <thead>
@@ -95,31 +112,32 @@ partner consortium (www.sonata-nfv.eu).
                         <th>Number</th>
                       </thead>
                       <tbody>
-                        <tr ng-repeat="state in vim.states">
+                        <tr ng-repeat="state in selected_vim.states">
                           <td>{{state.metric.state}}</td><td>{{state.values[0][1]}}</td></tr>
                         
                       </tbody>
                     </table>
                     </div>
                     <div class="col s6"> 
-                      <div id="stateChart_{{vim.id}}"></div>
+                      <div id="stateChart"></div>
                     </div>
                   </div>
-                  <table class="bordered responsive-table">
+                  <table class="bordered responsive-table" ng-show="selected_vim.all_vms.metrics.result.length">
                     <thead>
                       <th>Created</th>
                       <th>Uuid</th>
                       <th>Tenant id</th>
                       <th>Name</th>
-                      <th>Last Updated</th>
+                      <th>Actions</th>
                     </thead>
                     <tbody>
-                      <tr ng-repeat="vm in vim.all_vms.metrics.result">
+                      <tr ng-repeat="vm in selected_vim.all_vms.metrics.result">
                         <td>{{vm.metric.created | date}}</td>
                         <td>{{vm.metric.uuid}}</td>
                         <td>{{vm.metric.tenant_id}}</td>
                         <td>{{vm.metric.name}}</td>
-                        <td>{{vm.metric.last_updated  | date:'yyyy-MM-dd HH:mm:ss Z'}}</td>
+               
+                        <td><i ng-click="openVMInfo(vm)" class="Small material-icons cursored">info_outline</i></td>
                       </tr>
                     </tbody>
                   </table>
@@ -128,22 +146,70 @@ partner consortium (www.sonata-nfv.eu).
 
                 
                 </div> 
+            </div>
+
+   
+                 <div id="modal_vm" class="modal modal-fixed-footer">
+          <div class="modal-content">
+                <h4>{{modals.content.exported_instance}}</h4>
+                <div class="col s12">
+                  <div class="card-panel">
+                 
+                    <strong>Uuid</strong>:  {{modals.content.uuid}}<br/>
+                    <strong>Job</strong>: {{modals.content.job}}<br/>
+                    <strong>Group</strong>:      {{modals.content.group}}<br/>
+                    <strong>Image Id</strong>:   {{modals.content.image_id}}<br/>
+                    <strong>Instance</strong>:   {{modals.content.instance}}<br/>
+                    <strong>Tenant Id</strong>:  {{modals.content.vim_tenant}}<br/>
+                    <strong>Created</strong>:  {{modals.content.created | date}}<br/>
+                    <strong>Updated</strong>:  {{modals.content.last_updated | date}}<br/>
+
+
+                  </div>
+                </div>
+
+                <div ng-show="modals.networks.length">
+                <div class="col s12">
+                  <div class="card-panel">                
+                 <table class="striped responsive-table">
+                    <thead>
+                      <th>Ips</th>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="ip in modals.networks">
+                        <td>{{ip}}</td>                       
+                      </tr>
+                    </tbody>
+                  </table> 
+                  </div>
+                  </div>
+                </div>
           </div>
+          <div class="modal-footer">
+            <a href="javascript:void(0)" ng-click="closeModal()" class="modal-action modal-close waves-effect waves-green btn-flat ">Close</a>
+          </div>
+        </div>
+                  
+                  
+          
         
 
 
       </div>
     
+
+
+
+ 
 </div>
 
 <style>
+.matab .active{
+  background: white!important;
+}
+
 .gauges_row table{
   width: auto;
   margin:0 auto!important;
 }
 </style>
-<script>
-/*$(document).ready(function() {
-    
-  });*/
-  </script>

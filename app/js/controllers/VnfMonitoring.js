@@ -33,7 +33,7 @@ SonataApp.controller('VnfMonitoring',['$rootScope','$scope','$routeParams','$loc
   $scope.vnf.currentMemoryUsage = 0;
   $scope.vnf.currentCPUUsage = 0;
 	$scope.current_time = new Date();
-  $scope.ten_m_before = new Date($scope.current_time.getTime() - 20*60000);
+  $scope.ten_m_before = new Date($scope.current_time.getTime() - 15*60000);
 
 $scope.getVM = function(){
   $http({
@@ -44,7 +44,7 @@ $scope.getVM = function(){
                   "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
                   "step": "10m",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.name}]
+                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
                     },
           headers : { 'Content-Type': 'application/json' }
          })
@@ -68,7 +68,7 @@ $scope.getCurrentMemory = function(){
                   "start": ""+ new Date().toISOString(),
                   "end": ""+new Date().toISOString(),
                   "step": "10m",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.name}]
+                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
                     },
           headers : { 'Content-Type': 'application/json' }
          })
@@ -91,7 +91,7 @@ $scope.getCurrentCPU = function(){
                   "start": ""+ new Date().toISOString(),
                   "end": ""+new Date().toISOString(),
                   "step": "1m",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.name}]
+                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
                     },
           headers : { 'Content-Type': 'application/json' }
          })
@@ -111,10 +111,10 @@ $scope.getCPU_History = function(){
           data:  {
                   "name": "vm_cpu_perc",
 
-                  "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
+                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
-                  "step": "1m",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.name}]
+                  "step": "10s",
+                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
                     },
           headers : { 'Content-Type': 'application/json' }
          })
@@ -170,12 +170,12 @@ $scope.drawGauges = function(){
           $scope.getCurrentMemory();          
           data.setValue(0, 1, parseFloat($scope.vnf.currentMemoryUsage));
           chart.draw(data, options);
-        }, 6000);
+        }, 10000);
         setInterval(function() {
           $scope.getCurrentCPU(); 
           data.setValue(1, 1, parseFloat($scope.vnf.currentCPUUsage));
           chart.draw(data, options);
-        }, 6000);
+        }, 10000);
        
       }
 }
@@ -206,10 +206,10 @@ $scope.drawTheChart = function(data_array,options,element){
           data:  {
                   "name": "vm_cpu_perc",
 
-                  "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
+                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
-                  "step": "1s",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.name}]
+                  "step": "10s",
+                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
                     },
           headers : { 'Content-Type': 'application/json' }
          })
@@ -270,7 +270,7 @@ $scope.drawTheChart = function(data_array,options,element){
                   "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
                   "step": "1m",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.name}]
+                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
                     },
           headers : { 'Content-Type': 'application/json' }
          })
@@ -322,7 +322,7 @@ $scope.drawTheChart = function(data_array,options,element){
        google.charts.setOnLoadCallback(drawChart);
 
       function drawChart() {        
-        var tstart = new Date(new Date().getTime() - 1*60000).toISOString();
+        var tstart = new Date(new Date().getTime() - 15*60000).toISOString();
         var tend = new Date().toISOString();
         $http({
           method  : 'POST',
@@ -331,14 +331,14 @@ $scope.drawTheChart = function(data_array,options,element){
                   "name": "vm_net_rx_bps",
                   "start": ""+ tstart,
                   "end": ""+tend,
-                  "step": "1s",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0"}]
+                  "step": "10s",
+                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0"}]
                   },
           headers : { 'Content-Type': 'application/json' }
          })
           .success(function(data) {
 
-            $scope.rx = data;
+            var rx = data;
 
 
                         $http({
@@ -348,29 +348,28 @@ $scope.drawTheChart = function(data_array,options,element){
                               "name": "vm_net_tx_bps",
                               "start": ""+ tstart,
                               "end": ""+tend,
-                              "step": "1s",
-                              "labels": [{"labeltag":"id","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0"}]
+                              "step": "10s",
+                              "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0"}]
                               },
                       headers : { 'Content-Type': 'application/json' }
                      })
                       .success(function(data) {
 
-                          console.log("RX");
-                          console.log($scope.rx);
-                          $scope.tx = data;
-                          $scope.kam = [['Time', 'Rx bps','Tx bps']];
+                          var tx = data;
+                          $scope.kam_bps = [['Time', 'Rx bps','Tx bps']];
 
 
-                            $scope.rx.metrics.result[0].values.forEach( function(rx, index) {
+                          rx.metrics.result[0].values.forEach( function(rx, index) {
+                                  
                                   var ttime = rx[0];
                                   var rx_value = rx[1];
-                                  var tx_value = $scope.tx.metrics.result[0].values[index][1];
+                                  var tx_value = tx.metrics.result[0].values[index][1];
 
 
                                   var timestamp = ttime.toString();
                                   timestamp = timestamp.replace('.','');
                                   timestamp = new Date(parseInt(timestamp));
-                                  $scope.kam.push([timestamp,parseFloat(rx_value),parseFloat(tx_value)]);
+                                  $scope.kam_bps.push([timestamp,parseFloat(rx_value),parseFloat(tx_value)]);
 
 
 
@@ -386,7 +385,7 @@ $scope.drawTheChart = function(data_array,options,element){
                             };
                             
                             
-                              $scope.drawTheChart($scope.kam,options,'rx_tx_chart');
+                              $scope.drawTheChart($scope.kam_bps,options,'rx_tx_chart');
 
 
                       });
@@ -418,10 +417,10 @@ $scope.drawTheChart = function(data_array,options,element){
           url     : $scope.apis.monitoring,
           data:  {
                   "name": "vm_disk_total_1k_blocks",
-                  "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
+                  "start": ""+ new Date(new Date().getTime() - 15*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
                   "step": "1m",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.name}]
+                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
                     },
           headers : { 'Content-Type': 'application/json' }
          })
@@ -440,10 +439,10 @@ $scope.drawTheChart = function(data_array,options,element){
                     url     : $scope.apis.monitoring,
                     data:  {
                             "name": "vm_disk_used_1k_blocks",
-                            "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
+                            "start": ""+ new Date(new Date().getTime() - 15*60000).toISOString(),
                             "end": ""+new Date().toISOString(),
                             "step": "1m",
-                            "labels": [{"labeltag":"id","labelid":$routeParams.name}]
+                            "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
                               },
                     headers : { 'Content-Type': 'application/json' }
                    })
@@ -453,13 +452,13 @@ $scope.drawTheChart = function(data_array,options,element){
                     data.metrics.result.forEach( function(element, index) {
                         var m= element.metric.file_system;
                         if(m.startsWith("/dev")){
-                          $scope.kam = [['Time', 'Usage','Total']];
+                          $scope.kam_disk = [['Time', 'Usage','Total']];
                           element.values.forEach( function(value, index) {
 
                               var timestamp = value[0].toString();
                               timestamp = timestamp.replace('.','');
                               timestamp = new Date(parseInt(timestamp));
-                              $scope.kam.push([timestamp,parseFloat(value[1]),parseFloat($scope.vnf.disk_total)]);
+                              $scope.kam_disk.push([timestamp,parseFloat(value[1]),parseFloat($scope.vnf.disk_total)]);
                           });
 
                         }
@@ -471,7 +470,7 @@ $scope.drawTheChart = function(data_array,options,element){
               vAxis: {minValue: 0,maxValue:$scope.vnf.disk_total}
             };
             
-              $scope.drawTheChart($scope.kam,options,'disk_chart');
+              $scope.drawTheChart($scope.kam_disk,options,'disk_chart');
 
                    
 
@@ -495,7 +494,7 @@ $scope.drawTheChart = function(data_array,options,element){
        google.charts.setOnLoadCallback(drawChart);
         function drawChart() {
              
-        var tstart = new Date(new Date().getTime() - 1*60000).toISOString();
+        var tstart = new Date(new Date().getTime() - 20*60000).toISOString();
         var tend = new Date().toISOString();
         $http({
           method  : 'POST',
@@ -504,14 +503,14 @@ $scope.drawTheChart = function(data_array,options,element){
                   "name": "vm_net_rx_pps",
                   "start": ""+ tstart,
                   "end": ""+tend,
-                  "step": "1s",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0"}]
+                  "step": "10s",
+                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0"}]
                   },
           headers : { 'Content-Type': 'application/json' }
          })
           .success(function(data) {
 
-            $scope.rx = data;
+            var rx = data;
 
 
                         $http({
@@ -521,29 +520,28 @@ $scope.drawTheChart = function(data_array,options,element){
                               "name": "vm_net_tx_pps",
                               "start": ""+ tstart,
                               "end": ""+tend,
-                              "step": "1s",
-                              "labels": [{"labeltag":"id","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0"}]
+                              "step": "10s",
+                              "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0"}]
                               },
                       headers : { 'Content-Type': 'application/json' }
                      })
                       .success(function(data) {
 
-                          console.log("RX");
-                          console.log($scope.rx);
-                          $scope.tx = data;
-                          $scope.kam = [['Time', 'Rx pps','Tx pps']];
+                        
+                          var tx = data;
+                          $scope.kam_pps = [['Time', 'Rx pps','Tx pps']];
 
 
-                            $scope.rx.metrics.result[0].values.forEach( function(rx, index) {
+                            rx.metrics.result[0].values.forEach( function(rx, index) {
                                   var ttime = rx[0];
                                   var rx_value = rx[1];
-                                  var tx_value = $scope.tx.metrics.result[0].values[index][1];
+                                  var tx_value = tx.metrics.result[0].values[index][1];
 
 
                                   var timestamp = ttime.toString();
                                   timestamp = timestamp.replace('.','');
                                   timestamp = new Date(parseInt(timestamp));
-                                  $scope.kam.push([timestamp,parseFloat(rx_value),parseFloat(tx_value)]);
+                                  $scope.kam_pps.push([timestamp,parseFloat(rx_value),parseFloat(tx_value)]);
 
 
 
@@ -559,7 +557,7 @@ $scope.drawTheChart = function(data_array,options,element){
                             };
                             
                             
-                              $scope.drawTheChart($scope.kam,options,'rx_tx_pps_chart');
+                              $scope.drawTheChart($scope.kam_pps,options,'rx_tx_pps_chart');
 
 
                       });
@@ -630,13 +628,13 @@ $scope.drawTheChart = function(data_array,options,element){
           $scope.drawMEMChart();          
           $scope.drawRxTxBPSChart();
           $scope.drawRxTxPPSChart();  
-        }, 5000);
+        }, 10000);
 
 
       setInterval(function(){
         
         $scope.drawDiskChart();
-      },20000);
+      },60000);
       
       //drawCPUS
       //drawMEMS

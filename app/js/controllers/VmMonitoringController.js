@@ -114,7 +114,7 @@ $scope.getCPU_History = function(){
           data:  {
                   "name": "vm_cpu_perc",
 
-                  "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
+                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
                   "step": "1m",
                   "labels": [{"labeltag":"id","labelid":$routeParams.name}]
@@ -173,12 +173,12 @@ $scope.drawGauges = function(){
           $scope.getCurrentMemory();          
           data.setValue(0, 1, parseFloat($scope.vm.currentMemoryUsage));
           chart.draw(data, options);
-        }, 6000);
+        }, 10000);
         setInterval(function() {
           $scope.getCurrentCPU(); 
           data.setValue(1, 1, parseFloat($scope.vm.currentCPUUsage));
           chart.draw(data, options);
-        }, 6000);
+        }, 10000);
        
       }
 }
@@ -211,7 +211,7 @@ $scope.drawTheChart = function(data_array,options,element){
 
                   "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
-                  "step": "1s",
+                  "step": "10s",
                   "labels": [{"labeltag":"id","labelid":$routeParams.name}]
                     },
           headers : { 'Content-Type': 'application/json' }
@@ -223,7 +223,8 @@ $scope.drawTheChart = function(data_array,options,element){
            
             var timestamp = element[0].toString();
             timestamp = timestamp.replace('.','');
-            
+            if(timestamp.length==12)
+                    timestamp=timestamp+'0';
             timestamp = new Date(parseInt(timestamp));
 
             m.push([timestamp,parseFloat(element[1])]);
@@ -284,7 +285,8 @@ $scope.drawTheChart = function(data_array,options,element){
            
             var timestamp = element[0].toString();
             timestamp = timestamp.replace('.','');
-            
+            if(timestamp.length==12)
+                    timestamp=timestamp+'0';
             timestamp = new Date(parseInt(timestamp));
 
             m.push([timestamp,parseFloat(element[1])]);
@@ -325,7 +327,7 @@ $scope.drawTheChart = function(data_array,options,element){
        google.charts.setOnLoadCallback(drawChart);
 
       function drawChart() {        
-        var tstart = new Date(new Date().getTime() - 1*60000).toISOString();
+        var tstart = new Date(new Date().getTime() - 20*60000).toISOString();
         var tend = new Date().toISOString();
         $http({
           method  : 'POST',
@@ -334,14 +336,14 @@ $scope.drawTheChart = function(data_array,options,element){
                   "name": "vm_net_rx_bps",
                   "start": ""+ tstart,
                   "end": ""+tend,
-                  "step": "1s",
+                  "step": "10s",
                   "labels": [{"labeltag":"id","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0"}]
                   },
           headers : { 'Content-Type': 'application/json' }
          })
           .success(function(data) {
 
-            $scope.rx = data;
+          var rx = data;
 
 
                         $http({
@@ -351,27 +353,32 @@ $scope.drawTheChart = function(data_array,options,element){
                               "name": "vm_net_tx_bps",
                               "start": ""+ tstart,
                               "end": ""+tend,
-                              "step": "1s",
+                              "step": "10s",
                               "labels": [{"labeltag":"id","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0"}]
                               },
                       headers : { 'Content-Type': 'application/json' }
                      })
                       .success(function(data) {
 
-                          $scope.tx = data;
-                          $scope.kam = [['Time', 'Rx','Tx']];
+                          var tx = data;
+                          var kam = [['Time', 'Rx','Tx']];
 
 
-                            $scope.rx.metrics.result[0].values.forEach( function(rx, index) {
+                            rx.metrics.result[0].values.forEach( function(rx, index) {
                                   var ttime = rx[0];
                                   var rx_value = rx[1];
-                                  var tx_value = $scope.tx.metrics.result[0].values[index][1];
+                                  var tx_value = tx.metrics.result[0].values[index][1];
 
 
                                   var timestamp = ttime.toString();
                                   timestamp = timestamp.replace('.','');
+                                  
+                                  if(timestamp.length==12)
+                                    timestamp=timestamp+'0';
+                                  
                                   timestamp = new Date(parseInt(timestamp));
-                                  $scope.kam.push([timestamp,parseFloat(rx_value),parseFloat(tx_value)]);
+
+                                  kam.push([timestamp,parseFloat(rx_value),parseFloat(tx_value)]);
 
 
 
@@ -387,7 +394,7 @@ $scope.drawTheChart = function(data_array,options,element){
                             };
                             
                             
-                              $scope.drawTheChart($scope.kam,options,'rx_tx_chart');
+                              $scope.drawTheChart(kam,options,'rx_tx_chart');
 
 
                       });
@@ -420,7 +427,7 @@ $scope.drawTheChart = function(data_array,options,element){
        google.charts.setOnLoadCallback(drawChart);
 
       function drawChart() {        
-        var tstart = new Date(new Date().getTime() - 1*60000).toISOString();
+        var tstart = new Date(new Date().getTime() - 20*60000).toISOString();
         var tend = new Date().toISOString();
         $http({
           method  : 'POST',
@@ -429,14 +436,14 @@ $scope.drawTheChart = function(data_array,options,element){
                   "name": "vm_net_rx_pps",
                   "start": ""+ tstart,
                   "end": ""+tend,
-                  "step": "1s",
+                  "step": "10s",
                   "labels": [{"labeltag":"id","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0"}]
                   },
           headers : { 'Content-Type': 'application/json' }
          })
           .success(function(data) {
 
-            $scope.rx = data;
+            var rx = data;
 
 
                         $http({
@@ -446,27 +453,29 @@ $scope.drawTheChart = function(data_array,options,element){
                               "name": "vm_net_tx_pps",
                               "start": ""+ tstart,
                               "end": ""+tend,
-                              "step": "1s",
+                              "step": "10s",
                               "labels": [{"labeltag":"id","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0"}]
                               },
                       headers : { 'Content-Type': 'application/json' }
                      })
                       .success(function(data) {
 
-                          $scope.tx = data;
-                          $scope.kam = [['Time', 'Rx','Tx']];
+                          var tx = data;
+                          var kam_pps = [['Time', 'Rx','Tx']];
 
 
-                            $scope.rx.metrics.result[0].values.forEach( function(rx, index) {
+                            rx.metrics.result[0].values.forEach( function(rx, index) {
                                   var ttime = rx[0];
                                   var rx_value = rx[1];
-                                  var tx_value = $scope.tx.metrics.result[0].values[index][1];
+                                  var tx_value = tx.metrics.result[0].values[index][1];
 
 
                                   var timestamp = ttime.toString();
                                   timestamp = timestamp.replace('.','');
+                                  if(timestamp.length==12)
+                                    timestamp=timestamp+'0';
                                   timestamp = new Date(parseInt(timestamp));
-                                  $scope.kam.push([timestamp,parseFloat(rx_value),parseFloat(tx_value)]);
+                                  kam_pps.push([timestamp,parseFloat(rx_value),parseFloat(tx_value)]);
 
 
 
@@ -482,7 +491,7 @@ $scope.drawTheChart = function(data_array,options,element){
                             };
                             
                             
-                              $scope.drawTheChart($scope.kam,options,'rx_tx_pps_chart');
+                              $scope.drawTheChart(kam_pps,options,'rx_tx_pps_chart');
 
 
                       });
@@ -515,7 +524,7 @@ $scope.drawTheChart = function(data_array,options,element){
           url     : $scope.apis.monitoring,
           data:  {
                   "name": "vm_disk_total_1k_blocks",
-                  "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
+                  "start": ""+ new Date(new Date().getTime() - 15*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
                   "step": "1m",
                   "labels": [{"labeltag":"id","labelid":$routeParams.name}]
@@ -552,13 +561,15 @@ $scope.drawTheChart = function(data_array,options,element){
 
                         var k = element.metric.file_system;     
                         if(k.startsWith("/dev/disk")){
-                          $scope.kam = [['Time', 'Usage','Total']];
+                          $scope.kam_disk = [['Time', 'Usage','Total']];
                           element.values.forEach( function(value, index) {
 
                               var timestamp = value[0].toString();
                               timestamp = timestamp.replace('.','');
+                              if(timestamp.length==12)
+                    timestamp=timestamp+'0';
                               timestamp = new Date(parseInt(timestamp));
-                              $scope.kam.push([timestamp,parseFloat(value[1]),parseFloat($scope.vm.disk_total)]);
+                              $scope.kam_disk.push([timestamp,parseFloat(value[1]),parseFloat($scope.vm.disk_total)]);
                           });
 
                         }
@@ -570,7 +581,7 @@ $scope.drawTheChart = function(data_array,options,element){
               vAxis: {minValue: 0,maxValue:$scope.vm.disk_total}
             };
             
-                          $scope.drawTheChart($scope.kam,options,'disk_chart');
+                          $scope.drawTheChart($scope.kam_disk,options,'disk_chart');
 
                    
 
@@ -608,14 +619,15 @@ $scope.drawTheChart = function(data_array,options,element){
           headers : { 'Content-Type': 'application/json','Accept':'application/json' }
          })
           .success(function(data) {
-            console.log('Containers');
-            console.log(data);
+            
             $scope.containers = data.metrics.result;
 
             $scope.containers.forEach(function(container,index){
               var ttime = container.values[0][0];
               var timestamp = ttime.toString();
                 timestamp = timestamp.replace('.','');
+                if(timestamp.length==12)
+                    timestamp=timestamp+'0';
                 container.created_date = new Date(parseInt(timestamp)); 
                 container.status = 'Active'; //Todo later (Read status from a new xhr request)
             })
@@ -647,13 +659,13 @@ $scope.drawTheChart = function(data_array,options,element){
           $scope.drawMEMChart();  
           $scope.drawRxTxPPSChart();        
           $scope.drawRxTxChart();  
-        }, 5000);
+        }, 10000);
 
 
       setInterval(function(){
         
         $scope.drawDiskChart();
-      },20000);
+      },60000);
       
       //drawCPUS
       //drawMEMS

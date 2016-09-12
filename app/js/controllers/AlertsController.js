@@ -27,19 +27,25 @@ partner consortium (www.sonata-nfv.eu).
 */
 
 SonataApp.controller('AlertsController',['$rootScope','$http','$scope',function($rootScope,$http,$scope){
+            
             (function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
            
-
-
+$scope.minutes = 5;
+$scope.refreshAlerts = function(){
+  $scope.getAlerts();
+}
 
 $scope.getAlerts = function(){
-
+  $scope.minutes = parseInt($scope.minutes);
+  if($scope.minutes>150){
+    alert('You can not have alerts for this period of time. Please select a smaller range');
+  }else{
   $http({
           method  : 'POST',
           url     : $scope.apis.monitoring,
           data:  {
                   "name": "ALERTS",
-                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
+                  "start": ""+ new Date(new Date().getTime() - $scope.minutes*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
                   "step": "1s",
                   "labels": [{}]
@@ -84,16 +90,18 @@ $scope.getAlerts = function(){
 
                   
 
-                  if(al.alertname.indexOf('cpu') !== -1 ){
+                  if(al.alertname.indexOf('cpu') !== -1 && !angular.isUndefined(al.core)){
                     al.alertname+= " core: "+al.core;
                   }
                   
 
                   al.timestamp = al.timestamp.toString();
                   al.timestamp = al.timestamp.replace('.','');
-                  console.log("timestamp:"+al.timestamp);
-                  /*if(al.timestamp.length==12)
-                    al.timestamp=al.timestamp+'0';*/
+                  
+                  
+                  if(al.timestamp.length==12)
+                    al.timestamp=al.timestamp+'0';
+                  
                   al.timestamp = new Date(parseInt(al.timestamp));
                   
                   if(al.value==1 && al.alertstate=='firing'){
@@ -121,6 +129,7 @@ $scope.getAlerts = function(){
 
 
           });
+        }
 }
 
 
