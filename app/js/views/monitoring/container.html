@@ -93,7 +93,7 @@ partner consortium (www.sonata-nfv.eu).
 
             <tbody>
               <tr ng-repeat="log in logs">
-                <td>{{log.message.timestamp | date:'yyyy-MM-dd HH:mm:ss Z'}}</td>
+                <td>{{log.message.timestamp  | date:'yyyy-MM-dd HH:mm' : 'UTC'}} UTC</td>
                 <td>{{log.message.message}}</td>
               </tr>
             </tbody>

@@ -31,19 +31,19 @@ partner consortium (www.sonata-nfv.eu).
           
 
           <div class="row matab">
-
             <h5 ng-hide="selected_vim.name">Select a VIM</h5>
-          <div class="col s12 m2 virtual-machine" ng-repeat="vim in vims" ng-click="changeVisibleVim(vim.metric.exported_instance)">
-                  <div class="col s12 entire cursored" ng-class="vim.selected_visible">                  
-                  <i class="fa fa-desktop" aria-hidden="true"></i>
-                    <span class="name col s12"><strong>{{vim.metric.exported_instance}}</strong></span>
-                    <span class="name col s12">{{vim.vim_tenant}}</span>
-                   
-                  </div>
-          </div>
+              <div class="col s12 m2 virtual-machine" ng-repeat="vim in vims" ng-click="changeVisibleVim(vim.metric.exported_instance)">
+                      <div class="col s12 entire cursored" ng-class="vim.selected_visible">                  
+                          <i class="fa fa-desktop" aria-hidden="true"></i>
+                          <span class="name col s12"><strong>{{vim.metric.exported_instance}}</strong></span>
+                          <span class="name col s12">{{vim.vim_tenant}}</span>                       
+                      </div>
+              </div>
           </div>
 
-        
+
+          
+          <div class="col s12">        
 
           <div ng-show="selected_vim.name">     
            <div class="card-panel">
@@ -128,11 +128,11 @@ partner consortium (www.sonata-nfv.eu).
                       <th>Uuid</th>
                       <th>Tenant id</th>
                       <th>Name</th>
-                      <th>Actions</th>
+                      <th>Info</th>
                     </thead>
                     <tbody>
-                      <tr ng-repeat="vm in selected_vim.all_vms.metrics.result">
-                        <td>{{vm.metric.created | date}}</td>
+                      <tr ng-repeat="vm in selected_vim.all_vms.metrics.result | orderBy:vm.metric.created:1">
+                        <td>{{vm.metric.created | date:'yyyy-MM-dd HH:mm' : 'UTC'}} UTC</td>
                         <td>{{vm.metric.uuid}}</td>
                         <td>{{vm.metric.tenant_id}}</td>
                         <td>{{vm.metric.name}}</td>
@@ -161,8 +161,8 @@ partner consortium (www.sonata-nfv.eu).
                     <strong>Image Id</strong>:   {{modals.content.image_id}}<br/>
                     <strong>Instance</strong>:   {{modals.content.instance}}<br/>
                     <strong>Tenant Id</strong>:  {{modals.content.vim_tenant}}<br/>
-                    <strong>Created</strong>:  {{modals.content.created | date}}<br/>
-                    <strong>Updated</strong>:  {{modals.content.last_updated | date}}<br/>
+                    <strong>Created</strong>:  {{modals.content.created  | date:'yyyy-MM-dd HH:mm' : 'UTC'}} UTC<br/>
+                    <strong>Updated</strong>:  {{modals.content.last_updated  | date:'yyyy-MM-dd HH:mm' : 'UTC'}} UTC<br/>
 
 
                   </div>
@@ -173,7 +173,7 @@ partner consortium (www.sonata-nfv.eu).
                   <div class="card-panel">                
                  <table class="striped responsive-table">
                     <thead>
-                      <th>Ips</th>
+                      <th>IPs</th>
                     </thead>
                     <tbody>
                       <tr ng-repeat="ip in modals.networks">
@@ -199,7 +199,7 @@ partner consortium (www.sonata-nfv.eu).
     
 
 
-
+      </div>
  
 </div>
 

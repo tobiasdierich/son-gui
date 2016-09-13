@@ -88,17 +88,17 @@ partner consortium (www.sonata-nfv.eu).
 		          	<tr>
 		              <th data-field="id">Name</th>
                   <th data-field="status">Status</th>
-                  <th data-field="created">Created</th>
+                  <th data-field="created">Created Date</th>
 		              <th data-field="image_name">Image Name</th>
 		              <th data-field="extra_info">Info</th>
 		          	</tr>
 		        </thead>
 
 		        <tbody>
-		          <tr ng-repeat="container in containers">
+		          <tr ng-repeat="container in containers | orderBy:container.created_date:-1">
 		            <td>{{container.metric.name}}</td>
                 <td>{{container.status}}</td>
-                <td>{{container.created_date}}</td>
+                <td>{{container.created_date | date:'yyyy-MM-dd HH:mm' : 'UTC'}} UTC</td>
 		            <td>{{container.metric.image_name}}</td>
 		            <td><i ng-show="container.status=='Active'"   ng-click="changeHash('/container/'+container.metric.id)" class="Small material-icons cursored">insert_chart</i></td>
 		          </tr>

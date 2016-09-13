@@ -43,7 +43,8 @@ partner consortium (www.sonata-nfv.eu).
 		         <table class="striped responsive-table">
 		        <thead>
 		          <tr>
-		              <th data-field="checkbox" ng-click="changeUrl()">Uuid</th> 
+		              <th data-field="checkbox" ng-click="changeUrl()">Uuid</th>
+		              <th>Name</th>
 		              <th data-field="checkbox">Time</th> 
 		              <th data-field="name">Rule Name</th>
 		              <th data-field="version">State</th>
@@ -52,15 +53,16 @@ partner consortium (www.sonata-nfv.eu).
 		        </thead>
 
 		        <tbody>
-		        	<tr ng-repeat="alert in alerts | filter:expression">
+		        	<tr ng-repeat="alert in alerts | filter:expression | orderBy:alert.timestamp:1">
 		        		  <td data-field="checkbox"><a href="javascript:void(0)" ng-click="changeState(alert.next_state)">{{alert.id}}</a></td> 
-		        		  <td data-field="checkbox">{{alert.timestamp | date:'yyyy-MM-dd HH:mm' : 'UTC+2'}} CET</td> 
+		        		  <td>{{alert.name}}</td>
+		        		  <td data-field="checkbox">{{alert.timestamp | date:'yyyy-MM-dd HH:mm' : 'UTC'}} UTC</td> 
 			              <td data-field="name">{{alert.alertname}}</td>
 			              <td data-field="version">Active</td>
 			              <td data-field="situation">{{alert.exported_job}}</td>
 		        	</tr>
 		        	<tr ng-hide="alerts.length">
-		        		<td colspan="5" style="text-align: center;">There are no alerts!</td>
+		        		<td colspan="6" style="text-align: center;">There are no alerts!</td>
 		        	</tr>
 		         
 		          
