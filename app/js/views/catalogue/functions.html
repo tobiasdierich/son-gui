@@ -43,7 +43,7 @@ partner consortium (www.sonata-nfv.eu).
                 </thead>
 
                 <tbody>
-                  <tr ng-repeat="function in functions">
+                  <tr ng-repeat="function in functions | orderBy:function.created_at:1">
                     <td>{{function.name}}</td>
                     <td>{{function.vendor}}</td>
                     <td>{{function.status}}</td>

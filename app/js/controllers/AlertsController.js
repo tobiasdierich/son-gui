@@ -54,7 +54,7 @@ $scope.getAlerts = function(){
           headers : { 'Content-Type': 'application/json' }
          })
           .success(function(data) {
-              
+              console.log(data);
               $scope.alerts = data.metrics.result;
               $scope.alerts = new Array();
               
@@ -76,8 +76,8 @@ $scope.getAlerts = function(){
 
                      /*al.value = 1;
                      al.timestamp = timest;*/
-                      /*al.value     = alert.values[alert.values.length-1][1];
-                      al.timestamp = alert.values[alert.values.length-1][0];*/
+                      al.value     = alert.values[alert.values.length-1][1];
+                      al.timestamp = alert.values[alert.values.length-1][0];
 
                   });
 
@@ -94,13 +94,20 @@ $scope.getAlerts = function(){
                     al.alertname+= " core: "+al.core;
                   }
                   
-
+                  
                   al.timestamp = al.timestamp.toString();
                   al.timestamp = al.timestamp.replace('.','');
                   
                   
                   if(al.timestamp.length==12)
                     al.timestamp=al.timestamp+'0';
+                  else if(al.timestamp.length==11)
+                    al.timestamp=al.timestamp+'00';
+                  else if(al.timestamp.length==10)
+                    al.timestamp = al.timestamp+'000';
+
+
+                  
                   
                   al.timestamp = new Date(parseInt(al.timestamp));
                   
@@ -108,18 +115,22 @@ $scope.getAlerts = function(){
                     
                     if(al.exported_job=='vnf'){
                       al.next_state = '/vnf/'+al.id;
+                      $scope.getAlertVNFName(al);
                     }
                     else if(al.exported_job=='vm'){
                       al.next_state = '/vm/'+al.id;
+                      $scope.getAlertVMName(al);
                     }
                     else if(al.exported_job=='container' || al.exported_job=='containers'){
                       al.next_state = '/container/'+al.id;
+                      $scope.getAlertContainerName(al);
                     }
                     else{
                       al.next_state = '/alerts';
+                      al.name = '-';
                     }
 
-
+                    $
 
                     $scope.alerts.push(al);
 
@@ -131,6 +142,64 @@ $scope.getAlerts = function(){
           });
         }
 }
+  
+  $scope.getAlertVMName = function(al){
+     $http({
+          method  : 'POST',
+          url     : $scope.apis.monitoring,
+          data:  {
+                  "name": "vm_mem_perc",
+                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
+                  "end": ""+new Date().toISOString(),
+                  "step": "10m",
+                  "labels": [{"labeltag":"id","labelid":al.id}]
+                    },
+          headers : { 'Content-Type': 'application/json' }
+         })
+          .success(function(data) {
+            al.name = data.metrics.result[0].metric.exported_instance;       
+            
+          });
+  }
+  $scope.getAlertVNFName = function(al){
+    $http({
+          method  : 'POST',
+          url     : $scope.apis.monitoring,
+          data:  {
+                  "name": "vm_mem_perc",
+                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
+                  "end": ""+new Date().toISOString(),
+                  "step": "10m",
+                  "labels": [{"labeltag":"id","labelid":al.id}]
+                    },
+          headers : { 'Content-Type': 'application/json' }
+         })
+          .success(function(data) {
+            al.name = data.metrics.result[0].metric.exported_instance;       
+            
+          });
+    
+  }
+  $scope.getAlertContainerName = function(al){
+    $http({
+          method  : 'POST',
+          url     : $scope.apis.monitoring,
+          data:  {
+                  "name": "cnt_mem_perc",
+                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
+                  "end": ""+new Date().toISOString(),
+                  "step": "10m",
+                  "labels": [{"labeltag":"id","labelid":al.id}]
+                    },
+          headers : { 'Content-Type': 'application/json' }
+         })
+          .success(function(data) {
+            
+            al.name = data.metrics.result[0].metric.exported_instance;
+        
+            
+          });
+  }
 
 
     $scope.changeState = function(next_state){
@@ -143,6 +212,8 @@ $scope.getAlerts = function(){
         }, 6000);
     }
       
+
+
 
            
 }]);

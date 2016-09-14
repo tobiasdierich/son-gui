@@ -74,7 +74,7 @@ $scope.getCurrentMemory = function(){
          })
           .success(function(data) {
         
-           $scope.vnf.currentMemoryUsage = data.metrics.result[0].values[0][1];
+           $scope.vnf.currentMemoryUsage = 100-data.metrics.result[0].values[0][1];
            
            
             
@@ -284,7 +284,7 @@ $scope.drawTheChart = function(data_array,options,element){
             
             timestamp = new Date(parseInt(timestamp));
 
-            m.push([timestamp,parseFloat(element[1])]);
+            m.push([timestamp,parseFloat(100-element[1])]);
 
             });
            

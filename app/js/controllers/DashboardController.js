@@ -53,8 +53,7 @@ SonataApp.controller('DashboardController',['$rootScope','$scope','$routeParams'
           headers : { 'Content-Type': 'application/json' }
          })
           .success(function(data) {
-              console.log("VIMS");
-              console.log(data);
+              
               data.metrics.result.forEach(function(element,index){
                 element.id = index;       
                 element.vim_tenant = element.metric.vim_tenant;         
@@ -188,10 +187,7 @@ $scope.getRamGauge = function(){
                             width: '100%',
                             height: 350
                         }
-                      };
-
-
-                      
+                      };                    
 
                       
                       $scope.drawGauge(data,options,'vim_ram_gauge');
@@ -229,9 +225,16 @@ $scope.waitForElementToDisplay = function(selector,time) {
             
             var timestamp = metric[0].toString();
             timestamp = timestamp.replace('.','');
-            if(timestamp.length==12)
+            
+            if(timestamp.length==11)
+              timestamp = timestamp+'00';
+            else if(timestamp.length==10)
+              timestamp = timestamp+'000';
+            else if(timestamp.length==12)
                     timestamp=timestamp+'0';
+            
             timestamp = new Date(parseInt(timestamp));
+            /*timestamp = $filter('date')(timestamp, "hh:mm:ss");*/
             
 
 

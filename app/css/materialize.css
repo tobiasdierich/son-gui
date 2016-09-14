@@ -9783,7 +9783,7 @@ select {
 .side-nav {
   position: fixed;
   width: 10%;
-  min-width: 172px;
+  min-width: 200px;
   left: -105%;
   top: 0;
   margin: 0;

@@ -36,6 +36,8 @@ SonataApp.controller('SideBarController', function($scope, $routeParams, $locati
     });
 
 
+
+
     });
 
 

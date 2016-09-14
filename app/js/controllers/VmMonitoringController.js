@@ -76,8 +76,8 @@ $scope.getCurrentMemory = function(){
           headers : { 'Content-Type': 'application/json' }
          })
           .success(function(data) {
-        
-           $scope.vm.currentMemoryUsage = data.metrics.result[0].values[0][1];
+          
+           $scope.vm.currentMemoryUsage = 100-data.metrics.result[0].values[0][1];
            
            
             
@@ -189,6 +189,7 @@ $scope.drawTheChart = function(data_array,options,element){
        var options = options;
        var chart = new google.visualization.AreaChart(document.getElementById(element));
        chart.draw(data, options);
+       data.length= 0;
        
 
 }
@@ -240,7 +241,7 @@ $scope.drawTheChart = function(data_array,options,element){
 
 
               $scope.drawTheChart(m,options,'cpu_chart');
-
+              m.length = 0;
 
           });
 
@@ -287,9 +288,12 @@ $scope.drawTheChart = function(data_array,options,element){
             timestamp = timestamp.replace('.','');
             if(timestamp.length==12)
                     timestamp=timestamp+'0';
+            else if(timestamp.length==11)
+                  timestamp = timestamp+'00';
+                
             timestamp = new Date(parseInt(timestamp));
 
-            m.push([timestamp,parseFloat(element[1])]);
+            m.push([timestamp,parseFloat(100-element[1])]);
 
             });
            
@@ -304,6 +308,7 @@ $scope.drawTheChart = function(data_array,options,element){
 
 
               $scope.drawTheChart(m,options,'mem_chart');
+              m.length=0;
 
 
           });
@@ -395,6 +400,7 @@ $scope.drawTheChart = function(data_array,options,element){
                             
                             
                               $scope.drawTheChart(kam,options,'rx_tx_chart');
+                              kam.length=0;
 
 
                       });
@@ -492,6 +498,7 @@ $scope.drawTheChart = function(data_array,options,element){
                             
                             
                               $scope.drawTheChart(kam_pps,options,'rx_tx_pps_chart');
+                              kam_pps.length=0;
 
 
                       });
@@ -582,7 +589,7 @@ $scope.drawTheChart = function(data_array,options,element){
             };
             
                           $scope.drawTheChart($scope.kam_disk,options,'disk_chart');
-
+                          $scope.kam_disk.length=0;
                    
 
                     });
@@ -620,16 +627,20 @@ $scope.drawTheChart = function(data_array,options,element){
          })
           .success(function(data) {
             
-            $scope.containers = data.metrics.result;
+            $scope.containers = []; 
+            
+            data.metrics.result.forEach(function(container,index){
+              var container = container;
+              var ttime = container.values[0][1];
 
-            $scope.containers.forEach(function(container,index){
-              var ttime = container.values[0][0];
               var timestamp = ttime.toString();
-                timestamp = timestamp.replace('.','');
-                if(timestamp.length==12)
-                    timestamp=timestamp+'0';
-                container.created_date = new Date(parseInt(timestamp)); 
+                timestamp  = $rootScope.FixTimestamp(timestamp);
+                
+                container.created_date = $rootScope.FixTimestamp(timestamp);//new Date(parseInt(timestamp)); 
+
+                //$scope.setContainerCreatedDate(container);
                 container.status = 'Active'; //Todo later (Read status from a new xhr request)
+                $scope.containers.push(container);
             })
 
           });

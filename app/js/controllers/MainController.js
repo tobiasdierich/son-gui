@@ -89,75 +89,27 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
 		}
 
 
-   $scope.alerts_visibility = 0;
+   
+
+$scope.alerts_visibility = 0;
             
 
 
+$rootScope.FixTimestamp = function(timestamp){
 
-$scope.getAlerts = function(){
+    timestamp = timestamp.replace('.','');
+                
+    if(timestamp.length==12)
+        timestamp=timestamp+'0';
+    else if(timestamp.length==11)
+      timestamp = timestamp+'00';
+    else if(timestamp.length==10)
+      timestamp = timestamp+'000';
+    else if(timestamp.length==9)
+      timestamp = timestamp+'0000';
 
-  $http({
-          method  : 'POST',
-          url     : $scope.apis.monitoring,
-          data:  {
-                  "name": "ALERTS",
-                  "start": ""+ new Date(new Date().getTime() - 1*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "1s",
-                  "labels": [{}]
-
-                    },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
-              
-              $scope.alerts = data.metrics.result;
-              $scope.alerts = new Array();
-              
-              data.metrics.result.forEach(function(alert,index){
-                  
-                  var al = alert.metric;                  
-
-                  alert.values.reverse();
-                  var timest = 0;
-                  alert.values.forEach(function(value,index){
-                    if(timest==0){
-                      if(value[1]==1){
-                      timest = value[0];
-                      
-                      }  
-                    }
-                    
-
-                    
-                  });
-
-                  if(timest!=0){
-                    al.value     = 1;
-                    al.timestamp = timest;  
-                  }
-                  else 
-                    al.value = 0;
-
-                 
-                  
-                  if(al.value==1 && al.alertstate=='firing'){
-                    
-                    $scope.alerts_visibility=1;
-
-                  }
-              });
-
-
-
-          });
+    return timestamp;
 }
-
-
-	setInterval(function() {
-          $scope.getAlerts();
-        }, 6000);
-
 
 
     $scope.changeHash = function(newHash){
