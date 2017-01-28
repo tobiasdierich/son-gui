@@ -47,7 +47,7 @@ $scope.getVM = function(){
                   "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
                   "step": "10m",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.name}]
+                  "labels": [{"labeltag":"id","labelid":$routeParams.id}]
                     },
           headers : { 'Content-Type': 'application/json' }
          })
@@ -71,7 +71,7 @@ $scope.getCurrentMemory = function(){
                   "start": ""+ new Date().toISOString(),
                   "end": ""+new Date().toISOString(),
                   "step": "10m",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.name}]
+                  "labels": [{"labeltag":"id","labelid":$routeParams.id}]
                     },
           headers : { 'Content-Type': 'application/json' }
          })
@@ -94,7 +94,7 @@ $scope.getCurrentCPU = function(){
                   "start": ""+ new Date().toISOString(),
                   "end": ""+new Date().toISOString(),
                   "step": "1m",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.name}]
+                  "labels": [{"labeltag":"id","labelid":$routeParams.id}]
                     },
           headers : { 'Content-Type': 'application/json' }
          })
@@ -117,7 +117,7 @@ $scope.getCPU_History = function(){
                   "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
                   "step": "1m",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.name}]
+                  "labels": [{"labeltag":"id","labelid":$routeParams.id}]
                     },
           headers : { 'Content-Type': 'application/json' }
          })
@@ -213,7 +213,7 @@ $scope.drawTheChart = function(data_array,options,element){
                   "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
                   "step": "10s",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.name}]
+                  "labels": [{"labeltag":"id","labelid":$routeParams.id}]
                     },
           headers : { 'Content-Type': 'application/json' }
          })
@@ -275,7 +275,7 @@ $scope.drawTheChart = function(data_array,options,element){
                   "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
                   "step": "1m",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.name}]
+                  "labels": [{"labeltag":"id","labelid":$routeParams.id}]
                     },
           headers : { 'Content-Type': 'application/json' }
          })
@@ -342,7 +342,7 @@ $scope.drawTheChart = function(data_array,options,element){
                   "start": ""+ tstart,
                   "end": ""+tend,
                   "step": "10s",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0"}]
+                  "labels": [{"labeltag":"id","labelid":$routeParams.id},{"labeltag":"inf","labelid":"eth0"}]
                   },
           headers : { 'Content-Type': 'application/json' }
          })
@@ -359,7 +359,7 @@ $scope.drawTheChart = function(data_array,options,element){
                               "start": ""+ tstart,
                               "end": ""+tend,
                               "step": "10s",
-                              "labels": [{"labeltag":"id","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0"}]
+                              "labels": [{"labeltag":"id","labelid":$routeParams.id},{"labeltag":"inf","labelid":"eth0"}]
                               },
                       headers : { 'Content-Type': 'application/json' }
                      })
@@ -443,7 +443,7 @@ $scope.drawTheChart = function(data_array,options,element){
                   "start": ""+ tstart,
                   "end": ""+tend,
                   "step": "10s",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0"}]
+                  "labels": [{"labeltag":"id","labelid":$routeParams.id},{"labeltag":"inf","labelid":"eth0"}]
                   },
           headers : { 'Content-Type': 'application/json' }
          })
@@ -460,7 +460,7 @@ $scope.drawTheChart = function(data_array,options,element){
                               "start": ""+ tstart,
                               "end": ""+tend,
                               "step": "10s",
-                              "labels": [{"labeltag":"id","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0"}]
+                              "labels": [{"labeltag":"id","labelid":$routeParams.id},{"labeltag":"inf","labelid":"eth0"}]
                               },
                       headers : { 'Content-Type': 'application/json' }
                      })
@@ -534,7 +534,7 @@ $scope.drawTheChart = function(data_array,options,element){
                   "start": ""+ new Date(new Date().getTime() - 15*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
                   "step": "1m",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.name}]
+                  "labels": [{"labeltag":"id","labelid":$routeParams.id}]
                     },
           headers : { 'Content-Type': 'application/json' }
          })
@@ -557,7 +557,7 @@ $scope.drawTheChart = function(data_array,options,element){
                             "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
                             "end": ""+new Date().toISOString(),
                             "step": "1m",
-                            "labels": [{"labeltag":"id","labelid":$routeParams.name}]
+                            "labels": [{"labeltag":"id","labelid":$routeParams.id}]
                               },
                     headers : { 'Content-Type': 'application/json' }
                    })
