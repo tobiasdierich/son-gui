@@ -32,7 +32,7 @@ partner consortium (www.sonata-nfv.eu).
 
           <div class="row matab">
             <h5 ng-hide="selected_vim.name">Select a VIM</h5>
-              <div class="col s12 m2 virtual-machine" ng-repeat="vim in vims" ng-click="changeVisibleVim(vim.metric.exported_instance)">
+              <div class="col s12 m6 l2 virtual-machine" ng-repeat="vim in vims" ng-click="changeVisibleVim(vim.metric.exported_instance)">
                       <div class="col s12 entire cursored" ng-class="vim.selected_visible">                  
                           <i class="fa fa-desktop" aria-hidden="true"></i>
                           <span class="name col s12"><strong>{{vim.metric.exported_instance}}</strong></span>
