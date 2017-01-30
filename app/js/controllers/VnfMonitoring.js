@@ -44,7 +44,7 @@ $scope.getVM = function(){
                   "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
                   "step": "10m",
-                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.id}]
+                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
                     },
           headers : { 'Content-Type': 'application/json' }
          })
@@ -68,7 +68,7 @@ $scope.getCurrentMemory = function(){
                   "start": ""+ new Date().toISOString(),
                   "end": ""+new Date().toISOString(),
                   "step": "10m",
-                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.id}]
+                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
                     },
           headers : { 'Content-Type': 'application/json' }
          })
@@ -91,7 +91,7 @@ $scope.getCurrentCPU = function(){
                   "start": ""+ new Date().toISOString(),
                   "end": ""+new Date().toISOString(),
                   "step": "1m",
-                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.id}]
+                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
                     },
           headers : { 'Content-Type': 'application/json' }
          })
@@ -114,7 +114,7 @@ $scope.getCPU_History = function(){
                   "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
                   "step": "10s",
-                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.id}]
+                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
                     },
           headers : { 'Content-Type': 'application/json' }
          })
@@ -209,7 +209,7 @@ $scope.drawTheChart = function(data_array,options,element){
                   "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
                   "step": "10s",
-                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.id}]
+                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
                     },
           headers : { 'Content-Type': 'application/json' }
          })
@@ -270,7 +270,7 @@ $scope.drawTheChart = function(data_array,options,element){
                   "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
                   "step": "1m",
-                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.id}]
+                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
                     },
           headers : { 'Content-Type': 'application/json' }
          })
@@ -332,7 +332,7 @@ $scope.drawTheChart = function(data_array,options,element){
                   "start": ""+ tstart,
                   "end": ""+tend,
                   "step": "10s",
-                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.id},{"labeltag":"inf","labelid":"eth0"}]
+                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0"}]
                   },
           headers : { 'Content-Type': 'application/json' }
          })
@@ -349,7 +349,7 @@ $scope.drawTheChart = function(data_array,options,element){
                               "start": ""+ tstart,
                               "end": ""+tend,
                               "step": "10s",
-                              "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.id},{"labeltag":"inf","labelid":"eth0"}]
+                              "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0"}]
                               },
                       headers : { 'Content-Type': 'application/json' }
                      })
@@ -420,7 +420,7 @@ $scope.drawTheChart = function(data_array,options,element){
                   "start": ""+ new Date(new Date().getTime() - 15*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
                   "step": "1m",
-                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.id}]
+                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
                     },
           headers : { 'Content-Type': 'application/json' }
          })
@@ -442,7 +442,7 @@ $scope.drawTheChart = function(data_array,options,element){
                             "start": ""+ new Date(new Date().getTime() - 15*60000).toISOString(),
                             "end": ""+new Date().toISOString(),
                             "step": "1m",
-                            "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.id}]
+                            "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
                               },
                     headers : { 'Content-Type': 'application/json' }
                    })
@@ -504,7 +504,7 @@ $scope.drawTheChart = function(data_array,options,element){
                   "start": ""+ tstart,
                   "end": ""+tend,
                   "step": "10s",
-                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.id},{"labeltag":"inf","labelid":"eth0"}]
+                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0"}]
                   },
           headers : { 'Content-Type': 'application/json' }
          })
@@ -521,7 +521,7 @@ $scope.drawTheChart = function(data_array,options,element){
                               "start": ""+ tstart,
                               "end": ""+tend,
                               "step": "10s",
-                              "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.id},{"labeltag":"inf","labelid":"eth0"}]
+                              "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0"}]
                               },
                       headers : { 'Content-Type': 'application/json' }
                      })
@@ -595,7 +595,7 @@ $scope.drawTheChart = function(data_array,options,element){
                   "start": ""+ $scope.ten_m_before.toISOString(),
                   "end": ""+$scope.current_time.toISOString(),
                   "step": "20m",
-                  "labels": [{"labeltag":"exported_job", "labelid":"containers"},{"labeltag":"id","labelid":$routeParams.id}]
+                  "labels": [{"labeltag":"exported_job", "labelid":"containers"},{"labeltag":"id","labelid":$routeParams.name}]
                     },
           headers : { 'Content-Type': 'application/json' }
          })
