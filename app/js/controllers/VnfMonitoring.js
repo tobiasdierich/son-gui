@@ -162,7 +162,7 @@ $scope.drawGauges = function(){
           minorTicks: 5
         };
 
-        var chart = new google.visualization.Gauge(document.getElementById('vCPUschart'));
+        var chart = new google.visualization.Gauge(document.getElementById('vCPUscharts'));
 
         chart.draw(data, options);
 

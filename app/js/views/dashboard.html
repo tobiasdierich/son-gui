@@ -53,16 +53,13 @@ partner consortium (www.sonata-nfv.eu).
                 </div>
             </div>
 
+
+
             <div class="card-panel">
                 <div class="row gauges_row">
-                  <table style="width: 100%">
-                    <tr>
-                    <td style="width: 33%"><div id="vim_ram_gauge" style="width: 100%"></div></td>
-                    <td style="width: 33%"><div id="vim_instances_gauge" style="width: 100%"></div>
-                  </td>
-                    <td style="width: 33%"><div id="vim_cores_gauge" style="width: 100%"></div></td>
-                    </tr>
-                  </table> 
+                  <div class="col-sm-12 col-md-4"><div id="vim_ram_gauge" style="width: 100%"></div></div>
+                  <div class="col-sm-12 col-md-4"><div id="vim_instances_gauge" style="width: 100%"></div></div>
+                  <div class="col-sm-12 col-md-4"><div id="vim_cores_gauge" style="width: 100%"></div></div>
                 </div>
             </div>
           
@@ -104,8 +101,8 @@ partner consortium (www.sonata-nfv.eu).
                   
                   <div class="col s12" style="margin-top:30px">
                   <h5 class="center-align">VMs</h5>
-                 <div class="col s12" ng-show="selected_vim.states.length">
-                  <div class="col s6">
+                 <div class="row" ng-show="selected_vim.states.length">
+                  <div class="col  s12 m6">
                     <table>
                       <thead>
                         <th>State</th>
@@ -118,9 +115,11 @@ partner consortium (www.sonata-nfv.eu).
                       </tbody>
                     </table>
                     </div>
-                    <div class="col s6"> 
-                      <div id="stateChart"></div>
+
+                    <div class="col s12 m6 hide-on-small-only"> 
+                      <div id="stateChart" style="width: 100%"></div>
                     </div>
+                  
                   </div>
                   <table class="bordered responsive-table" ng-show="selected_vim.all_vms.metrics.result.length">
                     <thead>
