@@ -30,20 +30,19 @@ partner consortium (www.sonata-nfv.eu).
 		<div class="col s12">
 			<div class="card-panel">
       
- 				<strong>VNF Name:</strong>{{vnf.exported_instance}}<br/>
-				<strong>Instance:</strong>{{vnf.instance}}<br/>
-				<strong>Group:</strong>{{vnf.group}}<br/>
-				<strong>ID:</strong>{{vnf.id}}<br/>
+ 				<strong>VNF Name:</strong> {{vnf.exported_instance}}<br/>
+				<strong>Instance:</strong> {{vnf.instance}}<br/>
+				<strong>Group:</strong> {{vnf.group}}<br/>
+				<strong>ID:</strong> {{vnf.id}}<br/>
 
 			</div>
 		</div>
-   		<div class="col s12">
+	
+      <div class="col s12">
    			<div class="card-panel">
           <div class="row">
-            <div class="center-align">
-              
-              <div id="vCPUschart" class="col s6 push-s4"></div>
-              
+            <div class="center-align">              
+              <div id="vCPUscharts" class="col s12 m6 push-m4"></div>              
             </div>
           </div>
    				
@@ -106,3 +105,10 @@ partner consortium (www.sonata-nfv.eu).
       		</div>
    		</div>
 </div>
+
+<style>
+div#vCPUscharts table {
+    text-align: center;
+    width: 100%;
+    max-width: 100%;
+}</style>
