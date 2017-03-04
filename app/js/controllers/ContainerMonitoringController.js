@@ -90,9 +90,11 @@ $scope.getCurrentMemory = function(){
           headers : { 'Content-Type': 'application/json' }
          })
           .success(function(data) {
-          
 
-           $scope.container.currentMemoryUsage = data.metrics.result[0].values[0][1];
+            console.log(data);
+          
+            if(data.metrics.result.length>0)
+              $scope.container.currentMemoryUsage = data.metrics.result[0].values[0][1];
            
            
             
@@ -115,6 +117,7 @@ $scope.getCurrentCPU = function(){
          })
           .success(function(data) {
 
+            if(data.metrics.result.length>0)
             $scope.container.currentCPUUsage = data.metrics.result[0].values[0][1];
            
            if($scope.container.currentCPUUsage>99)
@@ -212,6 +215,331 @@ $scope.drawTheChart = function(data_array,options,element){
 
 }
 
+
+
+$scope.drawCPUChartnew = function(){
+console.log("DRAW CPU CHART");
+ $http({
+          method  : 'POST',
+          url     : $scope.apis.monitoring,
+          data:  {
+                  "name": "cnt_cpu_perc",
+                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
+                  "end": ""+new Date().toISOString(),
+                  "step": "1s",
+                  "labels": [{"labeltag":"id","labelid":$routeParams.id}]
+                    },
+          headers : { 'Content-Type': 'application/json' }
+         })
+          .success(function(data) {
+
+            $scope.cpudata = [];                                        
+            data.metrics.result[0].values.forEach(function(element, index) {
+
+                  var timestamp = element[0].toString();
+                  timestamp = timestamp.replace('.','');
+                  if(timestamp.length==12)
+                                        timestamp=timestamp+'0';
+                                else if(timestamp.length==11)
+                                      timestamp = timestamp+'00';
+                                else if(timestamp.length==10)
+                                      timestamp = timestamp+'000';
+                                else if(timestamp.length==9)
+                                      timestamp = timestamp+'0000';
+                                else if(timestamp.length==8)
+                                      timestamp = timestamp+'00000';
+                  timestamp = parseInt(timestamp);
+                  $scope.cpudata.push([timestamp,parseFloat(element[1])]);
+              
+
+             });
+
+                       Highcharts.chart('cnt_cpu_chart_new', {
+                              chart: {
+                                  zoomType: 'x',
+                                  events: {
+                                      load: function () {
+
+                                          
+                                          var series = this.series[0];
+                                          setInterval(function () {
+
+
+
+
+
+                                          $http({
+                                                  method  : 'POST',
+                                                  url     : $scope.apis.monitoring,
+                                                  data:  {
+                                                        "name": "cnt_cpu_perc",
+                                                        "start": ""+ new Date().toISOString(),
+                                                        "end": ""+new Date().toISOString(),
+                                                        "step": "1m",
+                                                        "labels": [{"labeltag":"id","labelid":$routeParams.id}]
+                                                            },
+                                                  headers : { 'Content-Type': 'application/json' }
+                                                 })
+                                                  .success(function(data) {
+                                                    
+                                                    $scope.container.currentCPUUsage = data.metrics.result[0].values[0][1];
+                                                    var y = data.metrics.result[0].values[0][1];
+                                                    var x = data.metrics.result[0].values[0][0];
+                                                    var timestamp = x.toString();
+                                                        timestamp = timestamp.replace('.','');
+
+                                                        if(timestamp.length==12)
+                                                                timestamp=timestamp+'0';
+                                                        else if(timestamp.length==11)
+                                                              timestamp = timestamp+'00';
+                                                        else if(timestamp.length==10)
+                                                              timestamp = timestamp+'000';
+                                                        else if(timestamp.length==9)
+                                                              timestamp = timestamp+'0000';
+                                                        else if(timestamp.length==8)
+                                                              timestamp = timestamp+'00000';
+
+                                                            
+                                                        timestamp = parseInt(timestamp);
+                                                      
+                                                      series.addPoint([timestamp, parseFloat(y)], true, true);
+
+                                                  })
+
+                                              
+
+
+
+
+
+                                          }, 5000);
+                                      
+
+
+                                      }
+                                    }
+                              },
+                              title: {
+                                  text: 'CPU usage over time'
+                              },
+                              subtitle: {
+                                  text: document.ontouchstart === undefined ?
+                                          'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
+                              },
+                              xAxis: {
+                                  type: 'datetime'
+                              },
+                              yAxis: {
+                                  title: {
+                                      text: 'CPU %'
+                                  }
+                              },
+                              legend: {
+                                  enabled: false
+                              },
+                              credits: {
+                                enabled: false
+                              },
+                              plotOptions: {
+                                  area: {
+                                      fillColor: {
+                                          linearGradient: {
+                                              x1: 0,
+                                              y1: 0,
+                                              x2: 0,
+                                              y2: 1
+                                          },
+                                          stops: [
+                                              [0, '#262B33'],
+                                              [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                                          ]
+                                      },
+                                      marker: {
+                                          radius: 2
+                                      },
+                                      lineWidth: 1,
+                                      states: {
+                                          hover: {
+                                              lineWidth: 1
+                                          }
+                                      },
+                                      threshold: null
+                                  }
+                              },
+                              series: [{
+                                  type: 'area',
+                                  color: '#454e5d',
+                                  name: 'CPU',
+                                  data: $scope.cpudata
+                              }]
+                          });
+          });
+}
+
+
+$scope.drawMEMChartnew = function(){
+console.log("DRAW MEM CHART");
+ $http({
+          method  : 'POST',
+          url     : $scope.apis.monitoring,
+          data:  {
+                   "name": "cnt_mem_perc",
+                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
+                  "end": ""+new Date().toISOString(),
+                  "step": "1s",
+                  "labels": [{"labeltag":"id","labelid":$routeParams.id}]
+                    },
+          headers : { 'Content-Type': 'application/json' }
+         })
+          .success(function(data) {
+
+            $scope.memdata = [];                                        
+            data.metrics.result[0].values.forEach(function(element, index) {
+
+                  var timestamp = element[0].toString();
+                  timestamp = timestamp.replace('.','');
+                  if(timestamp.length==12)
+                                        timestamp=timestamp+'0';
+                                else if(timestamp.length==11)
+                                      timestamp = timestamp+'00';
+                                else if(timestamp.length==10)
+                                      timestamp = timestamp+'000';
+                                else if(timestamp.length==9)
+                                      timestamp = timestamp+'0000';
+                                else if(timestamp.length==8)
+                                      timestamp = timestamp+'00000';
+                  timestamp = parseInt(timestamp);
+                  $scope.memdata.push([timestamp,parseFloat(element[1])]);
+            
+
+             });
+
+                       Highcharts.chart('cnt_mem_chart_new', {
+                              chart: {
+                                  zoomType: 'x',
+                                  events: {
+                                      load: function () {
+
+                                          
+                                          var series = this.series[0];
+                                          setInterval(function () {
+
+
+
+
+
+                                          $http({
+                                                  method  : 'POST',
+                                                  url     : $scope.apis.monitoring,
+                                                  data:  {
+                                                        "name": "cnt_mem_perc",
+                                                        "start": ""+ new Date().toISOString(),
+                                                        "end": ""+new Date().toISOString(),
+                                                        "step": "1m",
+                                                        "labels": [{"labeltag":"id","labelid":$routeParams.id}]
+                                                            },
+                                                  headers : { 'Content-Type': 'application/json' }
+                                                 })
+                                                  .success(function(data) {
+                                                    
+                                                    $scope.container.currentMEMUsage = data.metrics.result[0].values[0][1];
+                                                    var y = data.metrics.result[0].values[0][1];
+                                                    var x = data.metrics.result[0].values[0][0];
+                                                    var timestamp = x.toString();
+                                                        timestamp = timestamp.replace('.','');
+
+                                                        if(timestamp.length==12)
+                                                                timestamp=timestamp+'0';
+                                                        else if(timestamp.length==11)
+                                                              timestamp = timestamp+'00';
+                                                        else if(timestamp.length==10)
+                                                              timestamp = timestamp+'000';
+                                                        else if(timestamp.length==9)
+                                                              timestamp = timestamp+'0000';
+                                                        else if(timestamp.length==8)
+                                                              timestamp = timestamp+'00000';
+
+                                                            
+                                                        timestamp = parseInt(timestamp);
+                                                      
+                                                      series.addPoint([timestamp, parseFloat(y)], true, true);
+
+                                                  })
+
+                                              
+
+
+
+
+
+                                          }, 5000);
+                                      
+
+
+                                      }
+                                    }
+                              },
+                              title: {
+                                  text: 'RAM usage over time'
+                              },
+                              subtitle: {
+                                  text: document.ontouchstart === undefined ?
+                                          'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
+                              },
+                              xAxis: {
+                                  type: 'datetime'
+                              },
+                              yAxis: {
+                                  title: {
+                                      text: 'RAM %'
+                                  }
+                              },
+                              legend: {
+                                  enabled: false
+                              },
+                              credits: {
+                                enabled: false
+                              },
+                              plotOptions: {
+                                  area: {
+                                      fillColor: {
+                                          linearGradient: {
+                                              x1: 0,
+                                              y1: 0,
+                                              x2: 0,
+                                              y2: 1
+                                          },
+                                          stops: [
+                                              [0, '#262B33'],
+                                              [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                                          ]
+                                      },
+                                      marker: {
+                                          radius: 2
+                                      },
+                                      lineWidth: 1,
+                                      states: {
+                                          hover: {
+                                              lineWidth: 1
+                                          }
+                                      },
+                                      threshold: null
+                                  }
+                              },
+
+                              series: [{
+                                  type: 'area',
+                                  color: '#454e5d',
+                                  name: 'RAM',
+                                  data: $scope.memdata
+                              }]
+                          });
+          });
+}
+
+$scope.drawCPUChartnew();
+$scope.drawMEMChartnew();
+/*
     $scope.drawCPUChart = function(){
        
        google.charts.setOnLoadCallback(drawChart);
@@ -227,7 +555,6 @@ $scope.drawTheChart = function(data_array,options,element){
           url     : $scope.apis.monitoring,
           data:  {
                   "name": "cnt_cpu_perc",
-
                   "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
                   "step": "30s",
@@ -270,7 +597,7 @@ $scope.drawTheChart = function(data_array,options,element){
 
         
       }
-    }
+    }*/
 
 
 
@@ -340,7 +667,7 @@ $scope.drawTheChart = function(data_array,options,element){
 
 
 
-
+/*
     $scope.drawRxTxChart = function(){
        
        google.charts.setOnLoadCallback(drawChart);
@@ -423,7 +750,7 @@ $scope.drawTheChart = function(data_array,options,element){
       
       }
 
-    }
+    }*/
 
 
 
@@ -439,6 +766,172 @@ $scope.drawTheChart = function(data_array,options,element){
 
 
 
+
+$scope.historyRXTX = function(){
+
+     $http({
+          method  : 'POST',
+          url     : $scope.apis.monitoring,
+          data    : {
+                  "name": "cnt_net_tx_MB",
+                  "start": ""+new Date(new Date().getTime() - 20*60000).toISOString(),
+                  "end": ""+new Date().toISOString(),
+                  "step": "1s",
+                  "labels": [{"labeltag":"id","labelid":$routeParams.id}]
+                    },
+          headers : { 'Content-Type': 'application/json' }
+         })
+          .success(function(data) {
+
+              $scope.the_in = data;
+          
+                  $http({
+                      method  : 'POST',
+                      url     : $scope.apis.monitoring,
+                      data    : {
+                              "name": "cnt_net_rx_MB",
+                              "start": ""+new Date(new Date().getTime() - 20*60000).toISOString(),
+                              "end": ""+new Date().toISOString(),
+                              "step": "1s",
+                              "labels": [{"labeltag":"id","labelid":$routeParams.id}]
+                                },
+                      headers : { 'Content-Type': 'application/json' }
+                  })
+                  .success(function(data) {
+                      
+                     $scope.the_out = data;
+                     $scope.data_rx = [];
+                     $scope.data_tx = [];
+
+                     
+                    $scope.the_in.metrics.result[0].values.forEach(function(element,index){
+
+                            var timestamp = element[0].toString();
+                              timestamp = timestamp.replace('.','');
+                               if(timestamp.length==12)
+                                        timestamp=timestamp+'0';
+                                else if(timestamp.length==11)
+                                      timestamp = timestamp+'00';
+                                else if(timestamp.length==10)
+                                      timestamp = timestamp+'000';
+                                else if(timestamp.length==9)
+                                      timestamp = timestamp+'0000';
+                                else if(timestamp.length==8)
+                                      timestamp = timestamp+'00000';
+
+                              timestamp = parseInt(timestamp);
+                              $scope.data_rx.push([timestamp,parseFloat(element[1])]);
+                    });
+
+                    $scope.the_out.metrics.result[0].values.forEach(function(element,index){
+
+                            var timestamp = element[0].toString();
+                              timestamp = timestamp.replace('.','');
+                               if(timestamp.length==12)
+                                        timestamp=timestamp+'0';
+                                else if(timestamp.length==11)
+                                      timestamp = timestamp+'00';
+                                else if(timestamp.length==10)
+                                      timestamp = timestamp+'000';
+                                else if(timestamp.length==9)
+                                      timestamp = timestamp+'0000';
+                                else if(timestamp.length==8)
+                                      timestamp = timestamp+'00000';
+
+                              timestamp = parseInt(timestamp);
+                              $scope.data_tx.push([timestamp,parseFloat(element[1])]);
+                    });
+
+
+                    Highcharts.chart('cnt_rxtx_chart_new', {
+                              chart: {
+                                  zoomType: 'x',
+                              },
+                              title: {
+                                  text: 'RX/TX over time'
+                              },
+                              subtitle: {
+                                  text: document.ontouchstart === undefined ?
+                                          'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
+                              },
+                              xAxis: {
+                                  type: 'datetime'
+                              },
+                              yAxis: {
+                                  title: {
+                                      text: ''
+                                  }
+                              },
+                              legend: {
+                                  enabled: false
+                              },
+                              credits: {
+                                enabled: false
+                              },
+                              plotOptions: {
+                                  area: {
+                                      fillColor: {
+                                          linearGradient: {
+                                              x1: 0,
+                                              y1: 0,
+                                              x2: 0,
+                                              y2: 1
+                                          },
+                                          stops: [
+                                              [0, '#262B33'],
+                                              [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                                          ]
+                                      },
+                                      marker: {
+                                          radius: 2
+                                      },
+                                      lineWidth: 1,
+                                      states: {
+                                          hover: {
+                                              lineWidth: 1
+                                          }
+                                      },
+                                      threshold: null
+                                  }
+                              },
+
+                              series:[{
+                                  type: 'line', 
+                                  color: '#466ca9',
+                                  name: 'RX',
+                                  data: $scope.data_rx
+                              },{
+                                  type: 'line', 
+                                  color: '#454e5d',
+                                  name: 'TX',
+                                  data: $scope.data_tx
+                              }]
+                          });
+
+
+
+
+
+
+
+
+                  });
+
+
+
+
+          });
+
+
+
+//End of Function
+       
+
+
+
+}
+            
+              
 
 
 
@@ -535,20 +1028,21 @@ $scope.drawTheChart = function(data_array,options,element){
       (function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
       $scope.getContainer();
       $scope.drawGauges();
-      $scope.drawCPUChart();
-      $scope.drawMEMChart();
-      $scope.drawRxTxChart();
-      $scope.drawDiskChart();
+      /*$scope.drawCPUChart();*/
+      /*$scope.drawMEMChart();*/
+      /*$scope.drawRxTxChart();*/
+      /*$scope.drawDiskChart();*/
       $scope.getCurrentMemory();
       $scope.getCPU_History();
+      $scope.historyRXTX();
       $scope.getLogs();
 
-      
+      /*
       setInterval(function() {
           $scope.drawCPUChart();
           $scope.drawMEMChart();          
           
-        }, 30000);
+        }, 30000);*/
       
       //drawCPUS
       //drawMEMS

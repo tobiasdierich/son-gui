@@ -30,10 +30,280 @@ SonataApp.controller('VnfMonitoring',['$rootScope','$scope','$routeParams','$loc
 	
   $scope.vnf = {};
   $scope.a_metrics = [];
+  $scope.pagecharts = [];
   $scope.vnf.currentMemoryUsage = 0;
   $scope.vnf.currentCPUUsage = 0;
 	$scope.current_time = new Date();
   $scope.ten_m_before = new Date($scope.current_time.getTime() - 15*60000);
+  $scope.settings_modal = {};
+  $scope.settings_modal.title = "Chart configuration";
+
+  $scope.potential_timeranges = [];
+  $scope.potential_timeranges.push({id:1,range:'1min',val:1});
+  $scope.potential_timeranges.push({id:2,range:'5mins',val:5});
+  $scope.potential_timeranges.push({id:3,range:'10mins',val:10});
+  $scope.potential_timeranges.push({id:4,range:'15mins',val:15});
+  $scope.potential_timeranges.push({id:5,range:'20mins',val:20});
+  $scope.potential_timeranges.push({id:6,range:'1hour',val:60});
+  $scope.potential_timeranges.push({id:7,range:'24hours',val:1440});
+
+
+  $scope.potential_step = [];
+  $scope.potential_step.push({id:1,step:'1sec',val:'1s'});
+  $scope.potential_step.push({id:2,step:'15sec',val:'15s'});
+  $scope.potential_step.push({id:3,step:'30sec',val:'30s'});
+  $scope.potential_step.push({id:4,step:'1min',val:'1m'});
+  $scope.potential_step.push({id:5,step:'5min',val:'5m'});
+  $scope.potential_step.push({id:6,step:'10min',val:'10m'});
+
+  
+
+
+  $scope.boxes = [];
+
+$scope.newChartBtn = function(){
+  console.log('dasdsa');
+  var thebox = {
+    id:'box_'+parseInt(Math.random()*10000),
+    class:'col s12 m6',
+    title:'',
+    measurement_name:''
+  };
+
+  $scope.boxes.push(thebox);
+  $scope.configureBox(thebox);
+}
+
+$scope.configureBox = function(box){
+  $scope.selected_box = box;
+  $('#settings_modal').openModal();
+}
+
+$scope.updateBox = function(box){
+  $scope.fillnewBox(box);
+}
+$scope.removeBox = function(box){
+  /*$scope.getObjById($scope.boxes, parseInt(box.id));*/
+
+  for (var i =0; i < $scope.boxes.length; i++)
+   if ($scope.boxes[i].id === box.id) {
+      $scope.boxes.splice(i,1);
+      break;
+   }
+
+}
+
+$scope.saveBoxConfiguration = function(){
+  $scope.selected_box.measurement = $scope.settings_modal.measurement;
+  $scope.selected_box.time_range  = $scope.settings_modal.time_range;
+  $scope.selected_box.step        = $scope.settings_modal.step;
+  $scope.fillnewBox($scope.selected_box);
+}
+
+
+
+
+
+$scope.getAllPotentialMeasurements = function(){
+  
+  $http({
+          method  : 'GET',
+          url     : $scope.apis.monitoring_list,
+          headers : { 'Content-Type': 'application/json' }
+         })
+          .success(function(data) {
+           $scope.potential_graphs = data.metrics;
+            
+          });
+}
+$scope.getAllPotentialMeasurements();
+
+
+
+$scope.fillnewBox = function(box){
+
+
+  var tt = $scope.getObjById($scope.potential_timeranges, parseInt(box.time_range));              
+  var st = $scope.getObjById($scope.potential_step, parseInt(box.step));
+
+
+$http({
+                method  : 'POST',
+                url     : $scope.apis.monitoring,
+                data:  {
+                        "name": box.measurement,
+                        "start": ""+ new Date(new Date().getTime() - parseInt(tt.val)*60000).toISOString(),
+                        "end": ""+new Date().toISOString(),
+                        "step": st.val,
+                        "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
+                          },
+                headers : { 'Content-Type': 'application/json' }
+              })
+                .success(function(datas) {
+                    $scope.data = [];
+                    if(datas.metrics.result[0]){
+                     datas.metrics.result[0].values.forEach(function(element, index) {
+          
+                            var timestamp = element[0].toString();
+                            timestamp = timestamp.replace('.','');
+                            if(timestamp.length==12)
+                                        timestamp=timestamp+'0';
+                                else if(timestamp.length==11)
+                                      timestamp = timestamp+'00';
+                                else if(timestamp.length==10)
+                                      timestamp = timestamp+'000';
+                                else if(timestamp.length==9)
+                                      timestamp = timestamp+'0000';
+                                else if(timestamp.length==8)
+                                      timestamp = timestamp+'00000';
+                            timestamp = parseInt(timestamp);
+                            $scope.data.push([timestamp,parseFloat(element[1])]);
+                         
+                       });
+
+
+                     Highcharts.chart(box.id, {
+                              chart: {
+                                  zoomType: 'x'
+                              },
+                              title: {
+                                  text: box.measurement
+                              },
+                              subtitle: {
+                                  text: document.ontouchstart === undefined ?
+                                          'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
+                              },
+                              xAxis: {
+                                  type: 'datetime'
+                              },
+                              yAxis: {
+                                  title: {
+                                      text: 'Values'
+                                  }
+                              },
+                              legend: {
+                                  enabled: false
+                              },
+                              credits: {
+                                enabled: false
+                              },
+                              plotOptions: {
+                                  area: {
+                                      fillColor: {
+                                          linearGradient: {
+                                              x1: 0,
+                                              y1: 0,
+                                              x2: 0,
+                                              y2: 1
+                                          },
+                                          stops: [
+                                              [0, '#262B33'],
+                                              [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                                          ]
+                                      },
+                                      marker: {
+                                          radius: 2
+                                      },
+                                      lineWidth: 1,
+                                      states: {
+                                          hover: {
+                                              lineWidth: 1
+                                          }
+                                      },
+                                      threshold: null
+                                  }
+                              },
+
+                              series: [{
+                                  type: 'area',
+                                  color: '#454e5d',
+                                  name: box.measurement,
+                                  data: $scope.data
+                              }]
+                          });
+
+
+
+                    }
+
+
+
+
+
+
+                });
+
+
+
+
+            
+
+
+
+
+
+}
+
+
+
+
+
+$scope.getObjById = function(arr, id) {
+    for (var d = 0, len = arr.length; d < len; d += 1) {
+        if (arr[d].id === id) {
+            return arr[d];
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+$scope.addPoints = function () {
+      var seriesArray = $scope.chartConfig.series
+      var rndIdx = Math.floor(Math.random() * seriesArray.length);
+      seriesArray[rndIdx].data = seriesArray[rndIdx].data.concat([1, 10, 20])
+    };
+
+    var series = 0;
+    $scope.addSeries = function () {
+      var rnd = []
+      for (var i = 0; i < 10; i++) {
+        rnd.push(Math.floor(Math.random() * 20) + 1)
+      }
+      $scope.chartConfig.series.push({
+        data: rnd,
+        id: 'series_' + series++
+      })
+    }
+
+    $scope.removeRandomSeries = function () {
+      var seriesArray = $scope.chartConfig.series
+      var rndIdx = Math.floor(Math.random() * seriesArray.length);
+      seriesArray.splice(rndIdx, 1)
+    }
+
+    $scope.swapChartType = function () {
+      this.chartConfig.chart.polar = !this.chartConfig.chart.polar;
+
+    }
+
+    
 
 $scope.getVM = function(){
   $http({
@@ -96,6 +366,7 @@ $scope.getCurrentCPU = function(){
           headers : { 'Content-Type': 'application/json' }
          })
           .success(function(data) {
+            
             $scope.vnf.currentCPUUsage = data.metrics.result[0].values[0][1];
            
             
@@ -125,25 +396,7 @@ $scope.getCPU_History = function(){
 }
 
 
- 
-        
-        /*var m=[['Time', 'Used', 'Total']];
 
-        data.metrics.result[0].values.forEach( function(element, index) {
-          
-           
-            m.push(['100',parseFloat(element[1]),400]);
-            
-          
-
-        });
-          var options = {
-              title: 'CPU',
-              hAxis: {title: 'Timestamp',  titleTextStyle: {color: '#333'}},
-              vAxis: {minValue: 0}
-            };
-            console.log(m);
-           $scope.drawTheChart(m,options,'cpu_chart');*/
 
 $scope.drawGauges = function(){
    google.charts.setOnLoadCallback(drawChart);
@@ -167,10 +420,12 @@ $scope.drawGauges = function(){
         chart.draw(data, options);
 
         setInterval(function() {
-          $scope.getCurrentMemory();          
+          $scope.getCurrentMemory();   
           data.setValue(0, 1, parseFloat($scope.vnf.currentMemoryUsage));
-          chart.draw(data, options);
+          chart.draw(data, options);       
+          
         }, 10000);
+
         setInterval(function() {
           $scope.getCurrentCPU(); 
           data.setValue(1, 1, parseFloat($scope.vnf.currentCPUUsage));
@@ -190,22 +445,173 @@ $scope.drawTheChart = function(data_array,options,element){
 
 }
 
-    $scope.drawCPUChart = function(){
-       
-       google.charts.setOnLoadCallback(drawChart);
 
-      function drawChart() {
+$scope.cpuChart = function(){
+  var chart = {
+        chart: {
+          events: {
+            load: function () {
 
-        var m=[
-          ['Time', 'Percent']
-        ];
+                
+                /*var series = this.series[0];
+                setInterval(function () {
+                    var x = (new Date()).getTime(),
+                        y = Math.round(Math.random() * 100);
+                    series.addPoint([x, y], true, true);
+                }, 1000);*/
+            }
+          },
+          type: 'line',
+          zoomType: 'x',
+          spacingRight: 20,
+          renderTo: 'cpu_chart_new'
+        },
+        title: {
+          text: 'CPU'
+        },
+        xAxis: {
+          type: 'datetime',
+          dateTimeLabelFormats: {
+            month: '%e. %b',
+            year: '%b'
+          }
+        },
+        credits: {
+          enabled: false
+        },
+         navigator:{enabled:true},
+         options: {
+            chart: {
+                type: 'line',
+                zoomType: 'x'
+            },
+            navigator: {enabled:true}
+        },
+        credits: {
+          enabled: false
+        },
+        series: [{
+
+        name: 'CPU',
+        data: (function () {
+
+              var tdata = [];
+
+            $http({
+                method  : 'POST',
+                url     : $scope.apis.monitoring,
+                 data:  {
+                  "name": "vm_cpu_perc",
+                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
+                  "end": ""+new Date().toISOString(),
+                  "step": "10s",
+                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
+                    },
+                headers : { 'Content-Type': 'application/json' }
+              }).then(function successCallback(response) {
+                  console.log(response);
+                   response.metrics.result[0].values.forEach( function(element, index) {
+                      console.log(element);
+                        var timestamp = element[0].toString();
+                        timestamp = timestamp.replace('.','');
+                        if(timestamp.length==12)
+                                        timestamp=timestamp+'0';
+                                else if(timestamp.length==11)
+                                      timestamp = timestamp+'00';
+                                else if(timestamp.length==10)
+                                      timestamp = timestamp+'000';
+                                else if(timestamp.length==9)
+                                      timestamp = timestamp+'0000';
+                                else if(timestamp.length==8)
+                                      timestamp = timestamp+'00000';
+
+                        timestamp = parseInt(timestamp);                        
+                        tdata.push([timestamp,parseFloat(element[1])]);
+
+                       if(index==data.metrics.result[0].values.length-1){
+                         console.log('data');
+                         console.log(data);
+                         return tdata; 
+                        }
+
+                    });
+
+
+
+                  }, function errorCallback(response) {
+    
+                      console.log(response);
+              });
+               
+                                  
+            console.log(data);
+          })
+    }]
+  };
+
+      
+      
+      setTimeout(function() {
+         console.log(chart);
+         var chartObj = new Highcharts.Chart(chart);
+      }, 4000);
+
+
+
+
+}
+
+
+
+/*$scope.cpuChart();*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            
+                            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+$scope.historyRAM = function(){
+
 
         $http({
           method  : 'POST',
           url     : $scope.apis.monitoring,
           data:  {
-                  "name": "vm_cpu_perc",
 
+
+     
+                  "name": "vm_mem_perc",
                   "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
                   "step": "10s",
@@ -214,203 +620,344 @@ $scope.drawTheChart = function(data_array,options,element){
           headers : { 'Content-Type': 'application/json' }
          })
           .success(function(data) {
-       
-            data.metrics.result[0].values.forEach( function(element, index) {
-          
-           
-            var timestamp = element[0].toString();
-            timestamp = timestamp.replace('.','');
-            
-            timestamp = new Date(parseInt(timestamp));
 
-            m.push([timestamp,parseFloat(element[1])]);
-
-            });
-
-            var options = {
-              title: 'CPU',
-              hAxis: {title: 'Time',  titleTextStyle: {color: '#333'}},
-              vAxis: {minValue: 0,maxValue:100}
-            };
-            
+            console.log('RAM SUccess');
+            console.log(data);
 
 
-              $scope.drawTheChart(m,options,'cpu_chart');
+            $scope.ramdata = [];
+                                        
+           data.metrics.result[0].values.forEach(function(element, index) {
+
+                  var timestamp = element[0].toString();
+                  timestamp = timestamp.replace('.','');
+                  timestamp = timestamp.replace('.','');
+                  
+                  if(timestamp.length==12)
+                          timestamp=timestamp+'0';
+                  else if(timestamp.length==11)
+                        timestamp = timestamp+'00';
+                  else if(timestamp.length==10)
+                        timestamp = timestamp+'000';
+                  else if(timestamp.length==9)
+                        timestamp = timestamp+'0000';
+                  else if(timestamp.length==8)
+                        timestamp = timestamp+'00000';
+
+
+                  timestamp = parseInt(timestamp);
+                  
+
+                  $scope.ramdata.push([timestamp,parseFloat(100-element[1])]);
+                  
+
+             });
+
+
+
+                       Highcharts.chart('ram_chart_new', {
+                              chart: {
+                                  zoomType: 'x',
+                                  events: {
+                                      load: function () {
+
+                                          
+                                          var series = this.series[0];
+                                          setInterval(function () {
+
+
+
+
+
+                                          $http({
+                                                  method  : 'POST',
+                                                  url     : $scope.apis.monitoring,
+                                                  data:  {
+
+
+                                             
+                                                          "name": "vm_mem_perc",
+                                                          "start": ""+ new Date().toISOString(),
+                                                          "end": ""+new Date().toISOString(),
+                                                          "step": "10s",
+                                                          "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
+                                                            },
+                                                  headers : { 'Content-Type': 'application/json' }
+                                                 })
+                                                  .success(function(data) {
+                                                    console.log(data);
+                                                    $scope.vnf.currentCPUUsage = data.metrics.result[0].values[0][1];
+                                                    var y = data.metrics.result[0].values[0][1];
+                                                    var x = data.metrics.result[0].values[0][0];
+                                                    var timestamp = x.toString();
+                                                        timestamp = timestamp.replace('.','');
+
+                                                        if(timestamp.length==12)
+                                                                timestamp=timestamp+'0';
+                                                        else if(timestamp.length==11)
+                                                              timestamp = timestamp+'00';
+                                                        else if(timestamp.length==10)
+                                                              timestamp = timestamp+'000';
+                                                        else if(timestamp.length==9)
+                                                              timestamp = timestamp+'0000';
+                                                        else if(timestamp.length==8)
+                                                              timestamp = timestamp+'00000';
+
+
+                                                        timestamp = parseInt(timestamp);
+                                                      
+                                                      series.addPoint([timestamp, parseFloat(100-y)], true, true);
+
+                                                  })
+
+                                              
+
+
+
+
+
+                                          }, 5000);
+                                      
+
+
+                                      }
+                                    }
+                              },
+                              title: {
+                                  text: 'Memory usage over time'
+                              },
+                              subtitle: {
+                                  text: document.ontouchstart === undefined ?
+                                          'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
+                              },
+                              xAxis: {
+                                  type: 'datetime'
+                              },
+                              yAxis: {
+                                  title: {
+                                      text: 'RAM %'
+                                  }
+                              },
+                              legend: {
+                                  enabled: false
+                              },
+                              credits: {
+                                enabled: false
+                              },
+                              plotOptions: {
+                                  area: {
+                                      fillColor: {
+                                          linearGradient: {
+                                              x1: 0,
+                                              y1: 0,
+                                              x2: 0,
+                                              y2: 1
+                                          },
+                                          stops: [
+                                              [0, '#262B33'],
+                                              [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                                          ]
+                                      },
+                                      marker: {
+                                          radius: 2
+                                      },
+                                      lineWidth: 1,
+                                      states: {
+                                          hover: {
+                                              lineWidth: 1
+                                          }
+                                      },
+                                      threshold: null
+                                  }
+                              },
+
+                              series: [{
+                                  type: 'area',
+                                  color: '#454e5d',
+                                  name: 'RAM',
+                                  data: $scope.ramdata
+                              }]
+                          });
+
 
 
           });
 
 
 
-        
-
-        
-      }
-    }
+}
 
 
 
 
-     $scope.drawMEMChart = function(){
-       
-       google.charts.setOnLoadCallback(drawChart);
-      function drawChart() {
-        
 
 
-        var m=[
-          ['Time', 'Percent']
-        ];
+$scope.historyCPU = function(){
 
-        $http({
+ $http({
           method  : 'POST',
           url     : $scope.apis.monitoring,
           data:  {
-                  "name": "vm_mem_perc",
-                  "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
+                  "name": "vm_cpu_perc",
+                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
-                  "step": "1m",
+                  "step": "10s",
                   "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
                     },
           headers : { 'Content-Type': 'application/json' }
          })
           .success(function(data) {
-       
-            data.metrics.result[0].values.forEach( function(element, index) {
-          
-           
-            var timestamp = element[0].toString();
-            timestamp = timestamp.replace('.','');
-            
-            timestamp = new Date(parseInt(timestamp));
 
-            m.push([timestamp,parseFloat(100-element[1])]);
+            $scope.prdata = [];                                        
+            data.metrics.result[0].values.forEach(function(element, index) {
 
-            });
-           
-
-
-            var options = {
-              title: 'Memory',
-              hAxis: {title: 'Time',  titleTextStyle: {color: '#333'}},
-              vAxis: {minValue: 0,maxValue:100}
-            };
+                  var timestamp = element[0].toString();
+                  timestamp = timestamp.replace('.','');
+                  if(timestamp.length==12)
+                                        timestamp=timestamp+'0';
+                                else if(timestamp.length==11)
+                                      timestamp = timestamp+'00';
+                                else if(timestamp.length==10)
+                                      timestamp = timestamp+'000';
+                                else if(timestamp.length==9)
+                                      timestamp = timestamp+'0000';
+                                else if(timestamp.length==8)
+                                      timestamp = timestamp+'00000';
+                  timestamp = parseInt(timestamp);
+                  $scope.prdata.push([timestamp,parseFloat(element[1])]);
             
 
+             });
 
-              $scope.drawTheChart(m,options,'mem_chart');
+                       Highcharts.chart('cpu_chart_new', {
+                              chart: {
+                                  zoomType: 'x',
+                                  events: {
+                                      load: function () {
 
-
-          });
-
-      }
-    }
-
-
-
-
-
+                                          
+                                          var series = this.series[0];
+                                          setInterval(function () {
 
 
 
 
 
+                                          $http({
+                                                  method  : 'POST',
+                                                  url     : $scope.apis.monitoring,
+                                                  data:  {
+                                                        "name": "vm_cpu_perc",
+                                                        "start": ""+ new Date().toISOString(),
+                                                        "end": ""+new Date().toISOString(),
+                                                        "step": "10s",
+                                                        "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
+                                                            },
+                                                  headers : { 'Content-Type': 'application/json' }
+                                                 })
+                                                  .success(function(data) {
+                                                    
+                                                    $scope.vnf.currentCPUUsage = data.metrics.result[0].values[0][1];
+                                                    var y = data.metrics.result[0].values[0][1];
+                                                    var x = data.metrics.result[0].values[0][0];
+                                                    var timestamp = x.toString();
+                                                        timestamp = timestamp.replace('.','');
+
+                                                        if(timestamp.length==12)
+                                                                timestamp=timestamp+'0';
+                                                        else if(timestamp.length==11)
+                                                              timestamp = timestamp+'00';
+                                                        else if(timestamp.length==10)
+                                                              timestamp = timestamp+'000';
+                                                        else if(timestamp.length==9)
+                                                              timestamp = timestamp+'0000';
+                                                        else if(timestamp.length==8)
+                                                              timestamp = timestamp+'00000';
+
+                                                            
+                                                        timestamp = parseInt(timestamp);
+                                                      
+                                                      series.addPoint([timestamp, parseFloat(y)], true, true);
+
+                                                  })
+
+                                              
 
 
-    $scope.drawRxTxBPSChart = function(){
-       
-       google.charts.setOnLoadCallback(drawChart);
-
-      function drawChart() {        
-        var tstart = new Date(new Date().getTime() - 15*60000).toISOString();
-        var tend = new Date().toISOString();
-        $http({
-          method  : 'POST',
-          url     : $scope.apis.monitoring,
-          data:  {
-                  "name": "vm_net_rx_bps",
-                  "start": ""+ tstart,
-                  "end": ""+tend,
-                  "step": "10s",
-                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0"}]
-                  },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
-
-            var rx = data;
 
 
-                        $http({
-                      method  : 'POST',
-                      url     : $scope.apis.monitoring,
-                      data:  {
-                              "name": "vm_net_tx_bps",
-                              "start": ""+ tstart,
-                              "end": ""+tend,
-                              "step": "10s",
-                              "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0"}]
+
+                                          }, 5000);
+                                      
+
+
+                                      }
+                                    }
                               },
-                      headers : { 'Content-Type': 'application/json' }
-                     })
-                      .success(function(data) {
+                              title: {
+                                  text: 'CPU usage over time'
+                              },
+                              subtitle: {
+                                  text: document.ontouchstart === undefined ?
+                                          'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
+                              },
+                              xAxis: {
+                                  type: 'datetime'
+                              },
+                              yAxis: {
+                                  title: {
+                                      text: 'CPU %'
+                                  }
+                              },
+                              legend: {
+                                  enabled: false
+                              },
+                              credits: {
+                                enabled: false
+                              },
+                              plotOptions: {
+                                  area: {
+                                      fillColor: {
+                                          linearGradient: {
+                                              x1: 0,
+                                              y1: 0,
+                                              x2: 0,
+                                              y2: 1
+                                          },
+                                          stops: [
+                                              [0, '#262B33'],
+                                              [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                                          ]
+                                      },
+                                      marker: {
+                                          radius: 2
+                                      },
+                                      lineWidth: 1,
+                                      states: {
+                                          hover: {
+                                              lineWidth: 1
+                                          }
+                                      },
+                                      threshold: null
+                                  }
+                              },
 
-                          var tx = data;
-                          $scope.kam_bps = [['Time', 'Rx bps','Tx bps']];
-
-
-                          rx.metrics.result[0].values.forEach( function(rx, index) {
-                                  
-                                  var ttime = rx[0];
-                                  var rx_value = rx[1];
-                                  var tx_value = tx.metrics.result[0].values[index][1];
-
-
-                                  var timestamp = ttime.toString();
-                                  timestamp = timestamp.replace('.','');
-                                  timestamp = new Date(parseInt(timestamp));
-                                  $scope.kam_bps.push([timestamp,parseFloat(rx_value),parseFloat(tx_value)]);
-
-
-
-
-
-
-                            });
-
-                             var options = {
-                              title: 'Rx/Tx',
-                              hAxis: {title: 'Time',  titleTextStyle: {color: '#333'}},
-                              vAxis: {minValue: 0}
-                            };
-                            
-                            
-                              $scope.drawTheChart($scope.kam_bps,options,'rx_tx_chart');
-
-
-                      });
-
-
-
-
-         
+                              series: [{
+                                  type: 'area',
+                                  color: '#454e5d',
+                                  name: 'CPU',
+                                  data: $scope.prdata
+                              }]
+                          });
           });
 
-
-      
-      }
-
-    }
+}
 
 
 
-    $scope.drawDiskChart = function(){
-       google.charts.setOnLoadCallback(drawChart);
-        function drawChart() {
-        
 
 
-       
+$scope.historyHardDisk = function(){
 
         $http({
           method  : 'POST',
@@ -425,7 +972,7 @@ $scope.drawTheChart = function(data_array,options,element){
           headers : { 'Content-Type': 'application/json' }
          })
           .success(function(data) {
-            
+
             $scope.vnf.disk_total = 0;
             data.metrics.result.forEach( function(element, index) {
               var m= element.metric.file_system;
@@ -452,25 +999,92 @@ $scope.drawTheChart = function(data_array,options,element){
                     data.metrics.result.forEach( function(element, index) {
                         var m= element.metric.file_system;
                         if(m.startsWith("/dev")){
-                          $scope.kam_disk = [['Time', 'Usage','Total']];
+                          $scope.kam_disk = [];
                           element.values.forEach( function(value, index) {
 
                               var timestamp = value[0].toString();
                               timestamp = timestamp.replace('.','');
-                              timestamp = new Date(parseInt(timestamp));
-                              $scope.kam_disk.push([timestamp,parseFloat(value[1]),parseFloat($scope.vnf.disk_total)]);
+                               if(timestamp.length==12)
+                                        timestamp=timestamp+'0';
+                                else if(timestamp.length==11)
+                                      timestamp = timestamp+'00';
+                                else if(timestamp.length==10)
+                                      timestamp = timestamp+'000';
+                                else if(timestamp.length==9)
+                                      timestamp = timestamp+'0000';
+                                else if(timestamp.length==8)
+                                      timestamp = timestamp+'00000';
+
+                              timestamp = parseInt(timestamp);
+
+                              $scope.kam_disk.push([timestamp,parseFloat(value[1])]);
                           });
 
                         }
                       
                       });
-                    var options = {
-              title: 'Disk',
-              hAxis: {title: 'Time',  titleTextStyle: {color: '#333'}},
-              vAxis: {minValue: 0,maxValue:$scope.vnf.disk_total}
-            };
+                  
             
-              $scope.drawTheChart($scope.kam_disk,options,'disk_chart');
+              Highcharts.chart('disk_chart_new', {
+                              chart: {
+                                  zoomType: 'x',
+                              },
+                              title: {
+                                  text: 'Disk usage over time'
+                              },
+                              subtitle: {
+                                  text: document.ontouchstart === undefined ?
+                                          'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
+                              },
+                              xAxis: {
+                                  type: 'datetime'
+                              },
+                              yAxis: {
+                                  title: {
+                                      text: 'Disk Usage %'
+                                  }
+                              },
+                              legend: {
+                                  enabled: false
+                              },
+                              credits: {
+                                enabled: false
+                              },
+                              plotOptions: {
+                                  area: {
+                                      fillColor: {
+                                          linearGradient: {
+                                              x1: 0,
+                                              y1: 0,
+                                              x2: 0,
+                                              y2: 1
+                                          },
+                                          stops: [
+                                              [0, '#262B33'],
+                                              [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                                          ]
+                                      },
+                                      marker: {
+                                          radius: 2
+                                      },
+                                      lineWidth: 1,
+                                      states: {
+                                          hover: {
+                                              lineWidth: 1
+                                          }
+                                      },
+                                      threshold: null
+                                  }
+                              },
+
+                              series:[{
+                                  type: 'area', 
+                                  color: '#454e5d',
+                                  name: 'Disk',
+                                  data: $scope.kam_disk
+                              }]
+                          });
+
 
                    
 
@@ -486,97 +1100,11 @@ $scope.drawTheChart = function(data_array,options,element){
           
           });
 
-      }
-    }
-
-    $scope.drawRxTxPPSChart = function(){
-       
-       google.charts.setOnLoadCallback(drawChart);
-        function drawChart() {
-             
-        var tstart = new Date(new Date().getTime() - 20*60000).toISOString();
-        var tend = new Date().toISOString();
-        $http({
-          method  : 'POST',
-          url     : $scope.apis.monitoring,
-          data:  {
-                  "name": "vm_net_rx_pps",
-                  "start": ""+ tstart,
-                  "end": ""+tend,
-                  "step": "10s",
-                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0"}]
-                  },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
-
-            var rx = data;
-
-
-                        $http({
-                      method  : 'POST',
-                      url     : $scope.apis.monitoring,
-                      data:  {
-                              "name": "vm_net_tx_pps",
-                              "start": ""+ tstart,
-                              "end": ""+tend,
-                              "step": "10s",
-                              "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name},{"labeltag":"inf","labelid":"eth0"}]
-                              },
-                      headers : { 'Content-Type': 'application/json' }
-                     })
-                      .success(function(data) {
-
-                        
-                          var tx = data;
-                          $scope.kam_pps = [['Time', 'Rx pps','Tx pps']];
-
-
-                            rx.metrics.result[0].values.forEach( function(rx, index) {
-                                  var ttime = rx[0];
-                                  var rx_value = rx[1];
-                                  var tx_value = tx.metrics.result[0].values[index][1];
-
-
-                                  var timestamp = ttime.toString();
-                                  timestamp = timestamp.replace('.','');
-                                  timestamp = new Date(parseInt(timestamp));
-                                  $scope.kam_pps.push([timestamp,parseFloat(rx_value),parseFloat(tx_value)]);
 
 
 
 
-
-
-                            });
-
-                             var options = {
-                              title: 'Rx/Tx',
-                              hAxis: {title: 'Time',  titleTextStyle: {color: '#333'}},
-                              vAxis: {minValue: 0}
-                            };
-                            
-                            
-                              $scope.drawTheChart($scope.kam_pps,options,'rx_tx_pps_chart');
-
-
-                      });
-
-
-
-
-         
-          });
-
-      }
-
-     
-    }
-
-
-
-
-
+}
 
 
 
@@ -612,44 +1140,12 @@ $scope.drawTheChart = function(data_array,options,element){
       (function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
       $scope.getVM();
       $scope.drawGauges();
-      $scope.drawCPUChart();
-      $scope.drawMEMChart();
-      $scope.drawRxTxBPSChart();
-      $scope.drawRxTxPPSChart();
+
+
+      $scope.historyCPU();
+      $scope.historyRAM();
+      $scope.historyHardDisk();
       $scope.getContainers();
-      $scope.getCurrentMemory();
-      $scope.getCPU_History();
-      $scope.drawDiskChart();
-
-
-      
-      setInterval(function() {
-          $scope.drawCPUChart();
-          $scope.drawMEMChart();          
-          $scope.drawRxTxBPSChart();
-          $scope.drawRxTxPPSChart();  
-        }, 10000);
-
-
-      setInterval(function(){
-        
-        $scope.drawDiskChart();
-      },60000);
-      
-      //drawCPUS
-      //drawMEMS
-      //drawRX/TX
-      //drawDISC
-      
-
-    	/*$scope.getCPU();
-    	$scope.getMEM();
-    	$scope.getLineGraph();*/
-    	
-    	/*$scope.FillCPUGraph();*/
-    	 /*setInterval(function() {
-          $scope.FillCPUGraph();
-        }, 5000);*/
     	
     }
 

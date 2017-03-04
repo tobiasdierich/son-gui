@@ -32,7 +32,7 @@ if(!String.prototype.startsWith){
     }
 }
 
-var SonataApp = angular.module('SonataApp', ['ngRoute','ui.materialize']);
+var SonataApp = angular.module('SonataApp', ['ngRoute','ui.materialize','highcharts-ng']);
    
 
 
@@ -129,6 +129,10 @@ $('.button-collapse').sideNav({
     }
   );
 
+
+
 $(".button-collapse").sideNav();
 $('.collapsible').collapsible();
-  
+
+ 
+
