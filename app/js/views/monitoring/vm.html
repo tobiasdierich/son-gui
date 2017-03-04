@@ -27,55 +27,52 @@ partner consortium (www.sonata-nfv.eu).
 -->
 
 <div class="row" ng-init="init()" ng-controller="VmMonitoring">
-		<div class="col s12">
-			<div class="card-panel">
-				<strong>VM Name:</strong> {{vm.exported_instance}}<br/>
-				<strong>Instance:</strong> {{vm.instance}}<br/>
-				<strong>Group:</strong> {{vm.group}}<br/>
-				<strong>ID:</strong> {{vm.id}}<br/>
-
-			</div>
-		</div>
-   		<div class="col s12">
-   			<div class="card-panel">
+		
+    <div class="col s12 m12 l3">
+      <div class="card-panel">
           <div class="row">
-            <div class="center-align">
-              
-              <div id="vCPUschart" class="col s12 m6 push-m4"></div>
-              
-            </div>
+            <strong>VM Name:</strong> {{vm.exported_instance}}<br/>
+            <strong>Instance:</strong> {{vm.instance}}<br/>
+            <strong>Group:</strong> {{vm.group}}<br/>
+            <strong>ID:</strong> {{vm.id}}<br/>
           </div>
-   				
-   			</div>
-   		</div>
-    	<div class="col s12">
+            <div class="row">
+              <div id="vCPUschart" class="col s12 m6 push-m1"></div>
+            </div>  
+            <div class="row" style="text-align: center;">
+              <div class="btn btn-success blue-grey darken-2" ng-click="newChartBtn()">Add a Chart</div>
+            </div>
+      </div>
+    </div>
+
+      <div class="col s12 m12 l9">
+       <div ng-repeat="box in boxes" ng-class="box.class">
+        <div class="card-panel">
+            <span class="card-title">
+              <i class="fa fa-pencil" aria-hidden="true" ng-click="configureBox(box)"></i>
+              <i class="fa fa-refresh" aria-hidden="true" ng-click="updateBox(box)"></i>               
+              <i class="fa fa-times" aria-hidden="true" ng-click="removeBox(box)"></i>
+            </span>
+          <div id="{{box.id}}" class="predefined_box"></div>
+        </div>
+      </div>
+
+    	  <div class="col s12">
           <div class="card-panel">
             <span class="card-title">CPUs</span>
-            <div id="cpu_chart"></div>
-          </div>
-        </div>
-        <div class="col s12">
-          <div class="card-panel">
-            <span class="card-title">Rx/Tx Packages Per Second</span>
-            <div id="rx_tx_pps_chart"></div>
-          </div>
-        </div>
-        <div class="col s12">
-          <div class="card-panel">
-            <span class="card-title">Rx/Tx Bits Per Second</span>
-            <div id="rx_tx_chart"></div>
+            <div id="cpu_chart_new"></div>
           </div>
         </div>
         <div class="col s12">
           <div class="card-panel">
             <span class="card-title">MEMORY</span>
-            <div id="mem_chart"></div>
+            <div id="ram_chart_new"></div>
           </div>
         </div>        
         <div class="col s12">
           <div class="card-panel">
             <span class="card-title">Hard Disk</span>
-            <div id="disk_chart"></div>
+            <div id="disk_chart_new"></div>
           </div>
         </div>
 
@@ -107,4 +104,45 @@ partner consortium (www.sonata-nfv.eu).
           </div>
       		</div>
    		</div>
+    </div>
+
+
+<!-- Modal Structure -->
+  <div id="settings_modal" class="modal modal-fixed-footer">
+    <div class="modal-content">
+      <h4>{{settings_modal.title}}</h4>
+      <p>{{selected_box.name}}</p>
+          
+          <div class="row">
+            <div class="col s12">
+                <label>Select Measurement</label>
+              <select name="repeatSelect" id="repeatSelect" ng-model="settings_modal.measurement" style="display: block">
+                <option ng-repeat="option in potential_graphs" value="{{option}}">{{option}}</option>
+              </select>
+            </div>
+
+            <div class="col s6">
+              <label>Select Duration</label>
+              <select name="repeatSelect" id="repeatSelect" ng-model="settings_modal.time_range" style="display: block">
+                <option ng-repeat="option in potential_timeranges" value="{{option.id}}">{{option.range}}</option>
+              </select>
+            </div>
+
+            <div class="col s6">
+                <label>Select Step</label>
+                <select name="repeatSelect" id="repeatSelect" ng-model="settings_modal.step" style="display: block">
+                  <option ng-repeat="option in potential_step" value="{{option.id}}">{{option.step}}</option>
+                </select>
+            </div>
+          </div>
+    </div>
+    <div class="modal-footer">
+      <a href="javascript:void(0)" ng-click="saveBoxConfiguration()" class="modal-action modal-close waves-effect waves-green btn-flat ">
+        Save
+      </a>
+      <a href="javascript:void(0)" ng-click="cancel()" class="modal-action modal-close waves-effect waves-green btn-flat ">
+        Cancel
+      </a>
+    </div>
+  </div>
 </div>

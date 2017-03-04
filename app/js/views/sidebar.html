@@ -28,7 +28,7 @@ partner consortium (www.sonata-nfv.eu).
 
      <ul id="slide-out" class="side-nav fixed">
       <li class="logo"><img src="media/sonata.jpg"/></li>
-      <li class="no-padding">
+      <li class="no-padding menu_item_li">
         <a class="collapsible-header waves-effect waves-teal" href="#/home"><i class="fa fa-home"></i>Dashboard</a>
       </li>
       <li class="no-padding">
@@ -37,8 +37,8 @@ partner consortium (www.sonata-nfv.eu).
             <a class="collapsible-header waves-effect waves-teal"><i class="fa fa-cogs"></i> Settings</a>
             <div class="collapsible-body">
               <ul>
-                <li class="waves-effect waves-teal lighten-5"><a href="#/user/profile" >User Profile</a></li>
-                <li class="waves-effect waves-teal"><a href="#/user/settings">User Settings</a></li>
+                <li class="waves-effect waves-teal lighten-5 menu_item_li"><a href="#/user/profile" >User Profile</a></li>
+                <li class="waves-effect waves-teal lighten-5 menu_item_li"><a href="#/user/settings">User Settings</a></li>
               </ul>
             </div>
           </li>
@@ -50,9 +50,9 @@ partner consortium (www.sonata-nfv.eu).
             <a class="collapsible-header waves-effect waves-teal"><i class="fa fa-list"></i> Catalogue</a>
             <div class="collapsible-body">
               <ul>
-                 <li class="waves-effect waves-teal"><a href="#/catalogue/packages">Packages</a></li>
-                <li class="waves-effect waves-teal"><a href="#/catalogue/allServices">Services</a></li>               
-                <li class="waves-effect waves-teal"><a href="#/catalogue/functions">Functions</a></li>
+                 <li class="waves-effect waves-teal menu_item_li"><a href="#/catalogue/packages">Packages</a></li>
+                <li class="waves-effect waves-teal menu_item_li"><a href="#/catalogue/allServices">Services</a></li>               
+                <li class="waves-effect waves-teal menu_item_li"><a href="#/catalogue/functions">Functions</a></li>
               </ul>
             </div>
           </li>
@@ -63,7 +63,7 @@ partner consortium (www.sonata-nfv.eu).
 <li class="no-padding">
          <ul class="collapsible">
           <li>
-            <a class="collapsible-header waves-effect waves-teal" href="#/vim_settings"><i class="fa fa-cogs"></i> VIM Settings</a>
+            <a class="collapsible-header waves-effect waves-teal menu_item_li" href="#/vim_settings"><i class="fa fa-cogs"></i> VIM Settings</a>
           </li>
           </ul>         
         
@@ -85,11 +85,11 @@ partner consortium (www.sonata-nfv.eu).
       <li class="no-padding">
          <ul class="collapsible collapsible-accordion">
           <li>
-            <a class="collapsible-header waves-effect waves-teal"><i class="fa fa-area-chart"></i> Monitoring</a>
+            <a class="collapsible-header waves-effect waves-teal menu_item_li"><i class="fa fa-area-chart"></i> Monitoring</a>
             <div class="collapsible-body">
               <ul>
-                <li class="waves-effect waves-teal"><a href="#/monitoring/platform">Service Platform</a></li>
-                <li class="waves-effect waves-teal"><a href="#/monitoring/vnfs">VNFs</a></li>
+                <li class="waves-effect waves-teal menu_item_li"><a href="#/monitoring/platform">Service Platform</a></li>
+                <li class="waves-effect waves-teal menu_item_li"><a href="#/monitoring/vnfs">VNFs</a></li>
                 
               </ul>
             </div>
@@ -101,13 +101,20 @@ partner consortium (www.sonata-nfv.eu).
       <li class="no-padding">
          <ul class="collapsible">
           <li>
-            <a class="collapsible-header waves-effect waves-teal" href="#/alerts"><i class="fa fa-bell-o"></i> Alerts  <i ng-show="alerts_visibility" style="color:red" class="right large material-icons">info_outline</i></a>
+            <a class="collapsible-header waves-effect waves-teal menu_item_li" href="#/alerts"><i class="fa fa-bell-o"></i> Alerts  <i ng-show="alerts_visibility" style="color:red" class="right large material-icons">info_outline</i></a>
           </li>
           </ul>                 
       </li>
 
     </ul>
 
+
+<script>
+$('.menu_item_li').click(function(){
+  $('.button-collapse').sideNav('hide');
+});
+
+</script>
 
 
 

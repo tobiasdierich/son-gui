@@ -55,6 +55,7 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
 
                   $scope.apis = {
 						'monitoring':'http://'+data.MON_URL+'/api/v1/prometheus/metrics/data',
+            'monitoring_list':'http://'+data.MON_URL+'/api/v1/prometheus/metrics/list',
 						'logs':'http://'+data.LOGS_URL+'/search/universal/relative?',
 						'vims':'http://'+data.VIMS_URL+'/vims',
 						'gatekeeper':{
@@ -89,10 +90,7 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
 		}
 
 
-   
-
-$scope.alerts_visibility = 0;
-            
+$scope.alerts_visibility = 0;           
 
 
 $rootScope.FixTimestamp = function(timestamp){

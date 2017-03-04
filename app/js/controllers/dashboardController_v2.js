@@ -28,7 +28,7 @@ partner consortium (www.sonata-nfv.eu).
 
 SonataApp.controller('DashboardController',['$rootScope','$scope','$routeParams','$location','$http',function($rootScope,$scope, $routeParams, $location, $http){
 (function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
-  
+	
   
   
   $scope.vims = new Array();
@@ -135,6 +135,7 @@ $scope.setFloatingIps = function(){
 }
 
 $scope.getRamGauge = function(){
+  $scope.historyRAM();
   $http({
           method  : 'POST',
           url     : $scope.apis.monitoring,
@@ -148,7 +149,7 @@ $scope.getRamGauge = function(){
           headers : { 'Content-Type': 'application/json' }
          })
           .success(function(data) {
-            $scope.selected_vim.totalRAMSize = data.metrics.result[0].values[0][1];
+
             $scope.selected_vim.maxTotalRamSize.push(data.metrics.result[0].values);
             $scope.selected_vim.currently_totalRam = parseFloat(data.metrics.result[0].values[0][1]);
           }).then(function(){
@@ -196,15 +197,12 @@ $scope.getRamGauge = function(){
                   
                   
                   }).then(function(){
-                    /*$scope.getRamGraph();*/
-                    $scope.getRamGraphNew();
+                    $scope.getRamGraph();
+
                   })
               
           });
  }
-
-
-
 
 $scope.waitForElementToDisplay = function(selector,time) {
         if(document.querySelector(selector)!=null) {
@@ -215,61 +213,111 @@ $scope.waitForElementToDisplay = function(selector,time) {
                 waitForElementToDisplay(selector, 200);
             }, 200);
         }
-}
+    }
 
 
-$scope.getRamGraphNew = function(){
 
+
+
+
+
+
+
+$scope.historyRAM = function(){
 
         $http({
           method  : 'POST',
           url     : $scope.apis.monitoring,
-          data:  { 
-
-                  "name": "vim_totalRAMUsed",
-                  "start": ""+ new Date(new Date().getTime() - 30*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "5s",
-                  "labels": [{"labeltag":"exported_instance", "labelid":$scope.selected_vim.name}]
-
-                  },
+          data:  {     
+                          
+                          "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
+                          "end": ""+new Date().toISOString(),
+                          "step": "5s",
+                          "name": "vim_totalRAMUsed",
+                          "labels": [{"labeltag":"exported_instance", "labelid":$scope.selected_vim.name}]
+                    },
           headers : { 'Content-Type': 'application/json' }
-         }).then(function(data){
+         })
+          .success(function(data) {
+
+            console.log('RAM SUccess');
             console.log(data);
-            $scope.ramdata = [];    
-            $scope.totalram = [];                                    
-            
-            data.data.metrics.result[0].values.forEach(function(element, index) {
 
-              var timestamp = element[0].toString();
-              timestamp = timestamp.replace('.','');
-              timestamp = timestamp.replace('.','');
-              
-              if(timestamp.length==12)
-                      timestamp=timestamp+'0';
-              else if(timestamp.length==11)
-                    timestamp = timestamp+'00';
-              else if(timestamp.length==10)
-                    timestamp = timestamp+'000';
-              else if(timestamp.length==9)
-                    timestamp = timestamp+'0000';
-              else if(timestamp.length==8)
-                    timestamp = timestamp+'00000';
 
-              timestamp = parseInt(timestamp);
-              $scope.ramdata.push([timestamp,parseFloat(element[1])]);
-              $scope.totalram.push([timestamp,parseFloat($scope.selected_vim.totalRAMSize)]);
-              
+            $scope.ramdata = [];
+                                        
+           data.metrics.result[0].values.forEach(function(element, index) {
+
+                  var timestamp = element[0].toString();
+                  timestamp = timestamp.replace('.','');
+                  timestamp = timestamp.replace('.','');
+                  
+                  if(timestamp.length==12)
+                          timestamp=timestamp+'0';
+                  else if(timestamp.length==11)
+                        timestamp = timestamp+'00';
+                  else if(timestamp.length==10)
+                        timestamp = timestamp+'000';
+                  else if(timestamp.length==9)
+                        timestamp = timestamp+'0000';
+                  else if(timestamp.length==8)
+                        timestamp = timestamp+'00000';
+
+
+                  timestamp = parseInt(timestamp);
+                  
+
+                  $scope.ramdata.push([timestamp,parseFloat(100-element[1])]);
+                  
 
              });
-              Highcharts.chart('ram_chart_new_new', {
+
+                       Highcharts.chart('vim_ram_chart_new', {
                               chart: {
-                                  type:'line',
                                   zoomType: 'x',
                                   events: {
-                                      load: function () {                                    
+                                      load: function () {
+                                          
+                                          var series = this.series[0];
+                                          setInterval(function () {
+
+                                          $http({
+                                                  method  : 'POST',
+                                                  url     : $scope.apis.monitoring,
+                                                  data:  {                                             
+                                                          "start": ""+new Date().toISOString(),
+                                                          "end": ""+new Date().toISOString(),
+                                                          "step": "5s",
+                                                          "name": "vim_totalRAMUsed",
+                                                          "labels": [{"labeltag":"exported_instance", "labelid":$scope.selected_vim.name}]
+                                                          },
+                                                  headers : { 'Content-Type': 'application/json' }
+                                                 })
+                                                  .success(function(data) {
+                                                    var y = data.metrics.result[0].values[0][1];
+                                                    var x = data.metrics.result[0].values[0][0];
+                                                    var timestamp = x.toString();
+                                                        timestamp = timestamp.replace('.','');
+
+                                                        if(timestamp.length==12)
+                                                                timestamp=timestamp+'0';
+                                                        else if(timestamp.length==11)
+                                                              timestamp = timestamp+'00';
+                                                        else if(timestamp.length==10)
+                                                              timestamp = timestamp+'000';
+                                                        else if(timestamp.length==9)
+                                                              timestamp = timestamp+'0000';
+                                                        else if(timestamp.length==8)
+                                                              timestamp = timestamp+'00000';
 
 
+                                                        timestamp = parseInt(timestamp);
+                                                      
+                                                      series.addPoint([timestamp, parseFloat(100-y)], true, true);
+
+                                                  }) 
+                                          }, 5000);
+                                      
                                       }
                                     }
                               },
@@ -305,7 +353,7 @@ $scope.getRamGraphNew = function(){
                                           },
                                           stops: [
                                               [0, '#262B33'],
-                                              [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0.4).get('rgba')]
+                                              [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
                                           ]
                                       },
                                       marker: {
@@ -320,20 +368,71 @@ $scope.getRamGraphNew = function(){
                                       threshold: null
                                   }
                               },
+
                               series: [{
-                                  color: '#6b6bb7',
-                                  name: 'Used RAM',
-                                  data: $scope.ramdata
-                              },{
+                                  type: 'area',
                                   color: '#454e5d',
-                                  lineWidth: 5,
-                                  data: $scope.totalram,
-                                name:'Total RAM'
+                                  name: 'RAM',
+                                  data: $scope.ramdata
                               }]
                           });
+
+
+
           });
+
+
+
 }
- 
+
+
+
+
+
+
+
+ $scope.getRamGraph = function(){
+      
+      google.charts.setOnLoadCallback(drawChart());      
+      
+      function drawChart() {
+        
+        var data = [
+          ['Time', 'Used', 'Total']];
+          
+          $scope.selected_vim.totalRamUsed[0].forEach(function(metric,index){
+            
+            var timestamp = metric[0].toString();
+            timestamp = timestamp.replace('.','');
+            
+            if(timestamp.length==11)
+              timestamp = timestamp+'00';
+            else if(timestamp.length==10)
+              timestamp = timestamp+'000';
+            else if(timestamp.length==12)
+                    timestamp=timestamp+'0';
+            
+            timestamp = new Date(parseInt(timestamp));
+            /*timestamp = $filter('date')(timestamp, "hh:mm:ss");*/
+            
+
+
+            data.push(new Array(timestamp,parseFloat(metric[1]),parseFloat($scope.selected_vim.maxTotalRamSize[0][index][1])));
+          });
+        
+
+        var options = {
+          title: 'RAM',
+          curveType: 'function',
+          legend: { position: 'bottom' }
+        };
+
+    $scope.drawTheChart(data,options,'vim_ram_chart');
+  }
+}
+
+
+
 
 $scope.drawTheChart = function(data_array,options,element){
 
@@ -382,7 +481,6 @@ $scope.getCoresGauge = function(){
                })
                 .success(function(data) {
                   $scope.selected_vim.maxTotalCores = [];
-                  $scope.selected_vim.totalCoresSize = parseFloat(data.metrics.result[0].values[0][1]);
                   $scope.selected_vim.maxTotalCores.push(data.metrics.result[0].values);
 
                   $scope.selected_vim.currently_totalCores = parseFloat(data.metrics.result[0].values[0][1]);              
@@ -411,8 +509,7 @@ $scope.getCoresGauge = function(){
                       };
 
                           $scope.drawGauge(data,options,'vim_cores_gauge');
-                          /*$scope.coresChart();*/
-                          $scope.coresChartNew();
+                          $scope.coresChart();
 
                       
 
@@ -460,126 +557,6 @@ $scope.coresChart = function(){
   }
 }
 
-
-
-$scope.coresChartNew = function(){
-
-
-   $http({
-          method  : 'POST',
-          url     : $scope.apis.monitoring,
-          data:  { 
-
-                  "name": "vim_totalCoresUsed",
-                  "start": ""+ new Date(new Date().getTime() - 30*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "5s",
-                  "labels": [{"labeltag":"exported_instance", "labelid":$scope.selected_vim.name}]
-
-                  },
-          headers : { 'Content-Type': 'application/json' }
-         }).then(function(data){
-            
-            $scope.coresdata = [];    
-            $scope.totalcores = [];                                    
-            console.log(data);
-            data.data.metrics.result[0].values.forEach(function(element, index) {
-
-                    var timestamp = element[0].toString();
-                    timestamp = timestamp.replace('.','');
-                    timestamp = timestamp.replace('.','');
-                    
-                    if(timestamp.length==12)
-                            timestamp=timestamp+'0';
-                    else if(timestamp.length==11)
-                          timestamp = timestamp+'00';
-                    else if(timestamp.length==10)
-                          timestamp = timestamp+'000';
-                    else if(timestamp.length==9)
-                          timestamp = timestamp+'0000';
-                    else if(timestamp.length==8)
-                          timestamp = timestamp+'00000';
-
-                    timestamp = parseInt(timestamp);
-                    $scope.coresdata.push([timestamp,parseFloat(element[1])]);
-                    $scope.totalcores.push([timestamp,parseFloat($scope.selected_vim.totalCoresSize)]);
-              
-
-             });
-
-
-              Highcharts.chart('cores_chart_new_new', {
-                              chart: {
-                                  type:'line',
-                                  zoomType: 'x',
-                                  events: {
-                                      load: function () {                                    
-
-
-                                      }
-                                    }
-                              },
-                              title: {
-                                  text: 'Cores'
-                              },
-                              subtitle: {
-                                  text: document.ontouchstart === undefined ?
-                                          'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
-                              },
-                              xAxis: {
-                                  type: 'datetime'
-                              },
-                              yAxis: {
-                                  title: {
-                                      text: 'Cores'
-                                  }
-                              },
-                              legend: {
-                                  enabled: false
-                              },
-                              credits: {
-                                enabled: false
-                              },
-                              plotOptions: {
-                                  area: {
-                                      fillColor: {
-                                          linearGradient: {
-                                              x1: 0,
-                                              y1: 0,
-                                              x2: 0,
-                                              y2: 1
-                                          },
-                                          stops: [
-                                              [0, '#262B33'],
-                                              [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0.4).get('rgba')]
-                                          ]
-                                      },
-                                      marker: {
-                                          radius: 2
-                                      },
-                                      lineWidth: 1,
-                                      states: {
-                                          hover: {
-                                              lineWidth: 1
-                                          }
-                                      },
-                                      threshold: null
-                                  }
-                              },
-                              series: [{
-                                  color: '#6b6bb7',
-                                  name: 'Used Cores',
-                                  data: $scope.coresdata
-                              },{
-                                  color: '#454e5d',
-                                  lineWidth: 5,
-                                  data: $scope.totalcores,
-                                name:'Total Cores'
-                              }]
-                          });
-          });
-}
-
 $scope.getInstancesGauge = function(){
   $http({
           method  : 'POST',
@@ -618,7 +595,6 @@ $scope.getInstancesGauge = function(){
                   .success(function(data) {
                     $scope.selected_vim.maxTotalInstances = [];
                     $scope.selected_vim.maxTotalInstances.push(data.metrics.result[0].values);
-                    $scope.selected_vim.totalInstances = data.metrics.result[0].values[0][1];
                     $scope.selected_vim.currently_Totalinstances = parseFloat(data.metrics.result[0].values[0][1]);
                     
 
@@ -644,8 +620,7 @@ $scope.getInstancesGauge = function(){
 
 
 
-                    /*$scope.instancesChart();*/
-                    $scope.instancesChartNew();
+                    $scope.instancesChart();
                   });
                       
             
@@ -654,134 +629,6 @@ $scope.getInstancesGauge = function(){
 
           });
 }
-
-
-
-$scope.instancesChartNew = function(){
-
-
-
-
-$http({
-          method  : 'POST',
-          url     : $scope.apis.monitoring,
-          data:  { 
-
-                  "name": "vim_totalInstancesUsed",
-                  "start": ""+ new Date(new Date().getTime() - 30*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "5s",
-                  "labels": [{"labeltag":"exported_instance", "labelid":$scope.selected_vim.name}]
-
-                  },
-          headers : { 'Content-Type': 'application/json' }
-         }).then(function(data){
-            
-            $scope.instancesdata = [];    
-            $scope.totalinstances = [];                                    
-            
-            data.data.metrics.result[0].values.forEach(function(element, index) {
-
-                    var timestamp = element[0].toString();
-                    timestamp = timestamp.replace('.','');
-                    timestamp = timestamp.replace('.','');
-                    
-                    if(timestamp.length==12)
-                            timestamp=timestamp+'0';
-                    else if(timestamp.length==11)
-                          timestamp = timestamp+'00';
-                    else if(timestamp.length==10)
-                          timestamp = timestamp+'000';
-                    else if(timestamp.length==9)
-                          timestamp = timestamp+'0000';
-                    else if(timestamp.length==8)
-                          timestamp = timestamp+'00000';
-
-                    timestamp = parseInt(timestamp);
-                    $scope.instancesdata.push([timestamp,parseFloat(element[1])]);
-                    $scope.totalinstances.push([timestamp,parseFloat($scope.selected_vim.totalInstances)]);
-              
-
-             });
-
-
-              Highcharts.chart('vim_instances_chart_new', {
-                              chart: {
-                                  type:'line',
-                                  zoomType: 'x',
-                                  events: {
-                                      load: function () {                                    
-
-
-                                      }
-                                    }
-                              },
-                              title: {
-                                  text: 'Instances'
-                              },
-                              subtitle: {
-                                  text: document.ontouchstart === undefined ?
-                                          'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
-                              },
-                              xAxis: {
-                                  type: 'datetime'
-                              },
-                              yAxis: {
-                                  title: {
-                                      text: 'Instances'
-                                  }
-                              },
-                              legend: {
-                                  enabled: false
-                              },
-                              credits: {
-                                enabled: false
-                              },
-                              plotOptions: {
-                                  area: {
-                                      fillColor: {
-                                          linearGradient: {
-                                              x1: 0,
-                                              y1: 0,
-                                              x2: 0,
-                                              y2: 1
-                                          },
-                                          stops: [
-                                              [0, '#454e5d'],
-                                              [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                                          ]
-                                      },
-                                      marker: {
-                                          radius: 2
-                                      },
-                                      lineWidth: 1,
-                                      states: {
-                                          hover: {
-                                              lineWidth: 1
-                                          }
-                                      },
-                                      threshold: null
-                                  }
-                              },
-                              series: [{
-                                  color: '#7598ce',
-                                  type:'line',
-                                  name: 'Used Instances',
-                                  data: $scope.instancesdata
-                              },{
-                                  color: '#454e5d',
-                                  type:'line',
-                                  lineWidth: 5,
-                                  data: $scope.totalinstances,
-                                name:'Total Instances'
-                              }]
-                          });
-          });
-}
-
-
-
-
 $scope.instancesChart = function(){
 
       google.charts.setOnLoadCallback(drawChart());
@@ -978,73 +825,3 @@ $scope.drawGauge = function(data_array,options,element){
 
 
 }]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
