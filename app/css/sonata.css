@@ -108,9 +108,13 @@ img {
 }
 
 .virtual-machine .entire {
-    background: #E4E4E4;
     padding: 10px;
     margin: 10px;
+    background: #616C7E;
+    color: #FDFDFB;
+}
+.virtual-machine .entire:hover{
+    background: #262B33;
 }
 .virtual-machine .entire i.fa.fa-desktop {
     text-align: center;

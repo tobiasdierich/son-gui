@@ -62,37 +62,29 @@ partner consortium (www.sonata-nfv.eu).
         <div class="col s12">
           <div class="card-panel">
             <span class="card-title">CPUs</span>
-            <div id="cpu_chart_new"></div>
+            <div id="cpu_chart_new" ng-init="historyCPU()"></div>
           </div>
         </div>
         <div class="col s12">
           <div class="card-panel">
             <span class="card-title">RAM</span>
-            <div id="ram_chart_new"></div>
+            <div id="ram_chart_new" ng-init="historyRAM()"></div>
           </div>
         </div>
 
-        <div class="col s12">
+        <div class="col s12 m6">
           <div class="card-panel">
-            <span class="card-title">Hard Disk</span>
-            <div id="disk_chart_new"></div>
+            <span class="card-title">NET RX BPS</span>
+            <div id="net_rx_bps" ng-init="net_rx_bps_history()"></div>
           </div>
         </div>
-
-        <!-- 
-        <div class="col s12">
-          <div class="cardss-panel">
-            <span class="card-title">Rx/Tx Packages Per Second</span>
-            <div id="rx_tx_pps_chart_new"></div>
+        <div class="col s12 m6">
+          <div class="card-panel">
+            <span class="card-title">NET TX BPS</span>
+            <div id="net_tx_bps" ng-init="net_tx_bps_history()"></div>
           </div>
         </div>
-        <div class="col s12">
-          <div class="cardss-panel">
-            <span class="card-title">Rx/Tx Bits Per Second</span>
-            <div id="rx_tx_chart"></div>
-          </div>
-        </div>
-         -->
+        
 
 
         <div class="col s12" ng-show="containers.length">
