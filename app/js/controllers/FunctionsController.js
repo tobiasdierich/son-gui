@@ -29,6 +29,15 @@ partner consortium (www.sonata-nfv.eu).
 SonataApp.controller('FunctionsController',['$rootScope','$http','$scope',function($rootScope,$http,$scope){
 (function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
   console.log('FUNCTIONS');
+            $scope.openServiceInfo = function(functionss){
+             $('#modal1').openModal();
+             $scope.modal = {};
+             $scope.modal.content = {};
+             $scope.modal.content.title=functionss.vnfd.name;
+
+             $scope.modal.content.function = functionss;
+           }
+
 
            $scope.getFunctions = function(){
             console.info('Get Functions call started. Url:'+$scope.apis.gatekeeper.functions);
@@ -39,7 +48,8 @@ SonataApp.controller('FunctionsController',['$rootScope','$http','$scope',functi
                })
                 .success(function(data) {
                   console.info('Get functions From Url: '+$scope.apis.gatekeeper.functions);
-                  $scope.functions = data;
+                  $scope.functions = data.items;
+                  console.log($scope.functions);
                 })
                 .error(function(data){
                   console.error('Get functions Failed. Get Url: '+$scope.apis.gatekeeper.functions);

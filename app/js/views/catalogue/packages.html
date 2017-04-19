@@ -49,9 +49,9 @@ partner consortium (www.sonata-nfv.eu).
 
         <tbody>
           <tr ng-repeat="package in packages | filter:expression | orderBy:package.created_at:1">
-              <td>{{package.name}}</td>
-              <td>{{package.version}}</td>
-              <td>{{package.description}}</td>
+              <td>{{package.pd.name}}</td>
+              <td>{{package.pd.version}}</td>
+              <td>{{package.pd.description}}</td>
               <td><i ng-click="openServiceInfo(package)" class="Small material-icons cursored">info_outline</i></td> 
           </tr>
          
@@ -70,10 +70,10 @@ partner consortium (www.sonata-nfv.eu).
                 <div class="col s12">
                   <div class="card-panel">
                   
-                    <strong>Description</strong>: {{modal.content.package.package_description}}<br/>
+                    <strong>Description</strong>: {{modal.content.package.pd.description}}<br/>
                     <strong>Uuid</strong>: {{modal.content.package.uuid}}<br/>
-                    <strong>Package maintainer</strong>: {{modal.content.package.package_maintainer}}<br/>
-                    <strong>Vendor</strong>: {{modal.content.package.vendor}}<br/>
+                    <strong>Package maintainer</strong>: {{modal.content.package.pd.maintainer}}<br/>
+                    <strong>Vendor</strong>: {{modal.content.package.pd.vendor}}<br/>
                     <strong>Created_at</strong>: {{modal.content.package.created_at | date:'yyyy-MM-dd HH:mm' : 'UTC'}} UTC<br/>
                     <strong>Updated_at</strong>: {{modal.content.package.updated_at | date:'yyyy-MM-dd HH:mm' : 'UTC'}} UTC<br/>
 

@@ -39,14 +39,16 @@ partner consortium (www.sonata-nfv.eu).
                   <th data-field="name">Name</th>
                   <th data-field="vendor">Vendor</th>
                   <th data-field="status">Status</th>
+                  <th data-field="status">Info</th>
                 </tr>
                 </thead>
 
                 <tbody>
                   <tr ng-repeat="function in functions | orderBy:function.created_at:1">
-                    <td>{{function.name}}</td>
-                    <td>{{function.vendor}}</td>
+                    <td>{{function.vnfd.name}}</td>
+                    <td>{{function.vnfd.vendor}}</td>
                     <td>{{function.status}}</td>
+                    <td><i ng-click="openServiceInfo(function)" class="Small material-icons cursored">info_outline</i></td> 
                   </tr>
                 </tbody>
               </table>
@@ -54,4 +56,27 @@ partner consortium (www.sonata-nfv.eu).
           </div>
         </div>
       </div>
+
+       <div id="modal1" class="modal modal-fixed-footer">
+          <div class="modal-content">
+             <h4>{{modal.content.title}}</h4>
+                <div class="col s12">
+                  <div class="card-panel">
+                  
+                    <strong>Description</strong>: {{modal.content.function.vnfd.description}}<br/>
+                    <strong>Descriptor version</strong>: {{modal.content.function.vnfd.descriptor_version}}<br/>
+                    <strong>Version</strong>: {{modal.content.function.vnfd.version}}<br/>
+                    <strong>Vendor</strong>: {{modal.content.function.vnfd.vendor}}<br/>
+                    <strong>Created_at</strong>: {{modal.content.function.vnfd.created_at | date:'yyyy-MM-dd HH:mm' : 'UTC'}} UTC<br/>
+                    <strong>Updated_at</strong>: {{modal.content.function.vnfd.updated_at | date:'yyyy-MM-dd HH:mm' : 'UTC'}} UTC<br/>
+
+
+                  </div>
+                </div>
+          </div>
+          <div class="modal-footer">
+            <a href="javascript:void(0)" ng-click="closeModal()" class="modal-action modal-close waves-effect waves-green btn-flat ">Close</a>
+          </div>
+        </div>
+
 </div>

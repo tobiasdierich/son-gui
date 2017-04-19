@@ -43,7 +43,7 @@ partner consortium (www.sonata-nfv.eu).
                  <table class="striped responsive-table">
                 <thead>
                   <tr>
-                      <th data-field="checkbox"></th> 
+                      <!-- <th data-field="checkbox"></th>  -->
                       <th data-field="name">Name</th>
                       <th data-field="version">Version</th>
                       <th data-field="description">Description</th>
@@ -53,12 +53,12 @@ partner consortium (www.sonata-nfv.eu).
 
                 <tbody>
                   <tr ng-repeat="service in services | filter:expression | orderBy:service.created_at:1">
-                     <td> 
-                        <input type="checkbox" class="filled-in" id="{{service.name+service.version}}" ng-model="service.checked" ng-change="remakeChecked(service)" /><label for="{{service.name+service.version}}"></label>
-                     </td>
-                      <td>{{service.name}}</td>
-                      <td>{{service.version}}</td>
-                      <td>{{service.description}}</td>
+                     <!-- <td> 
+                        <input type="checkbox" class="filled-in" id="{{service.nsd.name+service.nsd.version}}" ng-model="service.checked" ng-change="remakeChecked(service)" /><label for="{{service.nsd.name+service.nsd.version}}"></label>
+                     </td> -->
+                      <td>{{service.nsd.name}}</td>
+                      <td>{{service.nsd.version}}</td>
+                      <td>{{service.nsd.description}}</td>
                       <td><i ng-click="openServiceInfo(service)" class="Small material-icons cursored">info_outline</i></td> 
                   </tr>
                  
@@ -78,9 +78,8 @@ partner consortium (www.sonata-nfv.eu).
                 <div class="col s12">
                   <div class="card-panel">
                   
-                    <strong>Description</strong>: {{modal.content.service.description}}<br/>
-                    <strong>ID</strong>: {{modal.content.service.id}}<br/>
-                    <strong>Author</strong>: {{modal.content.service.author}}<br/>
+                    <strong>Description</strong>: {{modal.content.service.nsd.description}}<br/>
+                    <strong>Author</strong>: {{modal.content.service.nsd.author}}<br/>
                     <strong>Created_at</strong>: {{modal.content.service.created_at  | date:'yyyy-MM-dd HH:mm' : 'UTC'}} UTC<br/>
                     <strong>Updated_at</strong>: {{modal.content.service.updated_at  | date:'yyyy-MM-dd HH:mm' : 'UTC'}} UTC<br/>
 
