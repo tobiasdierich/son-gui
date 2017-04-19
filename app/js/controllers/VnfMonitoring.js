@@ -1025,7 +1025,7 @@ $scope.historyHardDisk = function(){
                       });
                   
             
-              Highcharts.chart('disk_chart_new_vnf', {
+              $scope.g_charts.push(Highcharts.chart('disk_chart_new_vnf', {
                               chart: {
                                   zoomType: 'x',
                               },
@@ -1083,7 +1083,7 @@ $scope.historyHardDisk = function(){
                                   name: 'Disk',
                                   data: $scope.kam_disk
                               }]
-                          });
+                          }));
 
 
                    
@@ -1138,6 +1138,7 @@ $scope.historyHardDisk = function(){
 
     $scope.init = function(){
       (function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
+      $scope.g_charts = [];
       $scope.getVM();
       $scope.drawGauges();
 
@@ -1148,6 +1149,14 @@ $scope.historyHardDisk = function(){
       $scope.getContainers();
     	
     }
+
+
+
+     $scope.$on("$destroy", function(){
+        $scope.g_charts.forEach(function(chart){
+          chart.destroy();
+        })
+    });
 
      
     
