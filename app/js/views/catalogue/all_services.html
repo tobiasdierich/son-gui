@@ -43,7 +43,7 @@ partner consortium (www.sonata-nfv.eu).
                  <table class="striped responsive-table">
                 <thead>
                   <tr>
-                      <th data-field="checkbox"></th> 
+                      <!-- <th data-field="checkbox"></th>  -->
                       <th data-field="name">Name</th>
                       <th data-field="version">Version</th>
                       <th data-field="description">Description</th>
@@ -53,9 +53,9 @@ partner consortium (www.sonata-nfv.eu).
 
                 <tbody>
                   <tr ng-repeat="service in services | filter:expression | orderBy:service.created_at:1">
-                     <td> 
+                     <!-- <td> 
                         <input type="checkbox" class="filled-in" id="{{service.nsd.name+service.nsd.version}}" ng-model="service.checked" ng-change="remakeChecked(service)" /><label for="{{service.nsd.name+service.nsd.version}}"></label>
-                     </td>
+                     </td> -->
                       <td>{{service.nsd.name}}</td>
                       <td>{{service.nsd.version}}</td>
                       <td>{{service.nsd.description}}</td>

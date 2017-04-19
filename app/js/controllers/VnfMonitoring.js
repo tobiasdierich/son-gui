@@ -464,7 +464,7 @@ $scope.cpuChart = function(){
           type: 'line',
           zoomType: 'x',
           spacingRight: 20,
-          renderTo: 'cpu_chart_new'
+          renderTo: 'cpu_chart_new_vnf'
         },
         title: {
           text: 'CPU'
@@ -655,7 +655,7 @@ $scope.historyRAM = function(){
 
 
 
-                       Highcharts.chart('ram_chart_new', {
+                       Highcharts.chart('ram_chart_new_vnf', {
                               chart: {
                                   zoomType: 'x',
                                   events: {
@@ -829,7 +829,7 @@ $scope.historyCPU = function(){
 
              });
 
-                       Highcharts.chart('cpu_chart_new', {
+                       Highcharts.chart('cpu_chart_new_vnf', {
                               chart: {
                                   zoomType: 'x',
                                   events: {
@@ -1025,7 +1025,7 @@ $scope.historyHardDisk = function(){
                       });
                   
             
-              Highcharts.chart('disk_chart_new', {
+              Highcharts.chart('disk_chart_new_vnf', {
                               chart: {
                                   zoomType: 'x',
                               },

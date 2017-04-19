@@ -807,7 +807,7 @@ $scope.historyHardDisk = function(){
                         var m= element.metric.file_system;
                         console.log(m);
                         
-                        if(m.startsWith("/dev/sda")){
+                        if(m.startsWith("/dev")){
                           $scope.kam_disk = [];
                           element.values.forEach( function(value, index) {
 
