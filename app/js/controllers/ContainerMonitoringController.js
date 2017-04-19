@@ -774,9 +774,9 @@ $scope.historyRXTX = function(){
           url     : $scope.apis.monitoring,
           data    : {
                   "name": "cnt_net_tx_MB",
-                  "start": ""+new Date(new Date().getTime() - 5*60*60000).toISOString(),
+                  "start": ""+new Date(new Date().getTime() - 20*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
-                  "step": "30s",
+                  "step": "1s",
                   "labels": [{"labeltag":"id","labelid":$routeParams.id}]
                     },
           headers : { 'Content-Type': 'application/json' }
@@ -790,9 +790,9 @@ $scope.historyRXTX = function(){
                       url     : $scope.apis.monitoring,
                       data    : {
                               "name": "cnt_net_rx_MB",
-                              "start": ""+new Date(new Date().getTime() - 5*60*60000).toISOString(),
+                              "start": ""+new Date(new Date().getTime() - 20*60000).toISOString(),
                               "end": ""+new Date().toISOString(),
-                              "step": "30s",
+                              "step": "1s",
                               "labels": [{"labeltag":"id","labelid":$routeParams.id}]
                                 },
                       headers : { 'Content-Type': 'application/json' }

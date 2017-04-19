@@ -54,16 +54,15 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
                   }
 
                   $scope.apis = {
-						'monitoring':'http://'+data.MON_URL+'/api/v1/prometheus/metrics/data',
-            'monitoring_list':'http://'+data.MON_URL+'/api/v1/prometheus/metrics/list',
-						'logs':'http://'+data.LOGS_URL+'/search/universal/relative?',
-						'vims':'http://'+data.VIMS_URL+'/vims',
+						'monitoring':data.MON_URL+'/api/v1/prometheus/metrics/data',
+            'monitoring_list':data.MON_URL+'/api/v1/prometheus/metrics/list',
+						'logs':data.LOGS_URL+'/search/universal/relative?',
+						'vims':data.VIMS_URL+'/vims',
 						'gatekeeper':{
-							'services':'http://'+data.GK_URL+'/services',
-							'packages':'http://'+data.GK_URL+'/packages',
-							'functions':'http://'+data.GK_URL+'/functions',
-							'requests':'http://'+data.GK_URL+'/requests',
-
+							'services' :data.GK_URL+'/services',
+							'packages' :data.GK_URL+'/packages',
+							'functions':data.GK_URL+'/functions',
+							'requests' :data.GK_URL+'/requests'
 						}
 					}
 				

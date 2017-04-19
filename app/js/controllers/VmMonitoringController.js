@@ -34,7 +34,7 @@ SonataApp.controller('VmMonitoring',['$rootScope','$scope','$routeParams','$loca
   $scope.vm.currentCPUUsage = 0;
 	$scope.current_time = new Date();
   $scope.ten_m_before = new Date($scope.current_time.getTime() - 20*60000);
-  $scope.settings_modal = {};
+$scope.settings_modal = {};
   $scope.settings_modal.title = "Chart configuration";
 
   $scope.potential_timeranges = [];
@@ -325,220 +325,6 @@ $scope.getCurrentCPU = function(){
           });
 }
 
-
-
-$scope.net_tx_bps_history = function(){
-
-$http({
-                method  : 'POST',
-                url     : $scope.apis.monitoring,
-                data:  {
-                        "name": 'vm_net_tx_bps',
-                        "start": ""+ new Date(new Date().getTime() - 5*60*60000).toISOString(),
-                        "end": ""+new Date().toISOString(),
-                        "step": '20s',
-                        "labels": [{"labeltag":"id","labelid":$routeParams.name}]
-                          },
-                headers : { 'Content-Type': 'application/json' }
-              })
-                .success(function(datas) {
-                    var t_data = [];
-                    
-                    if(datas.metrics.result[0]){
-                     datas.metrics.result[0].values.forEach(function(element, index) {
-          
-                            var timestamp = element[0].toString();
-                            timestamp = timestamp.replace('.','');
-                            if(timestamp.length==12)
-                                        timestamp=timestamp+'0';
-                                else if(timestamp.length==11)
-                                      timestamp = timestamp+'00';
-                                else if(timestamp.length==10)
-                                      timestamp = timestamp+'000';
-                                else if(timestamp.length==9)
-                                      timestamp = timestamp+'0000';
-                                else if(timestamp.length==8)
-                                      timestamp = timestamp+'00000';
-                            timestamp = parseInt(timestamp);
-                            t_data.push([timestamp,parseFloat(element[1])]);
-                         
-                       });
-
-
-                     Highcharts.chart('net_tx_bps', {
-                              chart: {
-                                  zoomType: 'x'
-                              },
-                              title: {
-                                  text: 'NET TX BPS'
-                              },
-                              subtitle: {
-                                  text: document.ontouchstart === undefined ?
-                                          'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
-                              },
-                              xAxis: {
-                                  type: 'datetime'
-                              },
-                              yAxis: {
-                                  title: {
-                                      text: 'Values'
-                                  }
-                              },
-                              legend: {
-                                  enabled: false
-                              },
-                              credits: {
-                                enabled: false
-                              },
-                              plotOptions: {
-                                  area: {
-                                      fillColor: {
-                                          linearGradient: {
-                                              x1: 0,
-                                              y1: 0,
-                                              x2: 0,
-                                              y2: 1
-                                          },
-                                          stops: [
-                                              [0, '#262B33'],
-                                              [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                                          ]
-                                      },
-                                      marker: {
-                                          radius: 2
-                                      },
-                                      lineWidth: 1,
-                                      states: {
-                                          hover: {
-                                              lineWidth: 1
-                                          }
-                                      },
-                                      threshold: null
-                                  }
-                              },
-
-                              series: [{
-                                  type: 'area',
-                                  color: '#454e5d',
-                                  name: 'NET TX BPS',
-                                  data: t_data
-                              }]
-                          });
-
-
-
-                    }
-
-                });          
-}
-
-
-
-$scope.net_rx_bps_history = function(){
-
-$http({
-                method  : 'POST',
-                url     : $scope.apis.monitoring,
-                data:  {
-                        "name": 'vm_net_rx_bps',
-                        "start": ""+ new Date(new Date().getTime() - 5*60*60000).toISOString(),
-                        "end": ""+new Date().toISOString(),
-                        "step": '20s',
-                        "labels": [{"labeltag":"id","labelid":$routeParams.name}]
-                          },
-                headers : { 'Content-Type': 'application/json' }
-              })
-                .success(function(datas) {
-                    var t_data = [];
-                    console.log("NET RX");
-                    console.log(datas);
-                    if(datas.metrics.result[0]){
-                     datas.metrics.result[0].values.forEach(function(element, index) {
-          
-                            var timestamp = element[0].toString();
-                            timestamp = timestamp.replace('.','');
-                            if(timestamp.length==12)
-                                        timestamp=timestamp+'0';
-                                else if(timestamp.length==11)
-                                      timestamp = timestamp+'00';
-                                else if(timestamp.length==10)
-                                      timestamp = timestamp+'000';
-                                else if(timestamp.length==9)
-                                      timestamp = timestamp+'0000';
-                                else if(timestamp.length==8)
-                                      timestamp = timestamp+'00000';
-                            timestamp = parseInt(timestamp);
-                            t_data.push([timestamp,parseFloat(element[1])]);
-                         
-                       });
-
-
-                     Highcharts.chart('net_rx_bps', {
-                              chart: {
-                                  zoomType: 'x'
-                              },
-                              title: {
-                                  text: 'NET RX BPS'
-                              },
-                              subtitle: {
-                                  text: document.ontouchstart === undefined ?
-                                          'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
-                              },
-                              xAxis: {
-                                  type: 'datetime'
-                              },
-                              yAxis: {
-                                  title: {
-                                      text: 'Values'
-                                  }
-                              },
-                              legend: {
-                                  enabled: false
-                              },
-                              credits: {
-                                enabled: false
-                              },
-                              plotOptions: {
-                                  area: {
-                                      fillColor: {
-                                          linearGradient: {
-                                              x1: 0,
-                                              y1: 0,
-                                              x2: 0,
-                                              y2: 1
-                                          },
-                                          stops: [
-                                              [0, '#262B33'],
-                                              [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                                          ]
-                                      },
-                                      marker: {
-                                          radius: 2
-                                      },
-                                      lineWidth: 1,
-                                      states: {
-                                          hover: {
-                                              lineWidth: 1
-                                          }
-                                      },
-                                      threshold: null
-                                  }
-                              },
-
-                              series: [{
-                                  type: 'area',
-                                  color: '#454e5d',
-                                  name: 'NET RX BPS',
-                                  data: t_data
-                              }]
-                          });
-
-
-
-                    }
-
-                });          
-}
 
 $scope.getCPU_History = function(){
   
@@ -1157,18 +943,48 @@ $scope.historyHardDisk = function(){
 
     $scope.init = function(){
       (function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
+      $scope.getVM();
+      $scope.drawGauges();
+      /*$scope.drawCPUChart();*/
+      $scope.historyCPU();
+      $scope.historyRAM();
+      $scope.historyHardDisk();
+      /*$scope.drawRxTxChart();*/
+      /*$scope.drawDiskChart();*/
+      $scope.getContainers();
+      /*$scope.getCurrentMemory();*/
+      /*$scope.getCPU_History();
+      $scope.drawRxTxPPSChart();*/
+
+
       
+      /*setInterval(function() {
+          $scope.drawCPUChart();
+          $scope.drawMEMChart();  
+          $scope.drawRxTxPPSChart();        
+          $scope.drawRxTxChart();  
+        }, 10000);*/
+
+
+/*      setInterval(function(){
+        
+        $scope.drawDiskChart();
+      },60000);
+*/      
+      //drawCPUS
+      //drawMEMS
+      //drawRX/TX
+      //drawDISC
       
-      
-        console.log("Content Loaded");
-          $scope.getVM();
-          $scope.drawGauges();
-          $scope.historyCPU();
-          $scope.historyRAM();      
-          $scope.net_rx_bps_history();
-          $scope.net_tx_bps_history();
-          $scope.getContainers();
-      
+
+    	/*$scope.getCPU();
+    	$scope.getMEM();
+    	$scope.getLineGraph();*/
+    	
+    	/*$scope.FillCPUGraph();*/
+    	 /*setInterval(function() {
+          $scope.FillCPUGraph();
+        }, 5000);*/
     	
     }
 
