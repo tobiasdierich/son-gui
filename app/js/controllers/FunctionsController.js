@@ -48,7 +48,7 @@ SonataApp.controller('FunctionsController',['$rootScope','$http','$scope',functi
                })
                 .success(function(data) {
                   console.info('Get functions From Url: '+$scope.apis.gatekeeper.functions);
-                  $scope.functions = data.items;
+                  $scope.functions = data;
                   console.log($scope.functions);
                 })
                 .error(function(data){

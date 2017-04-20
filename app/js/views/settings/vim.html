@@ -27,13 +27,11 @@ partner consortium (www.sonata-nfv.eu).
 -->
 
 <div class="row" ng-init="init()" ng-controller="VimSettingsController">
-	<div class="col s12">
-		<a class="modal-trigger waves-effect waves-light btn-large" href="#new_vim"><i class="material-icons left">library_add</i>Add a VIM</a>
-	</div>
-	<div class="col s12">
-			
-
-			      <table class="bordered responsive-table">
+	<div class="col s12 m6">
+    <div class="card-panel">
+      <div class="card-content">
+        <a class="modal-trigger waves-effect waves-light btn right" href="#new_wim"><i class="material-icons left">library_add</i>Add a WIM</a>
+        <table class="bordered responsive-table">
                <thead>
                 <tr>
                   <th data-field="uuid">Uuid</th>
@@ -42,15 +40,55 @@ partner consortium (www.sonata-nfv.eu).
                 </thead>
 
                 <tbody>
-                  <tr ng-repeat="vim in vims">
+                  <tr ng-repeat="wim in wims" ng-show="wims.length>0">
                     <td>{{vim.items.request_uuid}}</td>
+                    <td>{{vim.status}}</td>
+                  </tr>
+                  <tr ng-hide="wims.length>0">
+                    <td colspan="2" class="center">There are no wims</td>
+                  </tr>
+                </tbody>
+            </table>
+      </div>
+    </div>
+  </div>
+  <div class="col s12 m6">
+    <div class="card-panel">
+      <div class="card-content">
+            <a class="modal-trigger waves-effect waves-light btn right" href="#new_vim"><i class="material-icons left">library_add</i>Add a VIM</a>
+            <table class="bordered responsive-table">
+               <thead>
+                <tr>
+                  <th data-field="uuid">Uuid</th>
+                  <th data-field="">Total Cores</th>
+                  <th data-field="">Core Used</th>
+                  <th data-field="">Total Memory</th>
+                  <th data-field="">Memory Used</th>
+                  <th data-field="status">Status</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                  <tr ng-repeat="vim in vims">
+                    <td>{{vim.vim_uuid}}</td>
+                    <td>{{vim.core_total}}</td>
+                    <td>{{vim.core_used}}</td>
+                    <td>{{vim.memory_total}}</td>
+                    <td>{{vim.memory_used}}</td>
                     <td>{{vim.status}}</td>
                   </tr>
                 </tbody>
             </table>
-		</div>
-   		
+      </div>
+    </div>
+  </div>
+      
 
+    
+  
+	
+   		
+<!-- 
 
  <div id="new_vim" class="modal modal-fixed-footer">
   
@@ -164,7 +202,164 @@ partner consortium (www.sonata-nfv.eu).
     	<a href="javascript:void(0)" class=" modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
       
     </div>
+  </div> -->
+
+
+
+
+
+ <div id="new_vim" class="modal modal-fixed-footer">
+  
+  <div class="modal-content">
+  <h4>New Vim</h4>
+   <div class="row">
+    <form>
+      <div class="col s12">
+        <h6>General Configuration</h6>
+          
+          <div class="input-field col s12 m4">
+            <input id="wim_id" ng-model="new_vim.wim_id" type="text" class="validate">
+            <label for="wim_id">WIM ID</label>
+          </div> 
+          <div class="input-field col s12 m4">
+            <input id="country" ng-model="new_vim.country" type="text" class="validate">
+            <label for="country">Country</label>
+          </div> 
+          <div class="input-field col s12 m4">
+            <input id="city" ng-model="new_vim.city" type="text" class="validate">
+            <label for="city">City</label>
+          </div> 
+      </div>
+      <div class="col s12 m6">
+        <h6>Compute Configuration</h6>
+          
+          <div class="input-field col s6">
+            <input id="compute_configurationtenant_id" ng-model="new_vim.compute_configuration.tenant_id" type="text" class="validate">
+            <label for="compute_configurationtenant_id">Tenant ID</label>
+          </div> 
+          
+          <div class="input-field col s6">
+            <input id="compute_configurationvim_address" ng-model="new_vim.compute_configuration.vim_address" type="text" class="validate">
+            <label for="compute_configurationvim_address">Vim address</label>
+          </div>
+
+          <div class="input-field col s6">
+            <input id="compute_configurationtenant_ext_net" ng-model="new_vim.compute_configuration.tenant_ext_net" type="text" class="validate">
+            <label for="compute_configurationtenant_ext_net">Tenant External Network ID</label>
+          </div>
+          
+          <div class="input-field col s6">
+            <input id="compute_configurationtenant_ext_router" ng-model="new_vim.compute_configuration.tenant_ext_router" type="text" class="validate">
+            <label for="compute_configurationtenant_ext_router">Tenant External Router ID</label>
+          </div>
+
+          <div class="input-field col s6">
+            <input id="compute_configurationusername" ng-model="new_vim.compute_configuration.username" type="text" class="validate">
+            <label for="compute_configurationusername">Username</label>
+          </div>
+          
+          <div class="input-field col s6">
+            <input id="compute_configurationpassword" ng-model="new_vim.compute_configuration.pass" type="text" class="validate">
+            <label for="compute_configurationpassword">Password</label>
+          </div>
+
+      </div>
+      <div class="col s12 m6">
+        <h6>Networking Configuration</h6>
+
+       
+          <div class="input-field col s12">
+            <input id="vim_address" ng-model="new_vim.networking_configuration.vim_address" type="text" class="validate">
+            <label for="vim_address">Vim address</label>
+          </div>
+
+        
+
+          <div class="input-field col s6">
+            <input id="username" ng-model="new_vim.networking_configuration.username" type="text" class="validate">
+            <label for="username">Username</label>
+          </div>
+          
+          <div class="input-field col s6">
+            <input id="password" ng-model="new_vim.networking_configuration.pass" type="text" class="validate">
+            <label for="password">Password</label>
+          </div>
+
+
+      </div>
+
+     
+
+  
+
+     
+
+  
+
+
+
+
+      
+     </form>
   </div>
+
+
+
+
+
+
+
+
+    </div>
+    <div class="modal-footer">
+      <a href="javascript:void(0)" ng-click="post_a_vim()" class="modal-action modal-close waves-effect waves-green btn-flat ">Save</a>
+      <a href="javascript:void(0)" class=" modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+      
+    </div>
+  </div>
+
+
+
+
+
+
+
+<div id="new_wim" class="modal modal-fixed-footer">  
+  <div class="modal-content">
+      <h4>New Wim</h4>
+      <div class="row">
+        <form class="col s12">
+          <div class="row">
+            
+            <div class="input-field col s6">
+                 <input id="wim_vendor" ng-model="new_wim.wim_vendor" type="text" class="validate">
+              <label for="wim_vendor">Wim vendor</label>
+            </div>
+            <div class="input-field col s6">
+                 <input id="wim_address" ng-model="new_wim.wim_address" type="text" class="validate">
+              <label for="wim_address">Wim address</label>
+            </div>
+            <div class="input-field col s6">
+                 <input id="username" ng-model="new_wim.username" type="text" class="validate">
+              <label for="username">username</label>
+            </div>
+            <div class="input-field col s6">
+                 <input id="pass" ng-model="new_wim.pass" type="text" class="validate">
+              <label for="pass">Wim vendor</label>
+            </div>
+
+          </div>
+        </form>     
+      </div>
+  </div>
+    <div class="modal-footer">
+      <a href="javascript:void(0)" ng-click="post_a_wim()" class="modal-action modal-close waves-effect waves-green btn-flat ">Save</a>
+      <a href="javascript:void(0)" class=" modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+      
+    </div>
+</div>
+
+
 
 
 
@@ -180,8 +375,6 @@ partner consortium (www.sonata-nfv.eu).
       <a href="javascript:void(0)" ng-click="getVims()" class="modal-action modal-close waves-effect waves-green btn-flat ">Ok</a>
     </div>
   </div>
-
-
 
 </div>
 
