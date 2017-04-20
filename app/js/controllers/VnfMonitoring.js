@@ -963,7 +963,7 @@ $scope.historyHardDisk = function(){
           method  : 'POST',
           url     : $scope.apis.monitoring,
           data:  {
-                  "name": "vm_disk_total_1k_blocks",
+                  "name": "vm_disk_usage_perc",
                   "start": ""+ new Date(new Date().getTime() - 15*60000).toISOString(),
                   "end": ""+new Date().toISOString(),
                   "step": "1m",
@@ -985,7 +985,7 @@ $scope.historyHardDisk = function(){
                     method  : 'POST',
                     url     : $scope.apis.monitoring,
                     data:  {
-                            "name": "vm_disk_used_1k_blocks",
+                            "name": "vm_disk_usage_perc",
                             "start": ""+ new Date(new Date().getTime() - 15*60000).toISOString(),
                             "end": ""+new Date().toISOString(),
                             "step": "1m",
