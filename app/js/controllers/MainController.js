@@ -58,6 +58,7 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
             'monitoring_list':data.MON_URL+'/api/v1/prometheus/metrics/list',
 						'logs':data.LOGS_URL+'/search/universal/relative?',
 						'vims':data.VIMS_URL+'/vims',
+            'wims':data.VIMS_URL+'/wims',
 						'gatekeeper':{
 							'services' :data.GK_URL+'/services',
 							'packages' :data.GK_URL+'/packages',
