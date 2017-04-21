@@ -47,19 +47,7 @@ SonataApp.controller('VimSettingsController',['$rootScope','$scope','$routeParam
           data    : $scope.new_vim
          })
           .success(function(data) {
-	         console.log(data);
-            console.log(data.items.request_uuid);
-
-              $http({
-                method  : 'GET',
-                url     : $scope.apis.vims+'/'+data.items.request_uuid,
-                headers : { 'Content-Type': 'application/json','Accept':'application/json' },
-                data    : $scope.new_vim
-               })
-                .success(function(data) {
-                  console.log("EE");
-                  console.log(data);
-                })
+            $scope.regetVims();
   	        
 	        $('#new_vim_installed').openModal();  
         });
@@ -77,7 +65,8 @@ SonataApp.controller('VimSettingsController',['$rootScope','$scope','$routeParam
           .success(function(data) {
           
           console.log(data);
-          $('#new_vim_installed').openModal();  
+          $('#new_wim_installed').openModal();
+            $scope.regetWims();  
           
         });
   }
@@ -86,9 +75,10 @@ SonataApp.controller('VimSettingsController',['$rootScope','$scope','$routeParam
 			
 	}
 
-	$scope.getVims = function(){
-
-      	$http({
+  $scope.regetVims = function(){
+    $scope.loading =1;
+      
+      $http({
           method  : 'GET',
           url     : $scope.apis.vims,
           headers : { 'Content-Type': 'application/json','Accept':'application/json' }
@@ -101,15 +91,25 @@ SonataApp.controller('VimSettingsController',['$rootScope','$scope','$routeParam
               url     : $scope.apis.vims+'/'+uuid,
               headers : { 'Content-Type': 'application/json','Accept':'application/json'}
              })
+              .error(function (data, status, headers, config) {
+                  $scope.zero_vims = 1;
+                  $scope.loading=0;
+              })
               .success(function(datamm) {
-                console.log("Mamo");
-                console.log(datamm);
-
                 $scope.vims = new Array();
                 $scope.vims=datamm;
-                $scope.vims.forEach(function(vim,index){
+                
+
+                if($scope.vims.length==0){
+                  $scope.zero_vims = 1;
+                  $scope.loading=0;
+                }else{
+                  $scope.vims.forEach(function(vim,index){
                     $scope.setVimStatus(vim);
-                });
+                    $scope.zero_vims=0;
+                    $scope.loading=0;
+                  });  
+                }
 
               });   
 
@@ -119,8 +119,171 @@ SonataApp.controller('VimSettingsController',['$rootScope','$scope','$routeParam
 
           });
 
+  }
+	$scope.getVims = function(){
+      $scope.zero_vims = 0;
+      $scope.loading =1;
+      	$http({
+          method  : 'GET',
+          url     : $scope.apis.vims,
+          headers : { 'Content-Type': 'application/json','Accept':'application/json' }
+         }).success(function(data) {
+            
+            var uuid = data.items.request_uuid;
+            setTimeout(function(){
+
+              $http({
+              method  : 'GET',
+              url     : $scope.apis.vims+'/'+uuid,
+              headers : { 'Content-Type': 'application/json','Accept':'application/json'}
+             })
+              .error(function (data, status, headers, config) {
+                  $scope.zero_vims = 1;
+                  $scope.loading=0;
+              })
+              .success(function(datamm) {
+              
+                $scope.vims = new Array();
+                $scope.vims=datamm;
+                if($scope.vims.length==0){
+                  $scope.zero_vims = 1;
+                  $scope.loading=0;
+                }else{
+                  $scope.vims.forEach(function(vim,index){
+                    $scope.setVimStatus(vim);
+                    $scope.zero_vims=0;
+                    $scope.loading=0;
+                  });  
+                }
+                
+
+              });   
+
+            },2500);
+
+
+
+          });
+
 
 	}
+
+
+  $scope.regetWims = function(){
+    console.log("MM");
+      $scope.zero_wims = 0;
+      $scope.loading_wims =1;
+
+    $http({
+          method  : 'GET',
+          url     : $scope.apis.wims,
+          headers : { 'Content-Type': 'application/json','Accept':'application/json' }
+         }).success(function(data) {
+            var uuid = data.items.request_uuid;
+            setTimeout(function(){
+
+              $http({
+              method  : 'GET',
+              url     : $scope.apis.wims+'/'+uuid,
+              headers : { 'Content-Type': 'application/json','Accept':'application/json'}
+             }).error(function (data, status, headers, config) {
+                  $scope.zero_wims = 1;
+                  $scope.loading_wims=0;
+              })
+              .success(function(datamm) {
+                
+                $scope.wims = new Array();
+                $scope.select = {};
+                $scope.select.wims = new Array();
+
+                
+                $scope.m=datamm;
+                               
+
+
+
+                 if($scope.m.length==0){
+                  $scope.zero_wims = 1;
+                  $scope.loading_wims=0;
+                }else{
+                  $scope.m.forEach(function(wim,index){
+                    
+                    
+                    var x = {};
+                    x.uuid = wim;
+                    x.status = "-";
+                    $scope.wims.push(x);
+                    $scope.select.wims.push(x);
+
+
+                  });  
+
+                  $scope.zero_wims=0;
+                    $scope.loading_wims=0;
+                }
+
+
+                
+                   
+                
+
+
+              });   
+
+
+            }, 2500);
+
+
+          });
+  }
+
+  $scope.getWims = function(){
+
+        $http({
+          method  : 'GET',
+          url     : $scope.apis.wims,
+          headers : { 'Content-Type': 'application/json','Accept':'application/json' }
+         }).success(function(data) {
+            var uuid = data.items.request_uuid;
+            
+
+              $http({
+              method  : 'GET',
+              url     : $scope.apis.wims+'/'+uuid,
+              headers : { 'Content-Type': 'application/json','Accept':'application/json'}
+             }).error(function (data, status, headers, config) {
+                  $scope.zero_wims = 1;
+                  $scope.loading_wims=0;
+              })
+              .success(function(datamm) {
+                
+                $scope.wims = new Array();
+
+                
+                $scope.m=datamm;
+                $scope.m.forEach(function(wim,index){
+                    var x = {};
+                    x.uuid = wim;
+                    x.status = "-";
+                    $scope.wims.push(x);
+                    
+
+                });
+                console.log("Wims");
+                console.log($scope.wims);
+                
+                   $('select').material_select();
+                   console.log("oook");
+                
+
+              });   
+
+          });
+
+
+  }
+
+
 
 	$scope.setVimStatus = function(vim){
 		vim.status = '-';
@@ -129,6 +292,7 @@ SonataApp.controller('VimSettingsController',['$rootScope','$scope','$routeParam
 
     $scope.init = function(){
     	$scope.getVims();
+      $scope.getWims();
     }
 
      
