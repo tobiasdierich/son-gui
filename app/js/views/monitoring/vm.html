@@ -37,8 +37,11 @@ partner consortium (www.sonata-nfv.eu).
             <strong>ID:</strong> {{vm.id}}<br/>
           </div>
             <div class="row">
-              <div id="vCPUschart" class="col s12 m12 center push-m2"></div>
-              <div id="vRAMschart" class="col s12 m12 center push-m2"></div>
+
+               <div class="col s12 m12 center"><div id="vCPUschart" class="gauge_div" style="width:100%;margin: 0 auto;display: block;"></div></div>
+              <div class="col s12 m12 center"><div id="vRAMschart"  class="gauge_div" style="margin: 0 auto;display: block;"></div></div>
+
+
             </div>  
             <div class="row" style="text-align: center;">
               <div class="btn btn-success blue-grey darken-2" ng-click="newChartBtn()">Add a Chart</div>

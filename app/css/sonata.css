@@ -136,3 +136,8 @@ img {
     display: block;
     z-index: 9999;
 }
+
+div.gauge_div table {
+    width: auto;
+    margin: 0 auto !important;
+}
