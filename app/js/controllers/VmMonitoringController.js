@@ -696,6 +696,35 @@ $scope.historyRAM = function(){
 
 
 
+$scope.drawGaugesRAM = function(){
+   google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+
+        var data = google.visualization.arrayToDataTable([
+          ['Label', 'Value'],
+          ['Memory', parseFloat($scope.vm.currentMemoryUsage)],
+        ]);
+
+        var options = {
+          width: 400, height: 120,
+          redFrom: 90, redTo: 100,
+          yellowFrom:75, yellowTo: 90,
+          minorTicks: 5
+        };
+
+        var chart = new google.visualization.Gauge(document.getElementById('vRAMschart'));
+
+        chart.draw(data, options);
+
+        setInterval(function() {
+          $scope.getCurrentMemory();          
+          data.setValue(0, 1, parseFloat($scope.vm.currentMemoryUsage));
+          chart.draw(data, options);
+        }, 10000);
+       
+       
+      }
+}
 
 $scope.drawGauges = function(){
    google.charts.setOnLoadCallback(drawChart);
@@ -703,7 +732,7 @@ $scope.drawGauges = function(){
 
         var data = google.visualization.arrayToDataTable([
           ['Label', 'Value'],
-          ['Memory', parseFloat($scope.vm.currentMemoryUsage)],
+          
           ['CPU', parseFloat($scope.vm.currentCPUUsage)]
         ]);
 
@@ -721,11 +750,6 @@ $scope.drawGauges = function(){
         setInterval(function() {
           $scope.getCurrentMemory();          
           data.setValue(0, 1, parseFloat($scope.vm.currentMemoryUsage));
-          chart.draw(data, options);
-        }, 10000);
-        setInterval(function() {
-          $scope.getCurrentCPU(); 
-          data.setValue(1, 1, parseFloat($scope.vm.currentCPUUsage));
           chart.draw(data, options);
         }, 10000);
        
@@ -945,6 +969,7 @@ $scope.historyHardDisk = function(){
       (function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
       $scope.getVM();
       $scope.drawGauges();
+      $scope.drawGaugesRAM();
       /*$scope.drawCPUChart();*/
       $scope.historyCPU();
       $scope.historyRAM();

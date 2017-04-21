@@ -27,35 +27,13 @@ partner consortium (www.sonata-nfv.eu).
 -->
 
 <div class="row" ng-init="init()" ng-controller="VimSettingsController">
-	<div class="col s12 m6">
-    <div class="card-panel">
-      <div class="card-content">
-        <a class="modal-trigger waves-effect waves-light btn right" href="#new_wim"><i class="material-icons left">library_add</i>Add a WIM</a>
-        <table class="bordered responsive-table">
-               <thead>
-                <tr>
-                  <th data-field="uuid">Uuid</th>
-                  <th data-field="status">Status</th>
-                </tr>
-                </thead>
 
-                <tbody>
-                  <tr ng-repeat="wim in wims" ng-show="wims.length>0">
-                    <td>{{vim.items.request_uuid}}</td>
-                    <td>{{vim.status}}</td>
-                  </tr>
-                  <tr ng-hide="wims.length>0">
-                    <td colspan="2" class="center">There are no wims</td>
-                  </tr>
-                </tbody>
-            </table>
-      </div>
-    </div>
-  </div>
   <div class="col s12 m6">
     <div class="card-panel">
       <div class="card-content">
-            <a class="modal-trigger waves-effect waves-light btn right" href="#new_vim"><i class="material-icons left">library_add</i>Add a VIM</a>
+            <h5>Vims</h5>
+            <a class="waves-effect blue-grey darken-3 btn right" ng-click="regetVims()"><i class="material-icons left">replay</i>Refresh</a>
+            <a class="modal-trigger waves-effect waves-light btn right" href="#new_vim" ng-show="wims.length>0" style="margin-right: 5px"><i class="material-icons left">library_add</i>Add a VIM</a>
             <table class="bordered responsive-table">
                <thead>
                 <tr>
@@ -69,13 +47,73 @@ partner consortium (www.sonata-nfv.eu).
                 </thead>
 
                 <tbody>
-                  <tr ng-repeat="vim in vims">
+                  <tr ng-show="loading">
+                    <td colspan="6" class="text-center center">
+                      <div class="preloader-wrapper small active">
+                        <div class="spinner-layer spinner-green-only">
+                          <div class="circle-clipper left">
+                            <div class="circle"></div>
+                          </div><div class="gap-patch">
+                            <div class="circle"></div>
+                          </div><div class="circle-clipper right">
+                            <div class="circle"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr ng-repeat="vim in vims" ng-show="!loading">
                     <td>{{vim.vim_uuid}}</td>
                     <td>{{vim.core_total}}</td>
                     <td>{{vim.core_used}}</td>
                     <td>{{vim.memory_total}}</td>
                     <td>{{vim.memory_used}}</td>
                     <td>{{vim.status}}</td>
+                  </tr>
+                   <tr ng-show="zero_vims">
+                    <td colspan="6" class="center" ng-show="!zero_vims">There are no vims</td>
+                  </tr>
+                </tbody>
+            </table>
+      </div>
+    </div>
+  </div>
+  <div class="col s12 m6">
+    <div class="card-panel">
+      <div class="card-content">
+          <h5>Wims</h5>
+        <a class="waves-effect blue-grey darken-3 btn right m-l" ng-click="regetWims()"><i class="material-icons left">replay</i>Refresh</a>
+        <a class="modal-trigger waves-effect waves-light btn right m-l" href="#new_wim" style="margin-right: 5px"><i class="material-icons left">library_add</i>Add a WIM</a>
+        <table class="bordered responsive-table">
+               <thead>
+                <tr>
+                  <th data-field="uuid">Uuid</th>
+                  <th data-field="status">Status</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                 <tr ng-show="loading_wims">
+                    <td colspan="6" class="text-center center">
+                      <div class="preloader-wrapper small active">
+                        <div class="spinner-layer spinner-green-only">
+                          <div class="circle-clipper left">
+                            <div class="circle"></div>
+                          </div><div class="gap-patch">
+                            <div class="circle"></div>
+                          </div><div class="circle-clipper right">
+                            <div class="circle"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr ng-repeat="wim in wims" ng-show="wims.length>0 && !loading_wims" >
+                    <td>{{wim.uuid}}</td>
+                    <td>{{wim.status}}</td>
+                  </tr>
+                  <tr ng-hide="wims.length>0">
+                    <td colspan="2" class="center" ng-show="!zero_wims">There are no wims</td>
                   </tr>
                 </tbody>
             </table>
@@ -84,129 +122,6 @@ partner consortium (www.sonata-nfv.eu).
   </div>
       
 
-    
-  
-	
-   		
-<!-- 
-
- <div id="new_vim" class="modal modal-fixed-footer">
-  
-  <div class="modal-content">
-  <h4>New Vim</h4>
-   <div class="row">
-    <form class="col s12">
-      <div class="row">
-        <div class="input-field col s6">
-          <select ng-model="new_vim.wr_type">
-            <option value="" disabled selected>Choose wrapper type</option>
-            <option value="Compute">Compute</option>
-            <option value="Networking">Networking</option>
-            <option value="Storage" disabled="disabled">Storage</option>
-          </select>
-          <label>Wrapper Type</label>
-          </div>
-          <p><label>Vim Vendor</label></p>
-          <div class="col s6">
-          
-
-              <div class="mradio" ng-show="new_vim.wr_type=='Compute' || new_vim.wr_type!='Networking'">
-              <input name="group1" type="radio" ng-model="new_vim.vim_type" id="Heat" value="Heat" />
-              <label for="Heat">Heat</label>
-              </div>
-
-              <div class="mradio" ng-show="new_vim.wr_type=='Compute' || new_vim.wr_type!='Networking'">
-              <input name="group1" type="radio" ng-model="new_vim.vim_type" id="Kubernetes" value="Kubernetes" />
-              <label for="Kubernetes">Kubernetes</label>
-              </div>
-
-              <div class="mradio" ng-show="new_vim.wr_type=='Networking'">
-              <input name="group1" ng-model="new_vim.vim_type" type="radio" id="Ovs"  value="Ovs" />
-              <label for="Ovs">Ovs</label>
-              </div>
-
-          </div>
-        
-      </div>
-
-  
-
-      <div class="row" ng-show="new_vim.wr_type=='Compute'">
-      <div class="input-field col s6">
-             <input id="tenant_ext_net" ng-model="new_vim.tenant_ext_net" type="text" class="validate">
-          <label for="tenant_ext_net">Tenant External Network ID</label>
-        </div> 
-         
-
-        <div class="input-field col s6">
-          <input id="tenant_ext_router" ng-model="new_vim.tenant_ext_router" type="text" class="validate">
-          <label for="tenant_ext_router">Tenant External Router ID</label>
-        </div>
-
-      </div>
-
-
-  
-
-      <div class="row" ng-show="new_vim.wr_type=='Networking'">
-        <div class="input-field col s6">
-            <input id="compute_uuid" ng-model="new_vim.compute_uuid" type="text" class="validate">
-            <label for="compute_uuid">Associated Compute Vim</label>
-        </div>
-      </div>
-
-
-
-
-      <div class="row">
-        <div class="input-field col s6">
-          <input id="vim_address" ng-model="new_vim.vim_address" type="text" class="validate">
-          <label for="vim_address">Vim address</label>
-        </div>
-        <div class="input-field col s6">
-            <input id="tenant" ng-model="new_vim.tenant" type="text" class="validate">
-          	<label for="tenant">Tenant</label>
-        </div>
-      </div>
-
-
-
-      <div class="row">
-        <div class="input-field col s6">
-          <input id="pass" ng-model="new_vim.pass" type="text" class="validate">
-          <label for="pass">Password</label>
-        </div>
-        <div class="input-field col s6">
-             <input id="username" ng-model="new_vim.username" type="text" class="validate">
-          <label for="username">Username</label>
-        </div>
-        
-      </div>
-
-
-
-      
-     </form>
-  </div>
-
-
-
-
-
-
-
-
-    </div>
-    <div class="modal-footer">
-      <a href="javascript:void(0)" ng-click="post_a_vim()" class="modal-action modal-close waves-effect waves-green btn-flat ">Save</a>
-    	<a href="javascript:void(0)" class=" modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
-      
-    </div>
-  </div> -->
-
-
-
-
 
  <div id="new_vim" class="modal modal-fixed-footer">
   
@@ -214,13 +129,20 @@ partner consortium (www.sonata-nfv.eu).
   <h4>New Vim</h4>
    <div class="row">
     <form>
+      <div class="row">
       <div class="col s12">
         <h6>General Configuration</h6>
           
+
+
           <div class="input-field col s12 m4">
-            <input id="wim_id" ng-model="new_vim.wim_id" type="text" class="validate">
-            <label for="wim_id">WIM ID</label>
+            <select class="" ng-model="new_vim.wim_id" material-select watch>
+                <option ng-repeat="value in wims">{{value.uuid}}</option>
+            </select>
+            <label for="">Select WIM</label>
           </div> 
+
+
           <div class="input-field col s12 m4">
             <input id="country" ng-model="new_vim.country" type="text" class="validate">
             <label for="country">Country</label>
@@ -230,6 +152,8 @@ partner consortium (www.sonata-nfv.eu).
             <label for="city">City</label>
           </div> 
       </div>
+      </div>
+      <div class="row">
       <div class="col s12 m6">
         <h6>Compute Configuration</h6>
           
@@ -287,7 +211,7 @@ partner consortium (www.sonata-nfv.eu).
 
 
       </div>
-
+      </div>
      
 
   
@@ -341,11 +265,11 @@ partner consortium (www.sonata-nfv.eu).
             </div>
             <div class="input-field col s6">
                  <input id="username" ng-model="new_wim.username" type="text" class="validate">
-              <label for="username">username</label>
+              <label for="username">Username</label>
             </div>
             <div class="input-field col s6">
                  <input id="pass" ng-model="new_wim.pass" type="text" class="validate">
-              <label for="pass">Wim vendor</label>
+              <label for="pass">Password</label>
             </div>
 
           </div>
@@ -368,6 +292,20 @@ partner consortium (www.sonata-nfv.eu).
  <div id="new_vim_installed" class="modal modal-fixed-footer">
     <div class="modal-content" style="    background: #80C383;">
       <h5 style="text-align: center; color: white; padding: 10px;">The new VIM has been added!</h5>
+      <h6 style="text-align: center;color: white"></h6>
+  </div>
+
+    <div class="modal-footer">
+      <a href="javascript:void(0)" ng-click="getVims()" class="modal-action modal-close waves-effect waves-green btn-flat ">Ok</a>
+    </div>
+  </div>
+
+
+
+
+  <div id="new_wim_installed" class="modal modal-fixed-footer">
+    <div class="modal-content" style="    background: #80C383;">
+      <h5 style="text-align: center; color: white; padding: 10px;">The new WIM has been added!</h5>
       <h6 style="text-align: center;color: white"></h6>
   </div>
 

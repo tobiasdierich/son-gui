@@ -398,13 +398,44 @@ $scope.getCPU_History = function(){
 
 
 
-$scope.drawGauges = function(){
+$scope.drawGaugesRAM = function(){
    google.charts.setOnLoadCallback(drawChart);
       function drawChart() {
 
         var data = google.visualization.arrayToDataTable([
           ['Label', 'Value'],
           ['Memory', parseFloat($scope.vnf.currentMemoryUsage)],
+        ]);
+
+        var options = {
+          width: 400, height: 120,
+          redFrom: 90, redTo: 100,
+          yellowFrom:75, yellowTo: 90,
+          minorTicks: 5
+        };
+
+        var chart = new google.visualization.Gauge(document.getElementById('vRAMschart'));
+
+        chart.draw(data, options);
+
+        setInterval(function() {
+          $scope.getCurrentMemory();   
+          data.setValue(0, 1, parseFloat($scope.vnf.currentMemoryUsage));
+          chart.draw(data, options);       
+          
+        }, 10000);
+
+       
+       
+      }
+}
+
+$scope.drawGauges = function(){
+   google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+
+        var data = google.visualization.arrayToDataTable([
+          ['Label', 'Value'],          
           ['CPU', parseFloat($scope.vnf.currentCPUUsage)]
         ]);
 
@@ -415,16 +446,10 @@ $scope.drawGauges = function(){
           minorTicks: 5
         };
 
-        var chart = new google.visualization.Gauge(document.getElementById('vCPUscharts'));
+        var chart = new google.visualization.Gauge(document.getElementById('vCPUschart'));
 
         chart.draw(data, options);
 
-        setInterval(function() {
-          $scope.getCurrentMemory();   
-          data.setValue(0, 1, parseFloat($scope.vnf.currentMemoryUsage));
-          chart.draw(data, options);       
-          
-        }, 10000);
 
         setInterval(function() {
           $scope.getCurrentCPU(); 
@@ -1141,6 +1166,7 @@ $scope.historyHardDisk = function(){
       $scope.g_charts = [];
       $scope.getVM();
       $scope.drawGauges();
+      $scope.drawGaugesRAM();
 
 
       $scope.historyCPU();

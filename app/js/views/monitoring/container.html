@@ -28,13 +28,13 @@ partner consortium (www.sonata-nfv.eu).
 
 <div class="row" ng-init="init()" ng-controller="ContainerMonitoring">
 		<div class="col s12">
+    <div class="col s12">
 			<div class="card-panel">
 				<strong>Exported Instance:</strong><!-- <a href="javascript:void(0)" class="cursored" ng-click="changeHash('/vm/'+container.exported_instance)"> -->{{container.exported_instance}}<!-- </a> --><br/>
 				<strong>Image Name:</strong>{{container.image_name}}<br/>
 				<strong>Id:</strong>{{container.id}}<br/>
-				
-				
 			</div>
+    </div>
 		</div>
    		<div class="col s12">
       <div class="col s12">
@@ -60,12 +60,7 @@ partner consortium (www.sonata-nfv.eu).
             <div id="cnt_mem_chart_new"></div>
           </div>
         </div>
-       <!--  <div class="col s12">
-         <div class="card-panel">
-           <span class="card-title">Rx/Tx</span>
-           <div id="cnt_rx_tx_chart_new"></div>
-         </div>
-       </div> -->
+      
         <div class="col s12">
           <div class="card-panel">
             <span class="card-title">Rx/Tx</span>
