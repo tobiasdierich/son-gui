@@ -11945,7 +11945,7 @@
                     boxes = [],
                     chart = this.chart,
                     ren = chart.renderer,
-                    rightAligned = true,
+                    rightAligned = false,
                     options = this.options,
                     headerHeight,
                     tooltipLabel = this.getLabel();

@@ -192,7 +192,7 @@ partner consortium (www.sonata-nfv.eu).
                 </div>
           </div>
           <div class="modal-footer">
-            <a href="javascript:void(0)" ng-click="closeModal()" class="modal-action modal-close waves-effect waves-green btn-flat ">Close</a>
+            <a href="javascript:void(0)" ng-click="closeModal()" class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
           </div>
         </div>
                   
@@ -209,6 +209,7 @@ partner consortium (www.sonata-nfv.eu).
  
 </div>
 
+
 <style>
 .matab .active{
   background: white!important;
@@ -219,3 +220,25 @@ partner consortium (www.sonata-nfv.eu).
   margin:0 auto!important;
 }
 </style>
+
+<script>
+$('.button-collapse').sideNav({
+      menuWidth: 300, // Default is 300
+      edge: 'right', // Choose the horizontal origin
+      closeOnClick: true, // Closes side-nav on <a> clicks, useful for Angular/Meteor
+      draggable: true // Choose whether you can drag to open on touch screens
+    }
+  );
+
+
+
+$(".button-collapse").sideNav();
+$(function(){
+  console.log("MMM");
+  $('.collapsible').collapsible({accordion: false, // A setting that changes the collapsible behavior to expandable instead of the default accordion style
+      onOpen: function(el) { alert('Open'); }, // Callback for Collapsible open
+      onClose: function(el) { alert('Closed'); } // Callback for Collapsible close
+  }); 
+});
+
+</script>
