@@ -27,8 +27,11 @@ partner consortium (www.sonata-nfv.eu).
 */
 
 SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$location', '$http',function($rootScope,$scope, $routeParams, $location, $http) {
-		console.log('MainControllers');
 		var debug=false;
+  
+
+    
+		
 		
 		
 		/*$scope.apis.monitoring = 'http://sp.int2.sonata-nfv.eu:8000/api/v1/prometheus/metrics/data';*/
@@ -63,7 +66,9 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
 							'services' :data.GK_URL+'/services',
 							'packages' :data.GK_URL+'/packages',
 							'functions':data.GK_URL+'/functions',
-							'requests' :data.GK_URL+'/requests'
+							'requests' :data.GK_URL+'/requests',
+              'users'    :data.GK_URL+'/users',
+              'user_sessions':data.GK_URL+'/sessions',
 						}
 					}
 				
@@ -83,12 +88,20 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
 
 		
     
-   	if(debug==false && $rootScope.resp!=1){
-			location.hash='/login';
-		}else {
-
-			$rootScope.is_user_logged_in = true;
-		}
+    if($location.url()!='/signup'){
+        console.log(debug);
+        console.log($rootScope.resp);
+      if(debug==false && $rootScope.resp!=1){
+        location.hash='/login';
+      
+      }else {
+      
+          $rootScope.is_user_logged_in = true;
+      }
+    }
+        
+    
+   	
 
 
 $scope.alerts_visibility = 0;           

@@ -296,5 +296,9 @@ SonataApp.controller('VimSettingsController',['$rootScope','$scope','$routeParam
     }
 
      
+     $scope.$on("$destroy", function() {
+         $scope.wims.clear();
+         $scope.vims.clear();
+    });
     
 }]);
