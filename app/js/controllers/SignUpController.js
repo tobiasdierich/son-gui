@@ -81,7 +81,7 @@ SonataApp.controller('SignUpController',['$rootScope','$http','$scope',function(
 	                  console.log(errorThrown);
 
 	                  console.log(jqXHR);
-	                  	$scope.error_message = jqXHR.responseJSON.error.message;
+	                  	$scope.error_message = jqXHR.statusText+" "+jqXHR.responseJSON.error.message;
 	                  	$scope.error_message_view = 1;
 	                  
 	              });

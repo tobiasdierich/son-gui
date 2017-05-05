@@ -116,8 +116,5 @@ SonataApp.controller('LoginController',['$rootScope','$http','$scope','$routePar
               });
           }
 
-           $scope.$on('$destroy', () => {
-              for (let member in $scope) $scope[member] = null;
-          })
            
 }]);
