@@ -29,10 +29,6 @@ partner consortium (www.sonata-nfv.eu).
 SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$location', '$http',function($rootScope,$scope, $routeParams, $location, $http) {
 		var debug=false;
   
-
-    
-		
-		
 		
 		/*$scope.apis.monitoring = 'http://sp.int2.sonata-nfv.eu:8000/api/v1/prometheus/metrics/data';*/
 		

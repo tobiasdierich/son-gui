@@ -98,6 +98,10 @@ SonataApp.config(function($routeProvider) {
 				templateUrl	: 'js/views/monitoring/vnfs.html',
 				controller 	: 'MainController'
 			})
+			.when('/catalogue/kpis',{
+				templateUrl	: 'js/views/catalogue/kpis.html',
+				controller 	: 'MainController'
+			})
 			.when('/vnf/:name',{
 				templateUrl	: 'js/views/monitoring/vnf.html',
 				controller 	: 'MainController'

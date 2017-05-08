@@ -82,7 +82,7 @@ $scope.updateBox = function(box){
   $scope.fillnewBox(box);
 }
 $scope.removeBox = function(box){
-  /*$scope.getObjById($scope.boxes, parseInt(box.id));*/
+  
 
   for (var i =0; i < $scope.boxes.length; i++)
    if ($scope.boxes[i].id === box.id) {
