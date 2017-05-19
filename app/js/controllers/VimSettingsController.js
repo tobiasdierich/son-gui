@@ -159,6 +159,7 @@ $scope.getWimDetails = function(wim){
 
                 $scope.vims = new Array();
                 $scope.vims=datamm;
+
                 if($scope.vims.length==0){
                   $scope.zero_vims = 1;
                   $scope.loading=0;
@@ -221,10 +222,15 @@ $scope.getWimDetails = function(wim){
                   $scope.loading_wims=0;
                 }else{
                   $scope.m.forEach(function(wim,index){
+
+
+                   
                     
                     
                     var x = {};
-                    x.uuid = wim;
+                    x.uuid = wim.uuid;
+                    x.name = wim.name;
+                    x.attached_vims = wim.attached_vims;
                     x.status = "-";
                     $scope.wims.push(x);
                     $scope.select.wims.push(x);
