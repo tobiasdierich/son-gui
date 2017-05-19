@@ -36,7 +36,7 @@ partner consortium (www.sonata-nfv.eu).
       <!--Import materialize.css-->
       <link type="text/css" rel="stylesheet" href="css/materialize.css"  media="screen,projection"/>
       <link type="text/css" rel="stylesheet" href="css/sonata.css"  media="screen,projection"/>
-
+      <meta charset="UTF-8">
 
       
 
@@ -55,25 +55,15 @@ partner consortium (www.sonata-nfv.eu).
         <div ng-include="'js/views/sidebar.html'" ng-controller="SideBarController" ng-show="is_user_logged_in"></div>
         <main ng-view></main>  
       </section>
-      
-
-      
-
 
       <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-      
-      
-
-
       <script src="js/vendor/angular.min.js"></script>
       <script src="js/vendor/angular-route.js"></script>
-      
       <script type="text/javascript" src="js/materialize.js"></script>
       <script src="js/vendor/angular-materialize.js"></script>
       <script src="js/vendor/angular-resource.min.js"></script>
-       <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-            <script>google.charts.load('current', {packages: ['corechart', 'line','gauge']});</script>
-      
+      <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+      <script>google.charts.load('current', {packages: ['corechart', 'line','gauge']});</script>     
      
 
     <!-- Modules -->
@@ -90,6 +80,7 @@ partner consortium (www.sonata-nfv.eu).
     <script src="js/controllers/UserSettingsController.js"></script>
     <script src="js/controllers/UserServicesController.js"></script>
     <script src="js/controllers/LoginController.js"></script>
+    <script src="js/controllers/SignUpController.js"></script>
     <script src="js/controllers/AlertsController.js"></script>
     <script src="js/controllers/LineChartController.js"></script>
     <script src="js/controllers/AllServicesController.js"></script>
@@ -97,9 +88,11 @@ partner consortium (www.sonata-nfv.eu).
     <script src="js/controllers/MonitoringServicePlatformController.js"></script>
     <script src="js/controllers/VmMonitoringController.js"></script>
     <script src="js/controllers/ContainerMonitoringController.js"></script>
+    <script src="js/controllers/KpisController.js"></script>
     <script src="js/controllers/VnfsController.js"></script>
     <script src="js/controllers/VnfMonitoring.js"></script>
     <script src="js/controllers/packagesController.js"></script>
+    <script src="js/controllers/HeaderBarController.js"></script>    
     <script src="js/controllers/FunctionsController.js"></script>
     <script src="js/controllers/VimSettingsController.js"></script>
     <script src="js/vendor/jszip.min.js"></script>

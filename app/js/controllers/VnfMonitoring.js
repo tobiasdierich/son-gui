@@ -1182,6 +1182,15 @@ $scope.historyHardDisk = function(){
         $scope.g_charts.forEach(function(chart){
           chart.destroy();
         })
+
+    
+    
+         $scope.kam_disk.clear();
+         $scope.prdata.clear();
+         $scope.ramdata.clear();
+         $scope.vnf.clear();
+         $scope.data.clear();
+    
     });
 
      

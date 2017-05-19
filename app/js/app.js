@@ -98,6 +98,10 @@ SonataApp.config(function($routeProvider) {
 				templateUrl	: 'js/views/monitoring/vnfs.html',
 				controller 	: 'MainController'
 			})
+			.when('/catalogue/kpis',{
+				templateUrl	: 'js/views/catalogue/kpis.html',
+				controller 	: 'MainController'
+			})
 			.when('/vnf/:name',{
 				templateUrl	: 'js/views/monitoring/vnf.html',
 				controller 	: 'MainController'
@@ -121,18 +125,4 @@ SonataApp.config(function($routeProvider) {
 
 	});
 
-$('.button-collapse').sideNav({
-      menuWidth: 300, // Default is 300
-      edge: 'right', // Choose the horizontal origin
-      closeOnClick: true, // Closes side-nav on <a> clicks, useful for Angular/Meteor
-      draggable: true // Choose whether you can drag to open on touch screens
-    }
-  );
-
-
-
-$(".button-collapse").sideNav();
-$('.collapsible').collapsible();
-
- 
 

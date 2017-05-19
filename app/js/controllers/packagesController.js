@@ -74,6 +74,9 @@ SonataApp.controller('PackagesController',['$rootScope','$http','$scope',functio
 
 
 
+    $scope.$on("$destroy", function() {
+         $scope.packages.clear();
+    });
 
            
 }]);

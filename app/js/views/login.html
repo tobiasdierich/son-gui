@@ -28,7 +28,8 @@ partner consortium (www.sonata-nfv.eu).
 
 <div id="login-page" class="row" ng-controller="LoginController">
   <div class="container">
-    <div class="col s12 z-depth-6 card-panel">
+    <div class="col s12 m4 l4">&nbsp;</div>
+    <div class="col s12 m4 l4 z-depth-6 card-panel">
       <form class="login-form">
 
         <div class="row">
@@ -37,36 +38,56 @@ partner consortium (www.sonata-nfv.eu).
           </div>
         </div>
         <div class="row center">
-        Please login using your github credentials.
-        <br/>
-          <div class="red-text" ng-show="failedMessageVisibility">Login Failed</div>
-        </div>
-        <div class="row margin">
-          <div class="input-field col s12">
-            <i class="mdi-social-person-outline prefix"></i>
-            <input class="validate" id="email" type="text" ng-model="user_email">
-            <label for="email" data-error="wrong" data-success="right" class="center-align">Username</label>
-          </div>
-        </div>
-        <div class="row margin">
-          <div class="input-field col s12">
-            <i class="mdi-action-lock-outline prefix"></i>
-            <input id="password" type="password" ng-model="password">
-            <label for="password">Password</label>
-          </div>
-        </div>
-    
-        <div class="row">
-          <div class="input-field col s4 right">
-            <a href="javascript:void(0)" ng-click="submitlogin()"  class="btn waves-effect waves-light col s12">Login</a>
-          </div>
-        </div>
         
+          
 
+          <div class="green-text" ng-show="register_message_view">{{register_message}}</div>
+          <div class="red-text" ng-show="error_message_view">{{error_message}}</div>
+          
+        </div>
+        <div class="row center" >
+         <div class="preloader-wrapper small active" ng-show="loading">
+            <div class="spinner-layer spinner-green-only">
+              <div class="circle-clipper left">
+                <div class="circle"></div>
+              </div><div class="gap-patch">
+                <div class="circle"></div>
+              </div><div class="circle-clipper right">
+                <div class="circle"></div>
+              </div>
+            </div>
+          </div>
+          <div class="col s12">
+            <div class="row margin"  ng-hide="loading">
+              <div class="input-field col s12">
+                <i class="mdi-social-person-outline prefix"></i>
+                <input class="validate" id="email" type="text" ng-model="user_email" ng-keydown="change()">
+                <label for="email" data-error="wrong" data-success="right" class="center-align">Username</label>
+              </div>
+            </div>
+            <div class="row margin"  ng-hide="loading">
+              <div class="input-field col s12">
+                <i class="mdi-action-lock-outline prefix"></i>
+                <input id="password" type="password" ng-model="password" ng-keydown="change()">
+                <label for="password">Password</label>
+              </div>
+            </div>
+            <div class="row"  ng-hide="loading">
+              <div class="input-field col s12 m6 l5 right">
+                <a href="javascript:void(0)" ng-click="submitlogin()"  class="btn waves-effect waves-light col s12">Login</a>
+                  <br/>&nbsp;
+                  <a href="javascript:void(0)" ng-click="registerPage()"  class="center col s12">or Register</a>
+              </div>
+            </div>
+          </div>
+    
+        
+        </div>
       </form>
     </div>
+    <div class="col s12 m4 l4">&nbsp;</div>
   </div>
 </div>
 <style>
-main{padding:0!important;}
+main{padding:0!important;margin: 0!important}
 </style>

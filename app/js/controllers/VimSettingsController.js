@@ -36,6 +36,18 @@ SonataApp.controller('VimSettingsController',['$rootScope','$scope','$routeParam
   $scope.new_wim = {};
 
 
+$scope.getVimDetails = function(vim){
+  $scope.selected_vim = vim;
+  $("#vim_details").openModal();
+}
+
+$scope.getWimDetails = function(wim){
+  $scope.selected_wim = wim;
+  console.log("SELECTED WIM");
+  console.log($scope.selected_wim);
+  $('#wim_details').openModal();  
+}
+
 
 
 	$scope.post_a_vim = function(){
@@ -142,7 +154,9 @@ SonataApp.controller('VimSettingsController',['$rootScope','$scope','$routeParam
                   $scope.loading=0;
               })
               .success(function(datamm) {
-              
+                console.log("Vims");
+                console.log(datamm);
+
                 $scope.vims = new Array();
                 $scope.vims=datamm;
                 if($scope.vims.length==0){
@@ -256,14 +270,18 @@ SonataApp.controller('VimSettingsController',['$rootScope','$scope','$routeParam
                   $scope.loading_wims=0;
               })
               .success(function(datamm) {
-                
+                console.log("WWWWWims");
+                console.log(datamm);
+
                 $scope.wims = new Array();
 
                 
                 $scope.m=datamm;
                 $scope.m.forEach(function(wim,index){
                     var x = {};
-                    x.uuid = wim;
+                    x.uuid = wim.uuid;
+                    x.name = wim.name;
+                    x.attached_vims = wim.attached_vims;
                     x.status = "-";
                     $scope.wims.push(x);
                     
@@ -296,5 +314,9 @@ SonataApp.controller('VimSettingsController',['$rootScope','$scope','$routeParam
     }
 
      
+     $scope.$on("$destroy", function() {
+         $scope.wims.clear();
+         $scope.vims.clear();
+    });
     
 }]);

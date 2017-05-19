@@ -26,15 +26,14 @@ acknowledge the contributions of their colleagues of the SONATA
 partner consortium (www.sonata-nfv.eu).
 -->
 
-<div class="nav-wrapper">
+<div class="nav-wrapper" ng-controller="HeaderBarController">
 
         <a href="#!" class="brand-logo"></a>
         <ul>
-
-        <li><a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">reorder</i></a></li>
-
-<!--         <li><a href=""><i class="material-icons">view_module</i></a></li>
-        <li><a href=""><i class="material-icons">refresh</i></a></li>
-        <li><a href=""><i class="material-icons">more_vert</i></a></li> -->
+        	<li><a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">reorder</i></a></li>
+			<!-- <li><a href=""><i class="material-icons">view_module</i></a></li>
+        		<li><a href=""><i class="material-icons">refresh</i></a></li>
+         	-->
+         	<li style="float: right;"><a href="#" ng-click="logout()"><i class="material-icons">settings_power</i></a></li>
         </ul>
-      </div>
+</div>

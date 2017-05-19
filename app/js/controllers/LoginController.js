@@ -26,25 +26,75 @@ acknowledge the contributions of their colleagues of the SONATA
 partner consortium (www.sonata-nfv.eu).
 */
 
-SonataApp.controller('LoginController',['$rootScope','$http','$scope',function($rootScope,$http,$scope){
+SonataApp.controller('LoginController',['$rootScope','$http','$scope','$routeParams',function($rootScope,$http,$scope,$routeParams){
 
           $rootScope.user_email = '';
           $rootScope.password = '';
           $scope.failedMessageVisibility = 0;
-          
+          $scope.error_message=" ";
+          $scope.loading=0;
+
+          if($routeParams.s==1){
+            $scope.register_message = "Your account has been created";
+            $scope.register_message_view = 1;
+            $scope.user_email = $routeParams.email;
+          }
+          $scope.registerPage = function(){
+            location.hash='/signup';
+          }
           $scope.checkLoaded = function(){
             if($('#login-page'))
               return true;
             else
               return false;
           }
+          $scope.change = function(){
+            $scope.error_message=" ";
+            $scope.error_message_view=0;
 
+          }
           $scope.submitlogin = function(){
-                $scope.failedMessageVisibility = 0;
+            $scope.error_message_view = 0;
+            $scope.loading=1;
+
+                /*$scope.failedMessageVisibility = 0;
               	var url = 'https://api.github.com';
 				        $scope.httpGet(url,{Accept: "application/json", "Authorization": "Basic " + 
-					                              btoa($scope.user_email+':'+$scope.password)}); 
-            
+					                              btoa($scope.user_email+':'+$scope.password)}); */
+
+
+          /*type: 'GET',,'Authorization':"Basic "+btoa($scope.user_email+":"+$scope.password)*/
+          $rootScope.token = "";
+            $.ajax({
+                type: 'POST',
+                  headers: {'Content-Type':'application/json'},
+                  url: $rootScope.apis.gatekeeper.user_sessions,
+                  data:JSON.stringify({"username":$scope.user_email,"password":$scope.password}),
+                  async: false
+              })
+              .done(function(data, textStatus, jqXHR) {
+                  $rootScope.token = data.token.access_token;
+                  console.log($rootScope.token);
+                  console.log(data);
+                  console.log(textStatus);
+                  console.log(jqXHR);
+                  $scope.loading=0;
+                  $rootScope.resp=1;
+                  $rootScope.setStorage('sonata-token',$rootScope.token);
+                  $rootScope.is_user_logged_in = true;  
+                  location.hash = '/home';
+                  
+
+              })
+              .fail(function(jqXHR, textStatus, errorThrown) {
+                  
+                    $scope.error_message = textStatus+" "+errorThrown;
+                    $scope.error_message_view = 1;
+                    $scope.loading=0;
+              });
+
+
+
           }
 
           $scope.httpGet = function(url,headers){
@@ -66,5 +116,6 @@ SonataApp.controller('LoginController',['$rootScope','$http','$scope',function($
                   $rootScope.resp = 0;
               });
           }
+
            
 }]);

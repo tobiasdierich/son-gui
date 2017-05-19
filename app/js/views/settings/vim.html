@@ -32,17 +32,20 @@ partner consortium (www.sonata-nfv.eu).
     <div class="card-panel">
       <div class="card-content">
             <h5>Vims</h5>
-            <a class="waves-effect blue-grey darken-3 btn right" ng-click="regetVims()"><i class="material-icons left">replay</i>Refresh</a>
-            <a class="modal-trigger waves-effect waves-light btn right" href="#new_vim" ng-show="wims.length>0" style="margin-right: 5px"><i class="material-icons left">library_add</i>Add a VIM</a>
+            <div class="row">
+              <div class="col s12">
+                <a class="waves-effect blue-grey darken-3 btn right" ng-click="regetVims()"><i class="material-icons left">replay</i>Refresh</a>
+                <a class="modal-trigger waves-effect waves-light btn right" href="#new_vim" ng-show="wims.length>0" style="margin-right: 5px"><i class="material-icons left">library_add</i>Add a 
+                VIM</a>
+              </div>
+            </div>
             <table class="bordered responsive-table">
                <thead>
                 <tr>
                   <th data-field="uuid">Uuid</th>
-                  <th data-field="">Total Cores</th>
-                  <th data-field="">Core Used</th>
-                  <th data-field="">Total Memory</th>
-                  <th data-field="">Memory Used</th>
-                  <th data-field="status">Status</th>
+                  <th data-field="">Cores</th>
+                  <th data-field="">Memory</th>
+                  <th data-field="actions">Actions</th>
                 </tr>
                 </thead>
 
@@ -64,11 +67,9 @@ partner consortium (www.sonata-nfv.eu).
                   </tr>
                   <tr ng-repeat="vim in vims" ng-show="!loading">
                     <td>{{vim.vim_uuid}}</td>
-                    <td>{{vim.core_total}}</td>
-                    <td>{{vim.core_used}}</td>
-                    <td>{{vim.memory_total}}</td>
-                    <td>{{vim.memory_used}}</td>
-                    <td>{{vim.status}}</td>
+                    <td>{{vim.core_used}}/{{vim.core_total}}</td>
+                    <td>{{vim.memory_used}}/{{vim.memory_total}}</td>
+                    <td><a ng-click="getVimDetails(vim)" class="modal-trigger waves-effect waves-light right"><i class="material-icons left">library_add</i></a></td>
                   </tr>
                    <tr ng-show="zero_vims">
                     <td colspan="6" class="center" ng-show="!zero_vims">There are no vims</td>
@@ -82,13 +83,20 @@ partner consortium (www.sonata-nfv.eu).
     <div class="card-panel">
       <div class="card-content">
           <h5>Wims</h5>
-        <a class="waves-effect blue-grey darken-3 btn right m-l" ng-click="regetWims()"><i class="material-icons left">replay</i>Refresh</a>
-        <a class="modal-trigger waves-effect waves-light btn right m-l" href="#new_wim" style="margin-right: 5px"><i class="material-icons left">library_add</i>Add a WIM</a>
-        <table class="bordered responsive-table">
+
+            <div class="row">
+              <div class="col s12">
+                  <a class="waves-effect blue-grey darken-3 btn right m-l" ng-click="regetWims()"><i class="material-icons left">replay</i>Refresh</a>
+                  <a class="modal-trigger waves-effect waves-light btn right m-l" href="#new_wim" style="margin-right: 5px"><i class="material-icons left">library_add</i>Add a WIM</a>
+              </div>
+            </div>
+
+            <table class="bordered responsive-table">          
                <thead>
                 <tr>
+                  <th data-field="name">Name</th>
                   <th data-field="uuid">Uuid</th>
-                  <th data-field="status">Status</th>
+                  <th data-field="actions">Actions</th>
                 </tr>
                 </thead>
 
@@ -108,12 +116,13 @@ partner consortium (www.sonata-nfv.eu).
                       </div>
                     </td>
                   </tr>
-                  <tr ng-repeat="wim in wims" ng-show="wims.length>0 && !loading_wims" >
+                  <tr ng-repeat="wim in wims" ng-show="wims.length>0 && !loading_wims" >                    
+                    <td>{{wim.name}}</td>
                     <td>{{wim.uuid}}</td>
-                    <td>{{wim.status}}</td>
+                    <td><a ng-click="getWimDetails(wim)" class="modal-trigger waves-effect waves-light right"><i class="material-icons left">library_add</i></a></td>
                   </tr>
                   <tr ng-hide="wims.length>0">
-                    <td colspan="2" class="center" ng-show="!zero_wims">There are no wims</td>
+                    <td colspan="3" class="center" ng-show="!zero_wims">There are no wims</td>
                   </tr>
                 </tbody>
             </table>
@@ -121,6 +130,55 @@ partner consortium (www.sonata-nfv.eu).
     </div>
   </div>
       
+
+<div id="wim_details" class="modal modal-fixed-footer">
+  <div class="modal-content">
+  <h4>{{selected_wim.name}}</h4>
+  <div class="row">
+      <div class="col s12">UUID:{{selected_wim.uuid}}</div>
+      <div class="col s12">
+          <div class="row">
+            <strong>Attached Vims</strong>
+            <ul>
+              <li ng-repeat="as in selected_wim.attached_vims">{{as}}</li>
+            </ul>
+          </div>          
+      </div>
+
+  </div>
+
+  </div>
+    <div class="modal-footer">
+      <a href="javascript:void(0)" class=" modal-action modal-close waves-effect waves-green btn-flat">Close</a>      
+    </div>
+</div>
+
+
+<div id="vim_details" class="modal modal-fixed-footer">
+  <div class="modal-content">
+  <h4>{{selected_vim.name}}</h4>
+  <div class="row">
+      <div class="col s12"><strong>Core Total:</strong> {{selected_vim.core_total}}</div>
+      <div class="col s12"><strong>Core Used:</strong> {{selected_vim.core_used}}</div>
+      <div class="col s12"><strong>Memory Total:</strong> {{selected_vim.memory_total}}</div>
+      <div class="col s12"><strong>Memory Used:</strong> {{selected_vim.memory_used}}</div>
+      <div class="col s12"><strong>Vim City:</strong> {{selected_vim.vim_city}}</div>
+      <div class="col s12"><strong>Vim EndPoint:</strong> {{selected_vim.vim_endpoint}}</div>
+      <div class="col s12"><strong>Vim UUID:</strong> {{selected_vim.vim_uuid}}</div>
+
+  </div>
+
+  </div>
+    <div class="modal-footer">
+      <a href="javascript:void(0)" class=" modal-action modal-close waves-effect waves-green btn-flat">Close</a>      
+    </div>
+</div>
+
+
+
+
+
+
 
 
  <div id="new_vim" class="modal modal-fixed-footer">
@@ -256,7 +314,10 @@ partner consortium (www.sonata-nfv.eu).
           <div class="row">
             
             <div class="input-field col s6">
-                 <input id="wim_vendor" ng-model="new_wim.wim_vendor" type="text" class="validate">
+              <select ng-model="new_wim.wim_vendor">
+                <option value="VTN">VTN</option>
+                <option value="MOCK">MOCK</option>
+              </select>                 
               <label for="wim_vendor">Wim vendor</label>
             </div>
             <div class="input-field col s6">

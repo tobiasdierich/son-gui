@@ -141,3 +141,47 @@ div.gauge_div table {
     width: auto;
     margin: 0 auto !important;
 }
+#signup-page{
+    background: #191919;
+    height: 100%;
+    position: fixed;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+#login-page{
+    background: #191919;
+    height: 100%;
+    position: fixed;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+.kpi{    
+    color: white;
+    text-align: center;
+    min-height: 200px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+.green-kpi{
+    background: #246C60;
+}
+.blue-kpi{
+    background: #2C4771;
+}
+.kpi-number{
+    font-size: 90px;
+    width: 100%;
+}
+.kpi-subtitle{
+    font-size: 23px;
+}
+
+span.tags {
+    margin: 4px;
+    background: #dddddd;
+    padding: 10px;
+    border-radius: 3px;
+    font-weight: bold
+}

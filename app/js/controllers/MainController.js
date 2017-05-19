@@ -27,16 +27,29 @@ partner consortium (www.sonata-nfv.eu).
 */
 
 SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$location', '$http',function($rootScope,$scope, $routeParams, $location, $http) {
-		console.log('MainController');
-		
-		
+		var debug=false;
+  
 		
 		/*$scope.apis.monitoring = 'http://sp.int2.sonata-nfv.eu:8000/api/v1/prometheus/metrics/data';*/
 		
 		$scope.todos = new Array();
 
+
+
 		(function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
-		 $scope.getServices = function(){
+		
+    
+    $rootScope.setStorage = function(valuename,valuevalue){
+      window.localStorage.setItem(valuename,valuevalue);
+    }
+    
+    $rootScope.getStorage = function(valuename){
+      return window.localStorage.getItem(valuename);
+    }
+
+    
+
+     $scope.getServices = function(){
 
             console.info('Get Enviroment variables call started.');
              $http({
@@ -63,13 +76,14 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
 							'services' :data.GK_URL+'/services',
 							'packages' :data.GK_URL+'/packages',
 							'functions':data.GK_URL+'/functions',
-							'requests' :data.GK_URL+'/requests'
+							'requests' :data.GK_URL+'/requests',
+              'kpis'     :data.GK_URL+'/kpis',
+              'users'    :data.GK_URL+'/users',
+              'user_sessions':data.GK_URL+'/sessions',
 						}
-					}
+					};
 				
-
-
-					$rootScope.apis = $scope.apis;
+              $rootScope.apis = $scope.apis;
 
                 })
                 .error(function(data){
@@ -82,13 +96,26 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
         $scope.getServices();
 
 		
-    var debug=false;
-   	if(debug==false && $rootScope.resp!=1){
-			location.hash='/login';
-		}else {
+    
+    if($location.url()!='/signup'){
 
-			$rootScope.is_user_logged_in = true;
-		}
+          console.log('GET LOCAL STORAGE');
+          console.log($rootScope.getStorage('sonata-token'));
+          
+
+
+        console.log(debug);
+        console.log($rootScope.resp);
+      if(debug==false && $rootScope.resp!=1){
+        location.hash='/login';
+        $rootScope.setStorage('sonata-token',null);  
+      }else {
+          $rootScope.is_user_logged_in = true;
+      }
+    }
+        
+    
+   	
 
 
 $scope.alerts_visibility = 0;           
