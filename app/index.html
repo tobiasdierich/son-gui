@@ -36,7 +36,7 @@ partner consortium (www.sonata-nfv.eu).
       <!--Import materialize.css-->
       <link type="text/css" rel="stylesheet" href="css/materialize.css"  media="screen,projection"/>
       <link type="text/css" rel="stylesheet" href="css/sonata.css"  media="screen,projection"/>
-
+      <meta charset="UTF-8">
 
       
 
@@ -55,25 +55,15 @@ partner consortium (www.sonata-nfv.eu).
         <div ng-include="'js/views/sidebar.html'" ng-controller="SideBarController" ng-show="is_user_logged_in"></div>
         <main ng-view></main>  
       </section>
-      
-
-      
-
 
       <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-      
-      
-
-
       <script src="js/vendor/angular.min.js"></script>
       <script src="js/vendor/angular-route.js"></script>
-      
       <script type="text/javascript" src="js/materialize.js"></script>
       <script src="js/vendor/angular-materialize.js"></script>
       <script src="js/vendor/angular-resource.min.js"></script>
-       <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-            <script>google.charts.load('current', {packages: ['corechart', 'line','gauge']});</script>
-      
+      <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+      <script>google.charts.load('current', {packages: ['corechart', 'line','gauge']});</script>     
      
 
     <!-- Modules -->

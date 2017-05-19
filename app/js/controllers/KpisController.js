@@ -55,17 +55,20 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
 
 
     $scope.getBOX = function(kpi){
-    	
+    	var start = new Date(new Date().getTime() - 10000*60000).toISOString();
+        var end = new Date().toISOString();
+        var step = '10m';
     		$http({
-                method  : 'POST',
-                url     : "https://sp.int3.sonata-nfv.eu/monitoring/api/v1/prometheus/metrics/data",
-                data:  {
+                method  : 'GET',
+                url: $scope.apis.gatekeeper.kpis+'?name='+kpi.api_name+'&start='+start+'&end='+end+'&step='+step,
+                /*url     : "https://sp.int3.sonata-nfv.eu/monitoring/api/v1/prometheus/metrics/data",*/
+                /*data:  {
                         "name": kpi.api_name,
                         "start": new Date(new Date().getTime() - 10000*60000).toISOString(),
                         "end": new Date().toISOString(),
                         "step": "10m",
                         "labels": [{}]
-                          },
+                    }*/
                 headers : { 'Content-Type': 'application/json' }
               })
                 .success(function(datas) {
@@ -73,7 +76,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                 		console.log(datas);
 
 
-                		 datas.metrics.result.forEach(function(element, index) {
+                		 datas.forEach(function(element, index) {
                 		 	kpi.sum++;
                 		 	
                 		 });
@@ -88,6 +91,10 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
 
 
     $scope.getKPIDetails = function(kpi){
+        var start = new Date(new Date().getTime() - 10000*60000).toISOString();
+        var end = new Date().toISOString();
+        var step = '10m';
+
 			$scope.results_type = [];
 			$scope.results =[];
 			$scope.tags = [];
@@ -96,7 +103,10 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
 			$scope.modal.title = kpi.description;
 
     		$http({
-                method  : 'POST',
+                  method  : 'GET',
+                url: $scope.apis.gatekeeper.kpis+'?name='+kpi.api_name+'&start='+start+'&end='+end+'&step='+step,
+                
+                /*method  : 'POST',
                 url     : "https://sp.int3.sonata-nfv.eu/monitoring/api/v1/prometheus/metrics/data",
                 data:  {
                         "name": kpi.api_name,
@@ -104,7 +114,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                         "end": new Date().toISOString(),
                         "step": "10m",
                         "labels": [{}]
-                          },
+                          }*/
                 headers : { 'Content-Type': 'application/json' }
               })
                 .success(function(datas) {
@@ -112,7 +122,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                 		console.log(datas);
 
                 		
-                		datas.metrics.result.forEach(function(element,index){
+                		datas.forEach(function(element,index){
 
                 			var exists = 0;
                 			$scope.tags.forEach(function(tag,index){

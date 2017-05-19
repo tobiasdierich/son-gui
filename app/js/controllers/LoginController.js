@@ -80,8 +80,9 @@ SonataApp.controller('LoginController',['$rootScope','$http','$scope','$routePar
                   console.log(jqXHR);
                   $scope.loading=0;
                   $rootScope.resp=1;
+                  $rootScope.setStorage('sonata-token',$rootScope.token);
+                  $rootScope.is_user_logged_in = true;  
                   location.hash = '/home';
-                  $rootScope.is_user_logged_in = true;
                   
 
               })
