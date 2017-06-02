@@ -27,12 +27,13 @@ partner consortium (www.sonata-nfv.eu).
 */
 
 SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$location', '$http',function($rootScope,$scope, $routeParams, $location, $http) {
-		var debug=false;
+		/*var debug=false;*/
   
 		
 		/*$scope.apis.monitoring = 'http://sp.int2.sonata-nfv.eu:8000/api/v1/prometheus/metrics/data';*/
 		
 		$scope.todos = new Array();
+    
 
 
 
@@ -46,8 +47,37 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
     $rootScope.getStorage = function(valuename){
       return window.localStorage.getItem(valuename);
     }
+    $rootScope.getToken = function(){
+      if($rootScope.token!=''){
+        
+        return $rootScope.token;
+      }
+      else if($rootScope.getStorage('sonata-token')>0){
+        return $rootScope.getStorage('sonata-token');
+      }
+      else{
+        return '';
+      }
+    }
+    $rootScope.isTokenValid = function(){
 
+    if($rootScope.getToken()==''){
+      
+      if(!$rootScope.checkIfNull($rootScope.getStorage('sonata-token'))){
+      
+        return false;
+      }
+    }
+    return true;
+
+}
     
+    $rootScope.checkIfNull = function(val){
+        if (!!val)
+            return false;
+        
+        return true;
+    }
 
      $scope.getServices = function(){
 
@@ -67,23 +97,27 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
                   }
 
                   $scope.apis = {
-						'monitoring':data.MON_URL+'/api/v1/prometheus/metrics/data',
-            'monitoring_list':data.MON_URL+'/api/v1/prometheus/metrics/list',
-						'logs':data.LOGS_URL+'/search/universal/relative?',
-						'vims':data.VIMS_URL+'/vims',
-            'wims':data.VIMS_URL+'/wims',
-						'gatekeeper':{
-							'services' :data.GK_URL+'/services',
-							'packages' :data.GK_URL+'/packages',
-							'functions':data.GK_URL+'/functions',
-							'requests' :data.GK_URL+'/requests',
-              'kpis'     :data.GK_URL+'/kpis',
-              'users'    :data.GK_URL+'/users',
-              'user_sessions':data.GK_URL+'/sessions',
-						}
-					};
-				
+            						'monitoring':data.MON_URL+'/api/v1/prometheus/metrics/data',
+                        'monitoring_list':data.MON_URL+'/api/v1/prometheus/metrics/list',
+            						'logs':data.LOGS_URL+'/search/universal/relative?',
+            						'vims':data.VIMS_URL+'/vims',
+                        'wims':data.VIMS_URL+'/wims',
+            						'gatekeeper':{
+            							'services' :data.GK_URL+'/services',
+            							'packages' :data.GK_URL+'/packages',
+            							'functions':data.GK_URL+'/functions',
+            							'requests' :data.GK_URL+'/requests',
+                          'kpis'     :data.GK_URL+'/kpis',
+                          'users'    :data.GK_URL+'/users',
+                          'user_sessions':data.GK_URL+'/sessions',
+            						}
+            					};
+				      
               $rootScope.apis = $scope.apis;
+              $rootScope.gk_headers = { 
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer '+$rootScope.getToken()
+                     };
 
                 })
                 .error(function(data){
@@ -102,16 +136,14 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
           console.log('GET LOCAL STORAGE');
           console.log($rootScope.getStorage('sonata-token'));
           
+          if(!$rootScope.isTokenValid()){
+            location.hash='/login';
+            $rootScope.setStorage('sonata-token',null);  
+          }else{
+            console.log("VALID MRE");
 
-
-        console.log(debug);
-        console.log($rootScope.resp);
-      if(debug==false && $rootScope.resp!=1){
-        location.hash='/login';
-        $rootScope.setStorage('sonata-token',null);  
-      }else {
-          $rootScope.is_user_logged_in = true;
-      }
+            $rootScope.is_user_logged_in = true;  
+          }
     }
         
     

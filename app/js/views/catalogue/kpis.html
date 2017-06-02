@@ -28,6 +28,7 @@ partner consortium (www.sonata-nfv.eu).
 
   <div class="row" ng-controller="KpisController">
     <div class="col s12">
+
       <div class="col s12 m4 l2" ng-repeat="kpi in kpis" ng-click="getKPIDetails(kpi)">
         <div class="kpi" ng-class="kpi.class">
           <div class="kpi-number">{{kpi.sum}}</div>
@@ -40,28 +41,32 @@ partner consortium (www.sonata-nfv.eu).
           <div class="modal-content">
              <h4>{{modal.title}}</h4>
                 <div class="col s12">
-                  <div class="card-panel">
-                    <span class="tags" ng-repeat="tag in tags">{{tag.name+" ("+tag.counter+")"}}</span>
-
-                    
+                    <div id="resultChart" style="width: 100%"></div>
+                </div>
+                <div class="col s12">
+                  
+                    <span class="tags" ng-repeat="tag in tags">{{tag.name+" ("+tag.counter+")"}}</span>                    
                     <table>
                       <thead>
                         <tr>
-                          <th>Uuid (with "ok" result)</th>
-                          <th>Time</th>
+                          <th>Uuid</th>
+                          <th>Instance</th>
+                          <th>Result</th>
+                          <th>Elapsed Time</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr ng-repeat="result in results">
-                          <td>{{result.uuid}}</td>
-                          <td>{{result.timest|date:'medium'}}</td>
+                        <tr ng-repeat="result in resl">
+                          <td>{{result.labels.uuid}}</td>
+                          <td>{{result.labels.instance}}</td>
+                          <td>{{result.labels.result}}</td>
+                          <td>{{result.labels.elapsed_time}}</td>
                         </tr>
                       </tbody>
                     </table>
-                    
-
-                  </div>
+                  
                 </div>
+                
           </div>
           <div class="modal-footer">
             <a href="javascript:void(0)" ng-click="closeModal()" class="modal-action modal-close waves-effect waves-green btn-flat ">Close</a>

@@ -29,6 +29,8 @@ partner consortium (www.sonata-nfv.eu).
 SonataApp.controller('HeaderBarController',['$rootScope','$http','$scope','$routeParams',function($rootScope,$http,$scope,$routeParams){
 
             $scope.logout = function(){
+      				$rootScope.token = '';
+      				$rootScope.setStorage('sonata-token',null);
       				$rootScope.resp=0;
       				$rootScope.is_user_logged_in = false;
       				location.hash="/login";

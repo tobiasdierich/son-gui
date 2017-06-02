@@ -170,6 +170,9 @@ div.gauge_div table {
 .blue-kpi{
     background: #2C4771;
 }
+.light-kpi{
+    background: #698873;
+}
 .kpi-number{
     font-size: 90px;
     width: 100%;
