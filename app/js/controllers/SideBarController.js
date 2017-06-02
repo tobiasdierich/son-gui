@@ -32,12 +32,8 @@ SonataApp.controller('SideBarController', function($scope, $routeParams, $locati
  	$scope.$on('$includeContentLoaded', function(event) {
       	$(".button-collapse").sideNav();
 		$('.collapsible').collapsible();
-		console.log('SideBar');
     });
 
-
-
-
-    });
+});
 
 

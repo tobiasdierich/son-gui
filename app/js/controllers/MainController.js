@@ -27,17 +27,11 @@ partner consortium (www.sonata-nfv.eu).
 */
 
 SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$location', '$http',function($rootScope,$scope, $routeParams, $location, $http) {
-		/*var debug=false;*/
-  
-		
-		/*$scope.apis.monitoring = 'http://sp.int2.sonata-nfv.eu:8000/api/v1/prometheus/metrics/data';*/
-		
+	 
+   console.log("MainController");
+  	
 		$scope.todos = new Array();
-    
-
-
-
-		(function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
+    (function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
 		
     
     $rootScope.setStorage = function(valuename,valuevalue){
@@ -47,6 +41,7 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
     $rootScope.getStorage = function(valuename){
       return window.localStorage.getItem(valuename);
     }
+
     $rootScope.getToken = function(){
       if($rootScope.token!=''){
         
@@ -59,25 +54,19 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
         return '';
       }
     }
-    $rootScope.isTokenValid = function(){
 
-    if($rootScope.getToken()==''){
+
+    $rootScope.checkIfValid = function(token){
       
-      if(!$rootScope.checkIfNull($rootScope.getStorage('sonata-token'))){
-      
-        return false;
-      }
+      return true;
+
     }
-    return true;
-
-}
     
     $rootScope.checkIfNull = function(val){
-        if (!!val)
-            return false;
-        
-        return true;
+      return angular.isUndefined(val) || val === null 
     }
+
+   
 
      $scope.getServices = function(){
 
@@ -89,8 +78,6 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
                })
                 .success(function(data) {
                   
-                  console.info('Enviroment variables received');
-                  //console.log(data);
 
                   $scope.configuration = {
                   	'logs_range':'86400' //time range (minutes before)
@@ -126,25 +113,36 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
            }
 
 
-     if(typeof $rootScope.apis )
-        $scope.getServices();
+    $rootScope.logout = function(){
+      $rootScope.is_user_logged_in = false;
+      delete window.localStorage['sonata-token'];
+      $rootScope.token = '';
+      location.hash='/login';
 
-		
-    
-    if($location.url()!='/signup'){
-
-          console.log('GET LOCAL STORAGE');
-          console.log($rootScope.getStorage('sonata-token'));
-          
-          if(!$rootScope.isTokenValid()){
-            location.hash='/login';
-            $rootScope.setStorage('sonata-token',null);  
-          }else{
-            console.log("VALID MRE");
-
-            $rootScope.is_user_logged_in = true;  
-          }
     }
+    $scope.checkAuthorization = function(){
+      if($rootScope.is_user_logged_in==false){
+        $rootScope.logout();        
+      }
+      if($location.url()!='/signup' && $location.url()!='/login'){
+            
+            var localStorageToken = $rootScope.getStorage('sonata-token');
+
+            if($rootScope.checkIfNull(localStorageToken)){
+              console.log("zimia 1");
+              $rootScope.is_user_logged_in = false;    
+              delete window.localStorage['sonata-token'];
+              location.hash='/login';            
+            }
+            else{
+              if($rootScope.checkIfValid(localStorageToken)){
+                $rootScope.is_user_logged_in = true;
+              }
+            }
+      }  
+    }
+    $scope.checkAuthorization();
+    
         
     
    	

@@ -33,7 +33,13 @@ SonataApp.controller('LoginController',['$rootScope','$http','$scope','$routePar
           $scope.failedMessageVisibility = 0;
           $scope.error_message=" ";
           $scope.loading=0;
-          $rootScope.token = '';
+          console.log("LoginController");
+          
+/*          $rootScope.token = '';
+          $rootScope.is_user_logged_in = false;
+          delete window.localStorage['sonata-token'];*/
+  /*        $rootScope.resp=0;*/
+
 
 
           if($routeParams.s==1){
@@ -58,15 +64,8 @@ SonataApp.controller('LoginController',['$rootScope','$http','$scope','$routePar
           $scope.submitlogin = function(){
             $scope.error_message_view = 0;
             $scope.loading=1;
+            $rootScope.token = "";
 
-                /*$scope.failedMessageVisibility = 0;
-              	var url = 'https://api.github.com';
-				        $scope.httpGet(url,{Accept: "application/json", "Authorization": "Basic " + 
-					                              btoa($scope.user_email+':'+$scope.password)}); */
-
-
-          /*type: 'GET',,'Authorization':"Basic "+btoa($scope.user_email+":"+$scope.password)*/
-          $rootScope.token = "";
             $.ajax({
                 type: 'POST',
                   headers: {'Content-Type':'application/json'},

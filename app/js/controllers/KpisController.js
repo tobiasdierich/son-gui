@@ -63,20 +63,13 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
     		$http({
                 method  : 'GET',
                 url: $scope.apis.gatekeeper.kpis+'?name='+kpi.api_name+'&start='+start+'&end='+end+'&step='+step,
-                /*url     : "https://sp.int3.sonata-nfv.eu/monitoring/api/v1/prometheus/metrics/data",*/
-                /*data:  {
-                        "name": kpi.api_name,
-                        "start": new Date(new Date().getTime() - 10000*60000).toISOString(),
-                        "end": new Date().toISOString(),
-                        "step": "10m",
-                        "labels": [{}]
-                    }*/
                 headers : $rootScope.gk_headers
               })
                 .success(function(datas) {
-                		console.log(datas);
+
                         var res=[];
-                        res = datas.data.metrics;
+                        if(datas.data.metrics)
+                            res = datas.data.metrics;
 
                 		 res.forEach(function(element, index) {
                 		 	kpi.sum++;
