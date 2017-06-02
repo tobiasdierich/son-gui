@@ -53,21 +53,18 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
         return $rootScope.token;
       }
       else if($rootScope.getStorage('sonata-token')>0){
-        console.log("Malaka 2");
         return $rootScope.getStorage('sonata-token');
       }
       else{
-        console.log("Malaka 3");
         return '';
       }
     }
     $rootScope.isTokenValid = function(){
 
     if($rootScope.getToken()==''){
-      console.log("Malaka 4");
-      console.log($rootScope.getStorage('sonata-token'));
+      
       if(!$rootScope.checkIfNull($rootScope.getStorage('sonata-token'))){
-        console.log("Malaka 5");
+      
         return false;
       }
     }
