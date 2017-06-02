@@ -33,6 +33,8 @@ SonataApp.controller('LoginController',['$rootScope','$http','$scope','$routePar
           $scope.failedMessageVisibility = 0;
           $scope.error_message=" ";
           $scope.loading=0;
+          $rootScope.token = '';
+
 
           if($routeParams.s==1){
             $scope.register_message = "Your account has been created";
@@ -73,13 +75,14 @@ SonataApp.controller('LoginController',['$rootScope','$http','$scope','$routePar
                   async: false
               })
               .done(function(data, textStatus, jqXHR) {
-                  $rootScope.token = data.token.access_token;
+                  
                   console.log($rootScope.token);
                   console.log(data);
                   console.log(textStatus);
                   console.log(jqXHR);
                   $scope.loading=0;
                   $rootScope.resp=1;
+                  $rootScope.token = data.token.access_token;
                   $rootScope.setStorage('sonata-token',$rootScope.token);
                   $rootScope.is_user_logged_in = true;  
                   location.hash = '/home';

@@ -42,17 +42,19 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
 
     });
     $scope.kpis.push({
-    	'id':1,
+    	'id':2,
     	'description':'Packages on Boarding',
     	'api_name':'package_on_boardings',
     	'sum':0,
     	'class':'green-kpi'
-
     });
-
-    
-
-
+    $scope.kpis.push({
+        'id':3,
+        'description':'Sync Requests',
+        'api_name':'synch_monitoring_data_requests',
+        'sum':0,
+        'class':'light-kpi'
+    });
 
     $scope.getBOX = function(kpi){
     	var start = new Date(new Date().getTime() - 10000*60000).toISOString();
@@ -69,14 +71,14 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                         "step": "10m",
                         "labels": [{}]
                     }*/
-                headers : { 'Content-Type': 'application/json' }
+                headers : $rootScope.gk_headers
               })
                 .success(function(datas) {
-                		console.log("E");
                 		console.log(datas);
+                        var res=[];
+                        res = datas.data.metrics;
 
-
-                		 datas.forEach(function(element, index) {
+                		 res.forEach(function(element, index) {
                 		 	kpi.sum++;
                 		 	
                 		 });
@@ -103,51 +105,37 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
 			$scope.modal.title = kpi.description;
 
     		$http({
-                  method  : 'GET',
+                method  : 'GET',
                 url: $scope.apis.gatekeeper.kpis+'?name='+kpi.api_name+'&start='+start+'&end='+end+'&step='+step,
-                
-                /*method  : 'POST',
-                url     : "https://sp.int3.sonata-nfv.eu/monitoring/api/v1/prometheus/metrics/data",
-                data:  {
-                        "name": kpi.api_name,
-                        "start": new Date(new Date().getTime() - 10000*60000).toISOString(),
-                        "end": new Date().toISOString(),
-                        "step": "10m",
-                        "labels": [{}]
-                          }*/
-                headers : { 'Content-Type': 'application/json' }
+                headers : $rootScope.gk_headers
               })
                 .success(function(datas) {
-                		console.log("E");
+                		console.log("KPI Details");
                 		console.log(datas);
+                        $scope.resl = datas.data.metrics;
+                        $scope.selected_data_pie = [];
+                        $scope.ss_states = [];
 
-                		
-                		datas.forEach(function(element,index){
+                        $scope.resl.forEach(function(kpi,index){
+                            if($scope.ss_states.indexOf(kpi.labels.result)>=0){
+                                
+                                var result = $scope.selected_data_pie.filter(function( obj ) {
+                                      return obj.name == kpi.labels.result;
+                                });
+                                result.y++;
 
-                			var exists = 0;
-                			$scope.tags.forEach(function(tag,index){
-                				
-                				if(tag.name==element.metric.result){
-                					exists=1;
-                					tag.counter++;
-                				}
-                			});
-                			
-
-                			if(exists==0){
-
-                				$scope.tags.push({
-                					"name":element.metric.result,
-                					"counter":1
-                				});
-                			}
-
-                			if(element.metric.result=='ok'){
-                				$scope.results.push({'uuid':element.metric.uuid,"timest":$scope.convertToDate(element.values[0][0])});
-                			}
-
-                		});
-                		
+                            }else{
+                                $scope.ss_states.push(kpi.labels.result);
+                                $scope.selected_data_pie.push({
+                                    name:kpi.labels.result,
+                                    y:1,
+                                    sliced: true
+                                });
+                            }                            
+                        });
+                        
+                            $scope.setResultChart();                        
+                       
                 	});
 
         
@@ -175,4 +163,47 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
         $scope.kpis.forEach(function(element,index){
     		$scope.getBOX(element);	
     	});
+
+
+
+$scope.setResultChart = function(){
+ Highcharts.chart('resultChart', {
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false,
+        type: 'pie'
+    },
+    title: {
+        text: $scope.modal.title
+    },
+    tooltip: {
+        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+                enabled: true,
+                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                style: {
+                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                }
+            }
+        }
+    },
+    series: [{
+        name: 'Results',
+        colorByPoint: true,
+        data: $scope.selected_data_pie
+    }]
+});   
+}
+
+        
+
+
+
+
 }]);
