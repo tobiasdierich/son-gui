@@ -42,7 +42,7 @@ SonataApp.controller('DashboardController',['$rootScope','$scope','$routeParams'
 
      $http({
           method  : 'POST',
-          url     : $scope.apis.monitoring,
+          url     : $rootScope.apis.monitoring,
           data:  {
                   "name": "vim_maxTotalInstances",
                   "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
@@ -86,7 +86,7 @@ SonataApp.controller('DashboardController',['$rootScope','$scope','$routeParams'
 $scope.setFloatingIps = function(){
   $http({
           method  : 'POST',
-          url     : $scope.apis.monitoring,
+          url     : $rootScope.apis.monitoring,
           data:  {
                   "name": "vim_maxTotalFloatingIpsUsed",
                   "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
@@ -111,7 +111,7 @@ $scope.setFloatingIps = function(){
             
                $http({
                   method  : 'POST',
-                  url     : $scope.apis.monitoring,
+                  url     : $rootScope.apis.monitoring,
                   data:  {
                           "name": "vim_maxTotalFloatingIps",
                           "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
@@ -137,7 +137,7 @@ $scope.setFloatingIps = function(){
 $scope.getRamGauge = function(){
   $http({
           method  : 'POST',
-          url     : $scope.apis.monitoring,
+          url     : $rootScope.apis.monitoring,
           data:  {
                   "name": "vim_maxTotalRAMSize",
                   "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
@@ -156,7 +156,7 @@ $scope.getRamGauge = function(){
               
                $http({
                   method  : 'POST',
-                  url     : $scope.apis.monitoring,
+                  url     : $rootScope.apis.monitoring,
                   data:  {
                           "name": "vim_totalRAMUsed",
                           "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
@@ -223,7 +223,7 @@ $scope.getRamGraphNew = function(){
 
         $http({
           method  : 'POST',
-          url     : $scope.apis.monitoring,
+          url     : $rootScope.apis.monitoring,
           data:  { 
 
                   "name": "vim_totalRAMUsed",
@@ -349,7 +349,7 @@ $scope.drawTheChart = function(data_array,options,element){
 $scope.getCoresGauge = function(){
   $http({
           method  : 'POST',
-          url     : $scope.apis.monitoring,
+          url     : $rootScope.apis.monitoring,
           data:  {
                   "name": "vim_totalCoresUsed",
                   "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
@@ -370,7 +370,7 @@ $scope.getCoresGauge = function(){
               $scope.vims.forEach(function(vim,index){
              $http({
                 method  : 'POST',
-                url     : $scope.apis.monitoring,
+                url     : $rootScope.apis.monitoring,
                 data:  {
                         "name": "vim_maxTotalCores",
                         "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
@@ -467,7 +467,7 @@ $scope.coresChartNew = function(){
 
    $http({
           method  : 'POST',
-          url     : $scope.apis.monitoring,
+          url     : $rootScope.apis.monitoring,
           data:  { 
 
                   "name": "vim_totalCoresUsed",
@@ -583,7 +583,7 @@ $scope.coresChartNew = function(){
 $scope.getInstancesGauge = function(){
   $http({
           method  : 'POST',
-          url     : $scope.apis.monitoring,
+          url     : $rootScope.apis.monitoring,
           data:  {
                   "name": "vim_totalInstancesUsed",
                   "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
@@ -605,7 +605,7 @@ $scope.getInstancesGauge = function(){
             
                $http({
                   method  : 'POST',
-                  url     : $scope.apis.monitoring,
+                  url     : $rootScope.apis.monitoring,
                   data:  {
                           "name": "vim_maxTotalInstances",
                           "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
@@ -664,7 +664,7 @@ $scope.instancesChartNew = function(){
 
 $http({
           method  : 'POST',
-          url     : $scope.apis.monitoring,
+          url     : $rootScope.apis.monitoring,
           data:  { 
 
                   "name": "vim_totalInstancesUsed",
@@ -847,7 +847,7 @@ $scope.getVms = function(){
       
       $http({
           method  : 'POST',
-          url     : $scope.apis.monitoring,
+          url     : $rootScope.apis.monitoring,
           data:  {
                   "name": "vm_last_update",
                   "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
@@ -879,7 +879,7 @@ $scope.getStates = function(){
 
       $http({
           method  : 'POST',
-          url     : $scope.apis.monitoring,
+          url     : $rootScope.apis.monitoring,
           data:  {
                   "name": "vms_state",
                   "start": ""+ new Date(new Date().getTime() - 3*60000).toISOString(),

@@ -88,7 +88,7 @@ SonataApp.config(function($routeProvider) {
 			})
 			.when('/login', {
 				templateUrl : 'js/views/login.html',
-				controller  : 'MainController'
+				controller  : 'LoginController'
 			})
 			.when('/monitoring/platform',{
 				templateUrl	: 'js/views/monitoring/service_platform.html',
