@@ -124,8 +124,9 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
       if($rootScope.is_user_logged_in==false){
         $rootScope.logout();        
       }
+      console.log("A");
       if($location.url()!='/signup' && $location.url()!='/login'){
-            
+      console.log("B");
             var localStorageToken = $rootScope.getStorage('sonata-token');
 
             if($rootScope.checkIfNull(localStorageToken)){
@@ -139,12 +140,14 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
                 $rootScope.is_user_logged_in = true;
               }
             }
-      }  
+      }else{
+        console.log("MANOS"+$location.url());
+        
+      }
     }
     $scope.checkAuthorization();
     
         
-    
    	
 
 

@@ -29,6 +29,7 @@ partner consortium (www.sonata-nfv.eu).
 SonataApp.controller('SignUpController',['$rootScope','$http','$scope',function($rootScope,$http,$scope){
 		
 		$rootScope.allowed =1;
+    console.log('SignUpController');
 
         $scope.new_user = {};
 
@@ -64,7 +65,7 @@ SonataApp.controller('SignUpController',['$rootScope','$http','$scope',function(
 	                  $rootScope.resp = 1;
 	                  location.hash = '/home';*/
 	                  if(textStatus=='success'){
-	                  	$scope.success_message = 'Your account created';
+	                  	$scope.success_message = 'Your account has been created';
 	                  	$scope.success_message_view = 1;
 	                  	location.hash='/login/?s=1';
 
@@ -78,9 +79,11 @@ SonataApp.controller('SignUpController',['$rootScope','$http','$scope',function(
 	              .fail(function(jqXHR, textStatus, errorThrown) {
 	                  /*$scope.failedMessageVisibility = 1;
 	                  $rootScope.resp = 0;*/
-	                  console.log(errorThrown);
-
 	                  console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+
+	                  /*console.log(jqXHR);*/
 	                  	$scope.error_message = jqXHR.statusText+" "+jqXHR.responseJSON.error.message;
 	                  	$scope.error_message_view = 1;
 	                  

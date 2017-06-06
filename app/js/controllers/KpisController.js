@@ -72,8 +72,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                             res = datas.data.metrics;
 
                 		 res.forEach(function(element, index) {
-                		 	kpi.sum++;
-                		 	
+                		 	kpi.sum++;                		 	
                 		 });
 
                 });
@@ -94,6 +93,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
 			$scope.results =[];
 			$scope.tags = [];
 			$scope.modal = {};
+            
 			$('#modal1').openModal();
 			$scope.modal.title = kpi.description;
 
@@ -108,14 +108,24 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                         $scope.resl = datas.data.metrics;
                         $scope.selected_data_pie = [];
                         $scope.ss_states = [];
+                        if($scope.resl.length>0){
+
 
                         $scope.resl.forEach(function(kpi,index){
+
                             if($scope.ss_states.indexOf(kpi.labels.result)>=0){
+                                var result = {};
+                                    result = $scope.selected_data_pie.filter(function( obj ) {
                                 
-                                var result = $scope.selected_data_pie.filter(function( obj ) {
-                                      return obj.name == kpi.labels.result;
+                                     if(obj.name==kpi.labels.result){
+                                        return obj;
+                                     }
+                                        
                                 });
-                                result.y++;
+
+                                result[0].y++;
+                                
+                                
 
                             }else{
                                 $scope.ss_states.push(kpi.labels.result);
@@ -124,8 +134,10 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                                     y:1,
                                     sliced: true
                                 });
+                                
                             }                            
                         });
+                         }
                         
                             $scope.setResultChart();                        
                        
@@ -160,6 +172,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
 
 
 $scope.setResultChart = function(){
+
  Highcharts.chart('resultChart', {
     chart: {
         plotBackgroundColor: null,
@@ -172,6 +185,9 @@ $scope.setResultChart = function(){
     },
     tooltip: {
         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    credits: {
+      enabled: false
     },
     plotOptions: {
         pie: {
