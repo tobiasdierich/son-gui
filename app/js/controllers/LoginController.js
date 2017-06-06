@@ -35,11 +35,6 @@ SonataApp.controller('LoginController',['$rootScope','$http','$scope','$routePar
           $scope.loading=0;
           console.log("LoginController");
           
-/*          $rootScope.token = '';
-          $rootScope.is_user_logged_in = false;
-          delete window.localStorage['sonata-token'];*/
-  /*        $rootScope.resp=0;*/
-
 
 
           if($routeParams.s==1){

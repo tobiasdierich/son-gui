@@ -34,7 +34,25 @@ if(!String.prototype.startsWith){
 
 var SonataApp = angular.module('SonataApp', ['ngRoute','ui.materialize','highcharts-ng']);
    
+SonataApp.run(function($rootScope, $route, $location){
+   //Bind the `$locationChangeSuccess` event on the rootScope, so that we dont need to 
+   //bind in induvidual controllers.
 
+   $rootScope.$on('$locationChangeSuccess', function() {
+        $rootScope.actualLocation = $location.path();
+		
+    });        
+
+   $rootScope.$watch(function () {return $location.path()}, function (newLocation, oldLocation) {
+        
+        if($rootScope.actualLocation === newLocation) {
+			$('.lean-overlay').hide();
+           /* $('.modal').each(function(m){
+            	$(m).modal('close');
+            })*/
+        }
+    });
+});
 
 SonataApp.config(function($routeProvider) {
 		$routeProvider
@@ -84,7 +102,7 @@ SonataApp.config(function($routeProvider) {
 			})
 			.when('/signup', {
 				templateUrl : 'js/views/signup.html',
-				controller  : 'MainController'
+				controller  : 'SignUpController'
 			})
 			.when('/login', {
 				templateUrl : 'js/views/login.html',
