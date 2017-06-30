@@ -33,6 +33,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
     $scope.user_registrations = 5;
     $scope.packages = 12;
     $scope.kpis = [];
+
     $scope.kpis.push({
     	'id':1,
     	'description':'Registered Users',
@@ -41,6 +42,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
     	'api_name':'user_registrations'
 
     });
+
     $scope.kpis.push({
     	'id':2,
     	'description':'Packages on Boarding',
@@ -48,6 +50,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
     	'sum':0,
     	'class':'green-kpi'
     });
+
     $scope.kpis.push({
         'id':3,
         'description':'Sync Requests',
@@ -55,6 +58,27 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
         'sum':0,
         'class':'light-kpi'
     });
+
+    $scope.vms_sum = {
+        'id':4,
+        'description':'VMs',
+        'api_name':'vms_sum',
+        'sum':0,
+        'class':'pencile-kpi'
+    };
+
+    $scope.http_sum = {
+        'id':5,
+        'description':'Http Requests',
+        'api_name':'http_requests_total',
+        'sum':0,
+        'class':'blue-kpi'
+    };
+
+    $scope.getVMsDetails = function(){
+
+
+    }
 
     $scope.getBOX = function(kpi){
     	var start = new Date(new Date().getTime() - 10000*60000).toISOString();
@@ -80,11 +104,179 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
         
     }
     
-    
+    $scope.getHttPTotals = function(){
+            
+            $http({
+                method  : 'GET',
+                url: $scope.apis.gatekeeper.kpis+'?name=http_requests_total',
+                headers : $rootScope.gk_headers
+              })
+                .success(function(datas) {
+                        console.log("Http Totals");
+                        console.log(datas); 
+                        
+                       $scope.http_categories = [];
+                       $scope.http_hndl = [];
+                       $scope.http_handlers = [];
+
+                       datas.data.metrics.forEach(function(dat){
+                            $scope.http_handlers.push({                                           
+                                    name: dat.labels.handler+":"+dat.labels.method+":"+dat.labels.code,
+                                    y: parseInt(dat.value),
+                                    drilldown: dat.labels.handler        
+                                });
+
+                        $scope.http_sum.sum+=parseInt(dat.value);
+                           /* $scope.http_hndl.push({
+                                name: dat.labels.handler+":"+dat.labels.method+":"+dat.labels.code,
+                                y: [parseInt(dat.value)]
+
+                            });
+                            $scope.http_categories.push(dat.labels.handler+":"+dat.labels.method+":"+dat.labels.code);
+                            console.log($scope.http_categories);*/
+                        });
+                })
+    };
+    $scope.getHttPTotals();
+
+    $scope.getHttPTotalsDetails = function(){
+        $('#modalhttps_details').openModal();
+
+        Highcharts.chart('http_chart_container', {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: 'Total number of HTTP requests made'
+    },
+    xAxis: {
+         type: 'category'
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Requests',
+            align: 'high'
+        },
+        labels: {
+            overflow: 'justify'
+        }
+    },
+    tooltip: {
+        valueSuffix: ' '
+    },
+    plotOptions: {
+        bar: {
+            dataLabels: {
+                enabled: true
+            }
+        }
+    },
+    legend: {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'top',
+        x: -40,
+        y: 80,
+        floating: true,
+        borderWidth: 1,
+        backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+        shadow: true
+    },
+    credits: {
+        enabled: false
+    },
+    series: [{
+        name: 'Handlers',
+        colorByPoint: true,
+        data: $scope.http_handlers
+    }]
+
+});
+
+
+    };
+
+    $scope.getVMsSum = function(){
+         $http({
+                method  : 'GET',
+                url: $scope.apis.gatekeeper.kpis+'?name='+$scope.vms_sum.api_name,
+                headers : $rootScope.gk_headers
+              })
+                .success(function(datas) {
+                        console.log("VMS Details");
+                        console.log(datas); 
+                        $scope.vms_sum.sum = datas.data.metrics[0].value;                 
+                       
+                    });
+    }
+     $scope.getVMsSum();
+    $scope.getVMsDetails = function(){
+        $('#modalvms_details').openModal();
+        /*$scope.modal.title = $scope.vms_sum.description;*/
+            
+            $http({
+                method  : 'GET',
+                url: $scope.apis.gatekeeper.kpis+'?name=vms_state',
+                headers : $rootScope.gk_headers
+            })
+            .success(function(datas) {
+            
+                        console.log("GET Details VMs");
+                        console.log(datas); 
+
+                        $scope.resl = datas.data.metrics;
+                        $scope.selected_data_pie = [];
+                        
+                        $scope.ss_states = [];
+                        if($scope.resl.length>0){
+
+                            $scope.modal = {};
+                            $scope.modal.title = "States of VMs";
+                        $scope.resl.forEach(function(kpi,index){
+                           
+                            if($scope.ss_states.indexOf(kpi.labels.result)>=0){
+                                var result = {};
+                                    result = $scope.selected_data_pie.filter(function( obj ) {
+                                
+                                     if(obj.name==kpi.labels.state){
+                                        return obj;
+                                     }
+                                        
+                                });
+
+                                result[0].y++;
+                                
+                                
+
+                            }else{
+                                $scope.ss_states.push(kpi.labels.state);
+                                
+                                $scope.selected_data_pie.push({
+                                    name:kpi.labels.state,
+                                    y:1,
+                                    sliced: true
+                                });
+                                
+                            }                            
+                        });
+                         }
+                        
+                            $scope.setResultChart(); 
+
+
+
+                        
+                       
+                    });
+        
+    }
+
 
 
 
     $scope.getKPIDetails = function(kpi){
+        $scope.kpi_timeline_data = [];
         var start = new Date(new Date().getTime() - 10000*60000).toISOString();
         var end = new Date().toISOString();
         var step = '10m';
@@ -107,12 +299,20 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                 		console.log(datas);
                         $scope.resl = datas.data.metrics;
                         $scope.selected_data_pie = [];
+                        
                         $scope.ss_states = [];
                         if($scope.resl.length>0){
 
 
                         $scope.resl.forEach(function(kpi,index){
-
+                            console.log("DATE:");
+                            
+                            console.log(kpi.labels.time_stamp);
+                            /*var x = new Date(kpi.labels.time_stamp);*/
+                            var x = new Date(kpi.labels.time_stamp);
+                           
+                            $scope.kpi_timeline_data.push([x.getTime(), 1]);
+                            console.log(x);
                             if($scope.ss_states.indexOf(kpi.labels.result)>=0){
                                 var result = {};
                                     result = $scope.selected_data_pie.filter(function( obj ) {
@@ -129,6 +329,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
 
                             }else{
                                 $scope.ss_states.push(kpi.labels.result);
+                                
                                 $scope.selected_data_pie.push({
                                     name:kpi.labels.result,
                                     y:1,
@@ -207,7 +408,93 @@ $scope.setResultChart = function(){
         colorByPoint: true,
         data: $scope.selected_data_pie
     }]
-});   
+});  
+
+var data = $scope.kpi_timeline_data;
+//TODO: Remove - the following code is for testing purposes only.
+if(data.length<4)
+data = [
+            [Date.UTC(2017, 1, 21), 0],
+            [Date.UTC(2017, 2, 4), 1],
+            [Date.UTC(2017, 2, 9), 1],
+            [Date.UTC(2017, 2, 27), 1],
+            [Date.UTC(2017, 3, 2), 1],
+            [Date.UTC(2017, 3, 26), 2],
+            [Date.UTC(2017, 4, 29), 3],
+            [Date.UTC(2017, 5, 1), 3],
+            [Date.UTC(2017, 5, 2), 4],
+            [Date.UTC(2017, 5, 3), 5],
+            [Date.UTC(2017, 5, 11), 5],
+            [Date.UTC(2017, 5, 25), 6],
+            [Date.UTC(2017, 6, 11), 7],
+            [Date.UTC(2017, 6, 11), 7],
+            [Date.UTC(2017, 6, 19), 8],
+            [Date.UTC(2017, 6, 25), 8],
+            [Date.UTC(2017, 6, 29), 8],
+            [Date.UTC(2017, 6, 30), 9]
+        ];
+ Highcharts.chart('kpi_timeline', {
+                              chart: {
+                                  zoomType: 'x',
+                              },
+                              title: {
+                                  text: 'ΤimeLine'
+                              },
+                              subtitle: {
+                                  text: document.ontouchstart === undefined ?
+                                          'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
+                              },
+                              xAxis: {
+                                  type: 'datetime'
+                              },
+                              yAxis: {
+                                  title: {
+                                      text: ''
+                                  }
+                              },
+                              legend: {
+                                  enabled: false
+                              },
+                              credits: {
+                                enabled: false
+                              },
+                              plotOptions: {
+                                  area: {
+                                      fillColor: {
+                                          linearGradient: {
+                                              x1: 0,
+                                              y1: 0,
+                                              x2: 0,
+                                              y2: 1
+                                          },
+                                          stops: [
+                                              [0, '#262B33'],
+                                              [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                                          ]
+                                      },
+                                      marker: {
+                                          radius: 2
+                                      },
+                                      lineWidth: 1,
+                                      states: {
+                                          hover: {
+                                              lineWidth: 1
+                                          }
+                                      },
+                                      threshold: null
+                                  }
+                              },
+                              
+    series: [{
+        name: $scope.modal.title,
+        data: data
+    }]
+                          });
+
+
+
+
+
 }
 
         

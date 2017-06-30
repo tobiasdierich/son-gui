@@ -35,12 +35,66 @@ partner consortium (www.sonata-nfv.eu).
           <div class="kpi-subtitle">{{kpi.description}}</div>
         </div>
       </div>
+
+      <div class="col s12 m4 l2" ng-click="getVMsDetails()">
+        <div class="kpi" ng-class="vms_sum.class">
+          <div class="kpi-number">{{vms_sum.sum}}</div>
+          <div class="kpi-subtitle">{{vms_sum.description}}</div>
+        </div>
+      </div>
+
+      <div class="col s12 m4 l2" ng-click="getHttPTotalsDetails()">
+        <div class="kpi" ng-class="http_sum.class">
+          <div class="kpi-number" >{{http_sum.sum}}</div>
+          <div class="kpi-subtitle" >{{http_sum.description}}</div>
+        </div>
+      </div>
+
+
+
+    </div>
+    
+
+    
+    <div id="modalhttps_details" class="modal modal-fixed-footer">
+      <div class="modal-content">
+            <div class="col s12">
+                <div id="http_chart_container" style="width: 100%"></div>
+            </div>
+      </div>
+      <div class="modal-footer">
+        <a href="javascript:void(0)" ng-click="closeModal()" class="modal-action modal-close waves-effect waves-green btn-flat ">Close</a>
+      </div>
     </div>
 
+    <div id="modalvms_details" class="modal modal-fixed-footer">
+          <div class="modal-content">
+                <div class="col s2">
+                  <table>
+                    <tr ng-repeat="dat in selected_data_pie">
+                      <td>{{dat.name}}</td>
+                      <td>{{dat.y}}</td>
+                    </tr>
+                  </table>
+                </div>
+                <div class="col s10">
+                    <div id="resultChart" style="width: 100%"></div>
+                </div>
+          </div>
+          <div class="modal-footer">
+            <a href="javascript:void(0)" ng-click="closeModal()" class="modal-action modal-close waves-effect waves-green btn-flat ">Close</a>
+          </div>
+        </div>
       <div id="modal1" class="modal modal-fixed-footer">
           <div class="modal-content">
              <h4>{{modal.title}}</h4>
-                <div class="col s12">
+              <div class="col s12 m6">
+                <div class="card-panel">
+                  <div id="kpi_timeline"></div>
+                </div>
+              </div>
+
+                <div class="col s12 m6">
                     <div id="resultChart" style="width: 100%"></div>
                 </div>
                 <div class="col s12">
