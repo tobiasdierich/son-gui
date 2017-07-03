@@ -121,7 +121,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
 
                        datas.data.metrics.forEach(function(dat){
                             $scope.http_handlers.push({                                           
-                                    name: dat.labels.handler+":"+dat.labels.method+":"+dat.labels.code,
+                                    name: dat.labels.handler+":"+dat.labels.method+":"+dat.labels.code+" (#"+parseInt(dat.value)+")",
                                     y: parseInt(dat.value),
                                     drilldown: dat.labels.handler        
                                 });
@@ -173,6 +173,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
         }
     },
     legend: {
+        enabled: false,    
         layout: 'vertical',
         align: 'right',
         verticalAlign: 'top',
@@ -233,6 +234,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
 
                             $scope.modal = {};
                             $scope.modal.title = "States of VMs";
+
                         $scope.resl.forEach(function(kpi,index){
                            
                             if($scope.ss_states.indexOf(kpi.labels.result)>=0){
@@ -245,8 +247,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                                         
                                 });
 
-                                result[0].y++;
-                                
+                                result[0].y++;                               
                                 
 
                             }else{
@@ -254,7 +255,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                                 
                                 $scope.selected_data_pie.push({
                                     name:kpi.labels.state,
-                                    y:1,
+                                    y:parseInt(kpi.value),
                                     sliced: true
                                 });
                                 
@@ -262,11 +263,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                         });
                          }
                         
-                            $scope.setResultChart(); 
-
-
-
-                        
+                            $scope.setResultChart('resultChartvms');                        
                        
                     });
         
@@ -340,7 +337,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                         });
                          }
                         
-                            $scope.setResultChart();                        
+                            $scope.setResultChart('resultChart');                        
                        
                 	});
 
@@ -372,9 +369,10 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
 
 
 
-$scope.setResultChart = function(){
+$scope.setResultChart = function(where){
+    console.log("RESULTCHART");
 
- Highcharts.chart('resultChart', {
+ Highcharts.chart(where, {
     chart: {
         plotBackgroundColor: null,
         plotBorderWidth: null,
