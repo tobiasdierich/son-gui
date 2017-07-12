@@ -28,6 +28,7 @@ partner consortium (www.sonata-nfv.eu).
 html{
     height: 100%;
     width:100%;
+    word-wrap: break-word;
 }
 body{
     background: #efefef;

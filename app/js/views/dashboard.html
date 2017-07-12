@@ -28,10 +28,70 @@ partner consortium (www.sonata-nfv.eu).
 
 
 	<div class="row"  ng-controller="DashboardController" ng-init="init()">
+    <div class="section">
+      <h5>Dashboard</h5>
+        <div class="col s12 m3">        
           
+          <div class="col s12">
+            <div class="card light-green darken-2">
+              <div class="card-content white-text">
+                <span class="card-title">Tips!</span>
+                <p>{{current_tip}}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col s12">
+            <div class="card teal darken-1">
+              <div class="card-content white-text">
+                <span class="card-title">Catalogue Packages</span>
+                <p>Here you can see information about Packages</p>
+              </div>
+              <div class="card-action">
+                
+                  <a href="#/catalogue/packages">See Packages</a>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="col s12">
+            <div class="card teal darken-1">
+              <div class="card-content white-text">
+                <span class="card-title">Catalogue Services</span>
+                <p>Here you can see information about Services</p>
+              </div>
+              <div class="card-action">
+                
+                  <a href="#/catalogue/allServices">See Services</a>
+
+              </div>
+            </div>
+          </div>
+
+
+          <div class="col s12">
+            <div class="card teal darken-1">
+              <div class="card-content white-text">
+                <span class="card-title">Catalogue Functions</span>
+                <p>Here you can see information about Functions</p>
+              </div>
+              <div class="card-action">
+                
+                  <a href="#/catalogue/functions">See Functions</a>
+
+              </div>
+            </div>
+          </div>
+      
+
+
+         
+
+          </div>
+          <div class="col s12 m9">
 
           <div class="row matab">
-            <h5 ng-hide="selected_vim.name">Select a VIM</h5>
               <div class="col s12 m6 l2 virtual-machine" ng-repeat="vim in vims" ng-click="changeVisibleVim(vim.metric.exported_instance)">
                       <div class="col s12 entire cursored" ng-class="vim.selected_visible">                  
                           <i class="fa fa-desktop" aria-hidden="true"></i>
@@ -206,6 +266,8 @@ partner consortium (www.sonata-nfv.eu).
 
 
       </div>
+      </div>
+        </div>
  
 </div>
 

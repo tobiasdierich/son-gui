@@ -26,10 +26,13 @@ acknowledge the contributions of their colleagues of the SONATA
 partner consortium (www.sonata-nfv.eu).
 */
 
-SonataApp.controller('DashboardController',['$rootScope','$scope','$routeParams','$location','$http',function($rootScope,$scope, $routeParams, $location, $http){
+SonataApp.controller('DashboardController',['$interval','$rootScope','$scope','$routeParams','$location','$http',function($interval,$rootScope,$scope, $routeParams, $location, $http){
 (function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
   
+  console.log("DashboardController");
   
+  $rootScope.username = $rootScope.getStorage('sonata-username');
+  console.log($rootScope.username);
   
   $scope.vims = new Array();
 
@@ -37,6 +40,38 @@ SonataApp.controller('DashboardController',['$rootScope','$scope','$routeParams'
     choices:[]
   };
     
+ $scope.random_num = 0;
+ $scope.tips = [];
+ $scope.tips.push('You can check all the available packages by clicking on the catalogue menu!');
+ $scope.tips.push('You can access to monitoring data from your VNFs by clicking on the Monitoring tab on the right');
+ $scope.tips.push('All the recent alerts and notifications are available on the relevant section (Alerts)');
+ $scope.current_tip = $scope.tips[$scope.random_num];
+  
+  stop = $interval(function() {
+            $scope.random_num++;
+            
+            if($scope.random_num>=$scope.tips.length)
+              $scope.random_num=0;
+            
+              
+              $scope.current_tip = $scope.tips[$scope.random_num];
+            
+
+          }, 5000);
+
+$scope.stopFight = function() {
+    console.log("STOP Interval");
+          if (angular.isDefined(stop)) {
+            $interval.cancel(stop);
+            stop = undefined;
+          }
+        };
+
+$scope.$on('$destroy', function() {
+          // Make sure that the interval is destroyed too
+
+          $scope.stopFight();
+        });
 
   $scope.FindAllVims = function(){
 

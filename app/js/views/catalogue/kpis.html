@@ -29,26 +29,28 @@ partner consortium (www.sonata-nfv.eu).
   <div class="row" ng-controller="KpisController">
     <div class="col s12">
 
-      <div class="col s12 m4 l2" ng-repeat="kpi in kpis" ng-click="getKPIDetails(kpi)">
+      <div class="col s12 m6 l4" ng-repeat="kpi in kpis" ng-click="getKPIDetails(kpi)" style="margin-top:10px">
         <div class="kpi" ng-class="kpi.class">
           <div class="kpi-number">{{kpi.sum}}</div>
           <div class="kpi-subtitle">{{kpi.description}}</div>
         </div>
       </div>
 
-      <div class="col s12 m4 l2" ng-click="getVMsDetails()">
+      <div class="col s12 m6 l4" ng-click="getVMsDetails()" style="margin-top:10px">
         <div class="kpi" ng-class="vms_sum.class">
           <div class="kpi-number">{{vms_sum.sum}}</div>
           <div class="kpi-subtitle">{{vms_sum.description}}</div>
         </div>
       </div>
 
-      <div class="col s12 m4 l2" ng-click="getHttPTotalsDetails()">
+      <div class="col s12 m6 l4" ng-click="getHttPTotalsDetails()" style="margin-top:10px">
         <div class="kpi" ng-class="http_sum.class">
           <div class="kpi-number" >{{http_sum.sum}}</div>
           <div class="kpi-subtitle" >{{http_sum.description}}</div>
         </div>
       </div>
+
+     
 
 
 
@@ -59,7 +61,7 @@ partner consortium (www.sonata-nfv.eu).
     <div id="modalhttps_details" class="modal modal-fixed-footer">
       <div class="modal-content">
             <div class="col s12">
-                <div id="http_chart_container" style="width: 100%"></div>
+             <div id="http_chart_container" style="width: 100%"></div>
             </div>
       </div>
       <div class="modal-footer">

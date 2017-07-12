@@ -51,8 +51,8 @@ SonataApp.controller('SignUpController',['$rootScope','$http','$scope',function(
 
           	}else{
           				$scope.success_message_view = 0;
-	                  	$scope.error_message_view = 0;
-          		$scope.new_user.user_type = "developer";
+	                $scope.error_message_view = 0;
+          		    $scope.new_user.user_type = "developer";
           		$.ajax({
                   type: 'POST',
                   headers: {"Content-Type":"application/json"},
@@ -61,9 +61,7 @@ SonataApp.controller('SignUpController',['$rootScope','$http','$scope',function(
                   async: false
 	              })
 	              .done(function(data, textStatus, jqXHR) {
-	                  /*$rootScope.gitResp = data;
-	                  $rootScope.resp = 1;
-	                  location.hash = '/home';*/
+	                  
 	                  if(textStatus=='success'){
 	                  	$scope.success_message = 'Your account has been created';
 	                  	$scope.success_message_view = 1;
