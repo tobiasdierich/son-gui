@@ -112,7 +112,7 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
                 })
            }
 
-
+    $rootScope.username='';
     $rootScope.logout = function(){
       $rootScope.is_user_logged_in = false;
       delete window.localStorage['sonata-token'];

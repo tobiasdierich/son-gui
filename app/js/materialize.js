@@ -2011,10 +2011,10 @@ $(document).ready(function(){
           dragTarget.css({'left': 0}); // Add Touch Area
         }
         else {
-          menu_id.addClass('right-aligned') // Change text-alignment to right
+/*          menu_id.addClass('right-aligned') // Change text-alignment to right
             .css('right', -1 * (options.menuWidth + 10))
             .css('left', '');
-          dragTarget.css({'right': 0}); // Add Touch Area
+          dragTarget.css({'right': 0}); // Add Touch Area*/
         }
 
         // If fixed sidenav, bring menu out

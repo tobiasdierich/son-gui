@@ -29,7 +29,10 @@ partner consortium (www.sonata-nfv.eu).
 SonataApp.controller('DashboardController',['$rootScope','$scope','$routeParams','$location','$http',function($rootScope,$scope, $routeParams, $location, $http){
 (function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
   
+  console.log("DashboardController");
   
+  $rootScope.username = $rootScope.getStorage('sonata-username');
+  console.log($rootScope.username);
   
   $scope.vims = new Array();
 

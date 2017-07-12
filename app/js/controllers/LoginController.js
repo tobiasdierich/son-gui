@@ -60,7 +60,9 @@ SonataApp.controller('LoginController',['$rootScope','$http','$scope','$routePar
             $scope.error_message_view = 0;
             $scope.loading=1;
             $rootScope.token = "";
-
+            
+            $rootScope.username = $scope.user_email;
+            console.log($rootScope.username);
             $.ajax({
                 type: 'POST',
                   headers: {'Content-Type':'application/json'},
@@ -78,7 +80,9 @@ SonataApp.controller('LoginController',['$rootScope','$http','$scope','$routePar
                   $rootScope.resp=1;
                   $rootScope.token = data.token.access_token;
                   $rootScope.setStorage('sonata-token',$rootScope.token);
-                  $rootScope.is_user_logged_in = true;  
+                  $rootScope.setStorage('sonata-username',$scope.user_email);
+                  $rootScope.is_user_logged_in = true; 
+
                   location.hash = '/home';
                   
 
