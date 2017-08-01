@@ -42,7 +42,7 @@ SonataApp.controller('PackagesController',['$rootScope','$http','$scope',functio
              $http({
                 method  : 'GET',
                 url     : $scope.apis.gatekeeper.packages,
-                headers : {"Content-Type":"application/zip"}
+                headers : {"Content-Type":"application/zip",'Authorization': 'Bearer '+$rootScope.getToken()}
                })
                 .success(function(data) {
                   
