@@ -77,26 +77,33 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
                 headers : { 'Content-Type': 'application/json' }
                })
                 .success(function(data) {
-                  
+                  var protocol = window.location.protocol;
+                  var host = window.location.hostname;
+                  var gk_url = protocol+'//'+host+'/api/v2';
+                  var mon_url = protocol+'//'+host+'/monitoring';
+                  var vims_url = protocol+'//'+host+'/api/v2';
+                  var logs_url = protocol+'//'+host+'/logs';
+                  console.log("protocol: "+protocol);
+                  console.log("host: "+host);
 
                   $scope.configuration = {
                   	'logs_range':'86400' //time range (minutes before)
                   }
 
                   $scope.apis = {
-            						'monitoring':data.MON_URL+'/api/v1/prometheus/metrics/data',
-                        'monitoring_list':data.MON_URL+'/api/v1/prometheus/metrics/list',
-            						'logs':data.LOGS_URL+'/search/universal/relative?',
-            						'vims':data.VIMS_URL+'/vims',
-                        'wims':data.VIMS_URL+'/wims',
+            						'monitoring':mon_url+'/api/v1/prometheus/metrics/data',
+                        'monitoring_list':mon_url+'/api/v1/prometheus/metrics/list',
+            						'logs':logs_url+'/search/universal/relative?',
+            						'vims':vims_url+'/vims',
+                        'wims':vims_url+'/wims',
             						'gatekeeper':{
-            							'services' :data.GK_URL+'/services',
-            							'packages' :data.GK_URL+'/packages',
-            							'functions':data.GK_URL+'/functions',
-            							'requests' :data.GK_URL+'/requests',
-                          'kpis'     :data.GK_URL+'/kpis',
-                          'users'    :data.GK_URL+'/users',
-                          'user_sessions':data.GK_URL+'/sessions',
+            							'services' :gk_url+'/services',
+            							'packages' :gk_url+'/packages',
+            							'functions':gk_url+'/functions',
+            							'requests' :gk_url+'/requests',
+                          'kpis'     :gk_url+'/kpis',
+                          'users'    :gk_url+'/users',
+                          'user_sessions':gk_url+'/sessions',
             						}
             					};
 				      
