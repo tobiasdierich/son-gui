@@ -19,7 +19,7 @@ echo json_encode($vars);
 function url(){
   return sprintf(
     "%s://%s",
-    isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'https',    $_SERVER['SERVER_NAME'] );
+    isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http',    $_SERVER['SERVER_NAME'] );
 }
 
 ?>
