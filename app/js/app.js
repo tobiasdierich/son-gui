@@ -58,83 +58,103 @@ SonataApp.config(function($routeProvider) {
 		$routeProvider
 			.when('/user/profile', {
 				templateUrl : 'js/views/settings/user_profile.html',
+				disableCache: true,
 				controller  : 'MainController'
 			})
 			.when('/user/settings', {
 				templateUrl : 'js/views/settings/user_settings.html',
+				disableCache: true,
 				controller  : 'MainController'
 			})
 			.when('/catalogue/userServices', {
 				templateUrl : 'js/views/catalogue/user_services.html',
+				disableCache: true,
 				controller  : 'MainController'
 			})
 			.when('/catalogue/allServices', {
 				templateUrl : 'js/views/catalogue/all_services.html',
+				disableCache: true,
 				controller  : 'MainController'
 			})
 			.when('/catalogue/packages', {
 				templateUrl : 'js/views/catalogue/packages.html',
+				disableCache: true,
 				controller  : 'MainController'
 			})
 			.when('/catalogue/functions', {
 				templateUrl : 'js/views/catalogue/functions.html',
+				disableCache: true,
 				controller  : 'MainController'
 			})
 			.when('/vim_settings', {
 				templateUrl : 'js/views/settings/vim.html',
+				disableCache: true,
 				controller  : 'MainController'
 			})
 			.when('/instances/overview', {
 				templateUrl : 'js/views/instances/overview.html',
+				disableCache: true,
 				controller  : 'MainController'
 			})
 			.when('/instances/userServices', {
 				templateUrl : 'js/views/instances/user_services.html',
+				disableCache: true,
 				controller  : 'MainController'
 			})
 			.when('/alerts', {
 				templateUrl : 'js/views/alerts.html',
+				disableCache: true,
 				controller  : 'MainController'
 			})
 			.when('', {
 				templateUrl : 'js/views/dashboard.html',
+				disableCache: true,
 				controller  : 'MainController'
 			})
 			.when('/signup', {
 				templateUrl : 'js/views/signup.html',
+				disableCache: true,
 				controller  : 'SignUpController'
 			})
 			.when('/login', {
 				templateUrl : 'js/views/login.html',
+				disableCache: true,
 				controller  : 'LoginController'
 			})
 			.when('/monitoring/platform',{
 				templateUrl	: 'js/views/monitoring/service_platform.html',
+				disableCache: true,
 				controller 	: 'MainController'
 			})
 			.when('/monitoring/vnfs',{
 				templateUrl	: 'js/views/monitoring/vnfs.html',
+				disableCache: true,
 				controller 	: 'MainController'
 			})
 			.when('/catalogue/kpis',{
 				templateUrl	: 'js/views/catalogue/kpis.html',
+				disableCache: true,
 				controller 	: 'MainController'
 			})
 			.when('/vnf/:name',{
 				templateUrl	: 'js/views/monitoring/vnf.html',
+				disableCache: true,
 				controller 	: 'MainController'
 			})
 			.when('/vm/:name',{
 				templateUrl	: 'js/views/monitoring/vm.html',
+				disableCache: true,
 				controller 	: 'MainController'
 			})
 			.when('/container/:id',{
 				templateUrl	: 'js/views/monitoring/container.html',
+				disableCache: true,
 				controller 	: 'MainController'
 			})
 			
 		$routeProvider.otherwise({
 			templateUrl:'js/views/dashboard.html',
+			disableCache: true,
 			controller :'MainController'
 		});
 	console.log($routeProvider);

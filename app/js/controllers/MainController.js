@@ -38,17 +38,18 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
     }
 
     $rootScope.getToken = function(){
-      if($rootScope.token!=''){
-        
-        return $rootScope.token;
-      }
-      else if($rootScope.getStorage('sonata-token')>0){
+      if($rootScope.getStorage('sonata-token')>0){
         return $rootScope.getStorage('sonata-token');
       }
       else{
         return '';
       }
     }
+
+    $rootScope.getUserName = function(){
+      return $rootScope.getStorage('sonata-username');
+    }
+    $rootScope.username=$rootScope.getUserName();
 
 
     $rootScope.checkIfValid = function(token){
@@ -113,14 +114,16 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
 
            }
 
-    $rootScope.username='';
+    
     $rootScope.logout = function(){
       $rootScope.is_user_logged_in = false;
       delete window.localStorage['sonata-token'];
+      delete window.localStorage['sonata-username'];
       $rootScope.token = '';
       location.hash='/login';
 
     }
+
     $scope.checkAuthorization = function(){
       if($rootScope.is_user_logged_in==false){
         $rootScope.logout();        
