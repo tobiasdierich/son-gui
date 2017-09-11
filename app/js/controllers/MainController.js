@@ -1,24 +1,19 @@
 /*
 Copyright (c) 2015 SONATA-NFV [, ANY ADDITIONAL AFFILIATION]
 ALL RIGHTS RESERVED.
-
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
-
     http://www.apache.org/licenses/LICENSE-2.0
-
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
 Neither the name of the SONATA-NFV [, ANY ADDITIONAL AFFILIATION]
 nor the names of its contributors may be used to endorse or promote 
 products derived from this software without specific prior written 
 permission.
-
 This work has been performed in the framework of the SONATA project,
 funded by the European Commission under Grant number 671517 through 
 the Horizon 2020 and 5G-PPP programmes. The authors would like to 
@@ -27,12 +22,12 @@ partner consortium (www.sonata-nfv.eu).
 */
 
 SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$location', '$http',function($rootScope,$scope, $routeParams, $location, $http) {
-	 
-   console.log("MainController");
-  	
-		$scope.todos = new Array();
+   $scope.debug=false;
+   
+    
+    $scope.todos = new Array();
     (function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
-		
+    
     
     $rootScope.setStorage = function(valuename,valuevalue){
       window.localStorage.setItem(valuename,valuevalue);
@@ -70,53 +65,52 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
 
      $scope.getServices = function(){
 
-            console.info('Get Enviroment variables call started.');
-             $http({
-                method  : 'GET',
-                url     : 'variables.php',
-                headers : { 'Content-Type': 'application/json' }
-               })
-                .success(function(data) {
-                  var protocol = window.location.protocol;
-                  var host = window.location.hostname;
+                if($scope.debug==false){
+                  var protocol  = window.location.protocol;
+                  var host      = window.location.hostname;               
+
                   var gk_url = protocol+'//'+host+'/api/v2';
                   var mon_url = protocol+'//'+host+'/monitoring';
                   var vims_url = protocol+'//'+host+'/api/v2';
                   var logs_url = protocol+'//'+host+'/logs';
+                
+                }else{
+                  
+                  var gk_url = 'http://sp.int3.sonata-nfv.eu:32001/api/v2';
+                  var mon_url = 'http://sp.int3.sonata-nfv.eu:8000';
+                  var vims_url = 'http://sp.int3.sonata-nfv.eu:32001/api/v2';
+                  var logs_url = 'http://logs.sonata-nfv.eu:12900/logs';
+                }
                   console.log("protocol: "+protocol);
                   console.log("host: "+host);
 
                   $scope.configuration = {
-                  	'logs_range':'86400' //time range (minutes before)
+                    'logs_range':'86400' //time range (minutes before)
                   }
 
                   $scope.apis = {
-            						'monitoring':mon_url+'/api/v1/prometheus/metrics/data',
+                        'monitoring':mon_url+'/api/v1/prometheus/metrics/data',
                         'monitoring_list':mon_url+'/api/v1/prometheus/metrics/list',
-            						'logs':logs_url+'/search/universal/relative?',
-            						'vims':vims_url+'/vims',
+                        'logs':logs_url+'/search/universal/relative?',
+                        'vims':vims_url+'/vims',
                         'wims':vims_url+'/wims',
-            						'gatekeeper':{
-            							'services' :gk_url+'/services',
-            							'packages' :gk_url+'/packages',
-            							'functions':gk_url+'/functions',
-            							'requests' :gk_url+'/requests',
+                        'gatekeeper':{
+                          'services' :gk_url+'/services',
+                          'packages' :gk_url+'/packages',
+                          'functions':gk_url+'/functions',
+                          'requests' :gk_url+'/requests',
                           'kpis'     :gk_url+'/kpis',
                           'users'    :gk_url+'/users',
                           'user_sessions':gk_url+'/sessions',
-            						}
-            					};
-				      
+                        }
+                      };
+              
               $rootScope.apis = $scope.apis;
               $rootScope.gk_headers = { 
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer '+$rootScope.getToken()
                      };
 
-                })
-                .error(function(data){
-                    console.error('Get Enviroment variables Failed.');
-                })
            }
 
     $rootScope.username='';
@@ -131,13 +125,12 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
       if($rootScope.is_user_logged_in==false){
         $rootScope.logout();        
       }
-      console.log("A");
       if($location.url()!='/signup' && $location.url()!='/login'){
-      console.log("B");
+      
             var localStorageToken = $rootScope.getStorage('sonata-token');
 
             if($rootScope.checkIfNull(localStorageToken)){
-              console.log("zimia 1");
+      
               $rootScope.is_user_logged_in = false;    
               delete window.localStorage['sonata-token'];
               location.hash='/login';            
@@ -147,15 +140,12 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
                 $rootScope.is_user_logged_in = true;
               }
             }
-      }else{
-        console.log("MANOS"+$location.url());
-        
       }
     }
     $scope.checkAuthorization();
     
         
-   	
+    
 
 
 $scope.alerts_visibility = 0;           
@@ -179,15 +169,13 @@ $rootScope.FixTimestamp = function(timestamp){
 
 
     $scope.changeHash = function(newHash){
-    	location.hash = newHash;
+      location.hash = newHash;
     }
 
-	$rootScope.checkIfFilesAreThere = function(){
+  $rootScope.checkIfFilesAreThere = function(){
 
-		return 1;	
-	}         
+    return 1; 
+  }         
     
 
     }]);
-
-

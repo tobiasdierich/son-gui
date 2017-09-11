@@ -62,7 +62,7 @@ SonataApp.controller('LoginController',['$rootScope','$http','$scope','$routePar
             $rootScope.token = "";
             
             $rootScope.username = $scope.user_email;
-            console.log($rootScope.username);
+            $rootScope.password = $scope.password;
             $.ajax({
                 type: 'POST',
                   headers: {'Content-Type':'application/json'},

@@ -75,58 +75,6 @@ $scope.getLogs = function(){
 
 }
 
-$scope.getCurrentMemory = function(){
-  
-   $http({
-          method  : 'POST',
-          url     : $scope.apis.monitoring,
-          data:  {
-                  "name": "cnt_mem_perc",
-                  "start": ""+ new Date().toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "10m",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.id}]
-                    },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
-
-            console.log(data);
-          
-            if(data.metrics.result.length>0)
-              $scope.container.currentMemoryUsage = data.metrics.result[0].values[0][1];
-           
-           
-            
-          });
-}
-
-$scope.getCurrentCPU = function(){
-  
-   $http({
-          method  : 'POST',
-          url     : $scope.apis.monitoring,
-          data:  {
-                  "name": "cnt_cpu_perc",
-                  "start": ""+ new Date().toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "1m",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.id}]
-                    },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
-
-            if(data.metrics.result.length>0)
-            $scope.container.currentCPUUsage = data.metrics.result[0].values[0][1];
-           
-           if($scope.container.currentCPUUsage>99)
-            $scope.container.currentCPUUsage=100;
-            
-          });
-}
-
-
 $scope.getCPU_History = function(){
   
    $http({
@@ -150,24 +98,6 @@ $scope.getCPU_History = function(){
 
 
  
-        
-        /*var m=[['Time', 'Used', 'Total']];
-
-        data.metrics.result[0].values.forEach( function(element, index) {
-          
-           
-            m.push(['100',parseFloat(element[1]),400]);
-            
-          
-
-        });
-          var options = {
-              title: 'CPU',
-              hAxis: {title: 'Timestamp',  titleTextStyle: {color: '#333'}},
-              vAxis: {minValue: 0}
-            };
-            console.log(m);
-           $scope.drawTheChart(m,options,'cpu_chart');*/
 
 $scope.drawGauges = function(){
    google.charts.setOnLoadCallback(drawChart);
@@ -190,17 +120,7 @@ $scope.drawGauges = function(){
 
         chart.draw(data, options);
 
-        setInterval(function() {
-          $scope.getCurrentMemory();          
-          data.setValue(0, 1, parseFloat($scope.container.currentMemoryUsage));
-          chart.draw(data, options);
-        }, 30000);
-        setInterval(function() {
-          $scope.getCurrentCPU(); 
-          data.setValue(1, 1, parseFloat($scope.container.currentCPUUsage));
-          chart.draw(data, options);
-        }, 30000);
-       
+      
       }
 }
 
@@ -254,7 +174,7 @@ console.log("DRAW CPU CHART");
 
              });
 
-                       Highcharts.chart('cnt_cpu_chart_new', {
+                       $scope.g_charts.push(Highcharts.chart('cnt_cpu_chart_new', {
                               chart: {
                                   zoomType: 'x',
                                   events: {
@@ -263,10 +183,6 @@ console.log("DRAW CPU CHART");
                                           
                                           var series = this.series[0];
                                           setInterval(function () {
-
-
-
-
 
                                           $http({
                                                   method  : 'POST',
@@ -282,7 +198,7 @@ console.log("DRAW CPU CHART");
                                                  })
                                                   .success(function(data) {
                                                     
-                                                    $scope.container.currentCPUUsage = data.metrics.result[0].values[0][1];
+                                                    
                                                     var y = data.metrics.result[0].values[0][1];
                                                     var x = data.metrics.result[0].values[0][0];
                                                     var timestamp = x.toString();
@@ -303,6 +219,9 @@ console.log("DRAW CPU CHART");
                                                         timestamp = parseInt(timestamp);
                                                       
                                                       series.addPoint([timestamp, parseFloat(y)], true, true);
+                                                      $scope.container.currentCPUUsage = y; 
+                                                      $scope.drawGauges();
+
 
                                                   })
 
@@ -372,7 +291,7 @@ console.log("DRAW CPU CHART");
                                   name: 'CPU',
                                   data: $scope.cpudata
                               }]
-                          });
+                          }));
           });
 }
 
@@ -414,7 +333,7 @@ console.log("DRAW MEM CHART");
 
              });
 
-                       Highcharts.chart('cnt_mem_chart_new', {
+                       $scope.g_charts.push(Highcharts.chart('cnt_mem_chart_new', {
                               chart: {
                                   zoomType: 'x',
                                   events: {
@@ -442,7 +361,7 @@ console.log("DRAW MEM CHART");
                                                  })
                                                   .success(function(data) {
                                                     
-                                                    $scope.container.currentMEMUsage = data.metrics.result[0].values[0][1];
+                                                    
                                                     var y = data.metrics.result[0].values[0][1];
                                                     var x = data.metrics.result[0].values[0][0];
                                                     var timestamp = x.toString();
@@ -463,6 +382,8 @@ console.log("DRAW MEM CHART");
                                                         timestamp = parseInt(timestamp);
                                                       
                                                       series.addPoint([timestamp, parseFloat(y)], true, true);
+                                                      $scope.container.currentMemoryUsage = 1-y; 
+                                                      $scope.drawGauges();
 
                                                   })
 
@@ -533,73 +454,12 @@ console.log("DRAW MEM CHART");
                                   name: 'RAM',
                                   data: $scope.memdata
                               }]
-                          });
+                          }));
           });
 }
 
 $scope.drawCPUChartnew();
 $scope.drawMEMChartnew();
-/*
-    $scope.drawCPUChart = function(){
-       
-       google.charts.setOnLoadCallback(drawChart);
-
-      function drawChart() {
-
-        var m=[
-          ['Time', 'Percent']
-        ];
-
-        $http({
-          method  : 'POST',
-          url     : $scope.apis.monitoring,
-          data:  {
-                  "name": "cnt_cpu_perc",
-                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "30s",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.id}]
-                    },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
-       
-            data.metrics.result[0].values.forEach( function(element, index) {
-          
-           
-            var timestamp = element[0].toString();
-            timestamp = timestamp.replace('.','');
-            
-                timestamp = new Date(parseInt(timestamp));
-
-                if(element[1]>99)
-                  element[1]=100;
-               m.push([timestamp,parseFloat(element[1])]);
-
-            });
-
-            var options = {
-              title: 'CPU',
-              hAxis: {title: 'Time',  titleTextStyle: {color: '#333'}},
-              vAxis: {minValue: 0,maxValue:100}
-            };
-            
-
-
-              $scope.drawTheChart(m,options,'cnt_cpu_chart');
-
-
-          });
-
-
-
-        
-
-        
-      }
-    }*/
-
-
 
 
      $scope.drawMEMChart = function(){
@@ -656,113 +516,6 @@ $scope.drawMEMChartnew();
 
       }
     }
-
-
-
-
-
-
-
-
-
-
-
-/*
-    $scope.drawRxTxChart = function(){
-       
-       google.charts.setOnLoadCallback(drawChart);
-
-      function drawChart() {        
-        var tstart = new Date(new Date().getTime() - 20*60000).toISOString();
-        var tend = new Date().toISOString();
-        $http({
-          method  : 'POST',
-          url     : $scope.apis.monitoring,
-          data:  {
-                  "name": "cnt_net_rx_MB",
-                  "start": ""+ tstart,
-                  "end": ""+tend,
-                  "step": "30s",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.id}]
-                  },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
-
-            $scope.rx = data;
-
-
-                        $http({
-                      method  : 'POST',
-                      url     : $scope.apis.monitoring,
-                      data:  {
-                              "name": "cnt_net_tx_MB",
-                              "start": ""+ tstart,
-                              "end": ""+tend,
-                              "step": "30s",
-                              "labels": [{"labeltag":"id","labelid":$routeParams.id}]
-                              },
-                      headers : { 'Content-Type': 'application/json' }
-                     })
-                      .success(function(data) {
-
-                          $scope.tx = data;
-                          $scope.kam = [['Time', 'Rx','Tx']];
-
-
-                            $scope.rx.metrics.result[0].values.forEach( function(rx, index) {
-                                  var ttime = rx[0];
-                                  var rx_value = rx[1];
-                                  var tx_value = $scope.tx.metrics.result[0].values[index][1];
-
-
-                                  var timestamp = ttime.toString();
-                                  timestamp = timestamp.replace('.','');
-                                  timestamp = new Date(parseInt(timestamp));
-                                  $scope.kam.push([timestamp,parseFloat(rx_value),parseFloat(tx_value)]);
-
-
-
-
-
-
-                            });
-
-                             var options = {
-                              title: 'Rx/Tx',
-                              hAxis: {title: 'Time',  titleTextStyle: {color: '#333'}},
-                              vAxis: {minValue: 0}
-                            };
-                            
-                            
-                              $scope.drawTheChart($scope.kam,options,'cnt_rx_tx_chart');
-
-
-                      });
-
-
-
-
-         
-          });
-
-
-      
-      }
-
-    }*/
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -843,7 +596,7 @@ $scope.historyRXTX = function(){
                     });
 
 
-                    Highcharts.chart('cnt_rxtx_chart_new', {
+                    $scope.g_charts.push(Highcharts.chart('cnt_rxtx_chart_new', {
                               chart: {
                                   zoomType: 'x',
                               },
@@ -906,29 +659,9 @@ $scope.historyRXTX = function(){
                                   name: 'TX',
                                   data: $scope.data_tx
                               }]
-                          });
-
-
-
-
-
-
-
-
+                          }));
                   });
-
-
-
-
           });
-
-
-
-//End of Function
-       
-
-
-
 }
             
               
@@ -939,10 +672,7 @@ $scope.historyRXTX = function(){
        
        google.charts.setOnLoadCallback(drawChart);
         function drawChart() {
-        
 
-
-       
           var the_start = new Date(new Date().getTime() - 20*60000).toISOString();
           var the_end = new Date().toISOString();
 
@@ -1026,40 +756,39 @@ $scope.historyRXTX = function(){
 
     $scope.init = function(){
       (function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
+      
+      $scope.g_charts = [];
+      $scope.intervals = [];
+      $('.hchart').each(function(c){$(this).empty();});
+      $('.highcharts-container').each(function(c){$(this).empty();});
+
       $scope.getContainer();
       $scope.drawGauges();
-      /*$scope.drawCPUChart();*/
-      /*$scope.drawMEMChart();*/
-      /*$scope.drawRxTxChart();*/
-      /*$scope.drawDiskChart();*/
-      $scope.getCurrentMemory();
+      
       $scope.getCPU_History();
       $scope.historyRXTX();
-      $scope.getLogs();
-
-      /*
-      setInterval(function() {
-          $scope.drawCPUChart();
-          $scope.drawMEMChart();          
-          
-        }, 30000);*/
-      
-      //drawCPUS
-      //drawMEMS
-      //drawRX/TX
-      //drawDISC
-      
-
-      /*$scope.getCPU();
-      $scope.getMEM();
-      $scope.getLineGraph();*/
-      
-      /*$scope.FillCPUGraph();*/
-       /*setInterval(function() {
-          $scope.FillCPUGraph();
-        }, 5000);*/
-      
+      $scope.getLogs();   
     }
+
+    $scope.$on("$destroy", function(){
+        
+        $('.hchart').each(function(c){$(this).empty();});
+        $('.highcharts-container').each(function(c){$(this).empty();});
+
+        $scope.g_charts.forEach(function(chart){
+          chart.destroy();
+          chart = null;
+        });
+        $scope.g_charts = [];
+        $scope.intervals.forEach(function(interval){
+          $interval.cancel(interval);
+        });
+
+
+        $scope.g_charts.forEach(function(chart){
+          chart.destroy();
+        })
+    });
 
      
     

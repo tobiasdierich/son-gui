@@ -28,7 +28,7 @@ partner consortium (www.sonata-nfv.eu).
 
 SonataApp.controller('HeaderBarController',['$rootScope','$http','$scope','$routeParams',function($rootScope,$http,$scope,$routeParams){
 
-
+	$scope.username = $rootScope.getStorage('sonata-username');
          
            
 }]);

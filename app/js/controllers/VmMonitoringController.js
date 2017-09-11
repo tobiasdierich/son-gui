@@ -34,7 +34,8 @@ SonataApp.controller('VmMonitoring',['$rootScope','$scope','$routeParams','$loca
   $scope.vm.currentCPUUsage = 0;
 	$scope.current_time = new Date();
   $scope.ten_m_before = new Date($scope.current_time.getTime() - 20*60000);
-$scope.settings_modal = {};
+  $scope.settings_modal = {};
+  $scope.intervals = [];
   $scope.settings_modal.title = "Chart configuration";
 
   $scope.potential_timeranges = [];
@@ -121,12 +122,10 @@ $scope.getAllPotentialMeasurements();
 
 $scope.fillnewBox = function(box){
 
-
   var tt = $scope.getObjById($scope.potential_timeranges, parseInt(box.time_range));              
   var st = $scope.getObjById($scope.potential_step, parseInt(box.step));
 
-
-$http({
+            $http({
                 method  : 'POST',
                 url     : $scope.apis.monitoring,
                 data:  {
@@ -161,7 +160,7 @@ $http({
                        });
 
 
-                     Highcharts.chart(box.id, {
+                     $scope.g_charts.push(Highcharts.chart(box.id, {
                               chart: {
                                   zoomType: 'x'
                               },
@@ -219,28 +218,9 @@ $http({
                                   name: box.measurement,
                                   data: $scope.data
                               }]
-                          });
-
-
-
+                          }));
                     }
-
-
-
-
-
-
                 });
-
-
-
-
-            
-
-
-
-
-
 }
 
 
@@ -320,8 +300,6 @@ $scope.getCurrentCPU = function(){
          })
           .success(function(data) {
             $scope.vm.currentCPUUsage = data.metrics.result[0].values[0][1];
-           
-            
           });
 }
 
@@ -346,12 +324,6 @@ $scope.getCPU_History = function(){
             
           });
 }
-
-
-
-
-
-
 
 
 $scope.historyCPU = function(){
@@ -391,7 +363,7 @@ $scope.historyCPU = function(){
 
              });
 
-                       Highcharts.chart('cpu_chart_new', {
+                       $scope.g_charts.push(Highcharts.chart('cpu_chart_new', {
                               chart: {
                                   zoomType: 'x',
                                   events: {
@@ -399,12 +371,7 @@ $scope.historyCPU = function(){
 
                                           
                                           var series = this.series[0];
-                                          setInterval(function () {
-
-
-
-
-
+                                          $scope.intervals.push($interval(function () {
                                           $http({
                                                   method  : 'POST',
                                                   url     : $scope.apis.monitoring,
@@ -439,20 +406,12 @@ $scope.historyCPU = function(){
                                                               timestamp = timestamp+'00000';
 
                                                             
-                                                        timestamp = parseInt(timestamp);
-                                                      
+                                                      timestamp = parseInt(timestamp);                                                      
                                                       series.addPoint([timestamp, parseFloat(y)], true, true);
-
+                                                      console.log(series.points.length);
                                                   })
+                                          }, 5000));
 
-                                              
-
-
-
-
-
-                                          }, 5000);
-                                      
 
 
                                       }
@@ -512,7 +471,7 @@ $scope.historyCPU = function(){
                                   name: 'CPU',
                                   data: $scope.prdata
                               }]
-                          });
+                          }));
           });
 
 }
@@ -562,9 +521,7 @@ $scope.historyRAM = function(){
 
              });
 
-
-
-                       Highcharts.chart('ram_chart_new', {
+                      $scope.g_charts.push(Highcharts.chart('ram_chart_new', {
                               chart: {
                                   zoomType: 'x',
                                   events: {
@@ -572,7 +529,7 @@ $scope.historyRAM = function(){
 
                                           
                                           var series = this.series[0];
-                                          setInterval(function () {
+                                          $scope.intervals.push($interval(function () {
 
 
                                           $http({
@@ -622,7 +579,7 @@ $scope.historyRAM = function(){
 
 
 
-                                          }, 5000);
+                                          }, 5000));
                                       
 
 
@@ -683,10 +640,7 @@ $scope.historyRAM = function(){
                                   name: 'RAM',
                                   data: $scope.ramdata
                               }]
-                          });
-
-
-
+                          }));
           });
 
 
@@ -713,14 +667,12 @@ $scope.drawGaugesRAM = function(){
         };
 
         var chart = new google.visualization.Gauge(document.getElementById('vRAMschart'));
-
         chart.draw(data, options);
-
-        setInterval(function() {
+        $scope.intervals.push($interval(function() {
           $scope.getCurrentMemory();          
           data.setValue(0, 1, parseFloat($scope.vm.currentMemoryUsage));
           chart.draw(data, options);
-        }, 10000);
+        }, 4000));
        
        
       }
@@ -731,8 +683,7 @@ $scope.drawGauges = function(){
       function drawChart() {
 
         var data = google.visualization.arrayToDataTable([
-          ['Label', 'Value'],
-          
+          ['Label', 'Value'],          
           ['CPU', parseFloat($scope.vm.currentCPUUsage)]
         ]);
 
@@ -744,48 +695,24 @@ $scope.drawGauges = function(){
         };
 
         var chart = new google.visualization.Gauge(document.getElementById('vCPUschart'));
-
         chart.draw(data, options);
 
-        setInterval(function() {
+        $scope.intervals.push($interval(function() {
           $scope.getCurrentMemory();          
-          data.setValue(0, 1, parseFloat($scope.vm.currentMemoryUsage));
+          data.setValue(0, 1, parseFloat($scope.vm.currentCPUUsage));
           chart.draw(data, options);
-        }, 10000);
-       
+        }, 4000));       
       }
 }
 
-$scope.drawTheChart = function(data_array,options,element){
+/*$scope.drawTheChart = function(data_array,options,element){
 
        var data = google.visualization.arrayToDataTable(data_array);
        var options = options;
        var chart = new google.visualization.AreaChart(document.getElementById(element));
        chart.draw(data, options);
        data.length= 0;
-       
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}*/
 
 
 $scope.historyHardDisk = function(){
@@ -856,7 +783,7 @@ $scope.historyHardDisk = function(){
                       
                       });                  
             
-              Highcharts.chart('disk_chart_new', {
+              $scope.g_charts.push(Highcharts.chart('disk_chart_new', {
                               chart: {
                                   zoomType: 'x',
                               },
@@ -913,7 +840,7 @@ $scope.historyHardDisk = function(){
                                   name: 'Disk',
                                   data: $scope.kam_disk
                               }]
-                          });
+                          }));
                     });
               }
             });          
@@ -951,10 +878,8 @@ $scope.historyHardDisk = function(){
               var timestamp = ttime.toString();
                 timestamp  = $rootScope.FixTimestamp(timestamp);
                 
-                container.created_date = $rootScope.FixTimestamp(timestamp);//new Date(parseInt(timestamp)); 
-
-                //$scope.setContainerCreatedDate(container);
-                container.status = 'Active'; //Todo later (Read status from a new xhr request)
+                container.created_date = $rootScope.FixTimestamp(timestamp);
+                container.status = 'Active'; 
                 $scope.containers.push(container);
             })
 
@@ -967,51 +892,31 @@ $scope.historyHardDisk = function(){
 
     $scope.init = function(){
       (function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
+      
+      $scope.g_charts = [];
+      $('.hchart').each(function(c){$(this).empty();});
+      $('.highcharts-container').each(function(c){$(this).empty();});
       $scope.getVM();
       $scope.drawGauges();
-      $scope.drawGaugesRAM();
-      /*$scope.drawCPUChart();*/
+      $scope.drawGaugesRAM();      
       $scope.historyCPU();
       $scope.historyRAM();
       $scope.historyHardDisk();
-      /*$scope.drawRxTxChart();*/
-      /*$scope.drawDiskChart();*/
-      $scope.getContainers();
-      /*$scope.getCurrentMemory();*/
-      /*$scope.getCPU_History();
-      $scope.drawRxTxPPSChart();*/
-
-
-      
-      /*setInterval(function() {
-          $scope.drawCPUChart();
-          $scope.drawMEMChart();  
-          $scope.drawRxTxPPSChart();        
-          $scope.drawRxTxChart();  
-        }, 10000);*/
-
-
-/*      setInterval(function(){
-        
-        $scope.drawDiskChart();
-      },60000);
-*/      
-      //drawCPUS
-      //drawMEMS
-      //drawRX/TX
-      //drawDISC
-      
-
-    	/*$scope.getCPU();
-    	$scope.getMEM();
-    	$scope.getLineGraph();*/
-    	
-    	/*$scope.FillCPUGraph();*/
-    	 /*setInterval(function() {
-          $scope.FillCPUGraph();
-        }, 5000);*/
-    	
+      $scope.getContainers();          	
     }
+
+      $scope.$on("$destroy", function(){
+        $('.hchart').each(function(c){$(this).empty();});
+        $('.highcharts-container').each(function(c){$(this).empty();});
+        $scope.g_charts.forEach(function(chart){
+          chart.destroy();
+          chart = null;
+        });
+        $scope.g_charts = [];
+        $scope.intervals.forEach(function(interval){
+          $interval.cancel(interval);
+        })
+      });
 
      
     

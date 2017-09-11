@@ -38,4 +38,24 @@ SonataApp.service('servicesSonata',['$scope','$http', function($scope,$http) {
 
 }]);
 
-
+/*SonataApp.factory('User', function($http){
+    
+        return{
+            getAvailableUoM:function(resource_uom){
+                return $http({
+                    url:appConfig.main.apis.main+'uom/source/'+resource_uom,
+                    method:'GET',
+                    headers: {"Accept": "application/json","Authorization":"bearer "+appConfig.main.auth_token},
+                })
+            },
+            getMeasurementsByURI:function(uri){
+                return $http({
+                    url:appConfig.main.apis.main+'resource/uri/'+uri,
+                    method:'GET',
+                    headers: {"Accept": "application/json","Authorization":"bearer "+appConfig.main.auth_token},
+                })
+            }
+        }
+       
+});
+*/
