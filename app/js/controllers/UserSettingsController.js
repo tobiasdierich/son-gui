@@ -74,7 +74,7 @@ SonataApp.controller('UserSettingsController', function($scope, $routeParams, $l
 					$http({
 			                method  : 'PUT',
 			                url: $scope.apis.gatekeeper.users+'?username='+$rootScope.username,
-			                headers : $rootScope.gk_headers,
+			                headers : $rootScope.getGKHeaders(),
 			                data:{
 			                	'username':$rootScope.username,
 			                	'password':$rootScope.password,
@@ -88,9 +88,6 @@ SonataApp.controller('UserSettingsController', function($scope, $routeParams, $l
 				       		$scope.pop_up_view = 1;
 				       		$scope.pop_up_h3 = 'User Profile Updated';
 				       		$scope.pop_up_p = 'The user profile has been updated correctly';
-				       		
-				       		/*$rootScope.logout();*/	        	
-
 				        });
 				}
 
@@ -102,21 +99,12 @@ SonataApp.controller('UserSettingsController', function($scope, $routeParams, $l
 	     	$http({
                 method  : 'GET',
                 url: $scope.apis.gatekeeper.users,
-                headers : $rootScope.gk_headers
+                headers : $rootScope.getGKHeaders()
               })
 	       .success(function(datas) {
 	       		console.log("GET User INFO");
 	       		console.log(datas);
-	       		$scope.info= datas;/*{
-								"username": "123",
-								"first_name": "87654321",
-								"last_name": "87654321",
-								"uuid": "92334cd9-7fd3-471d-a003-eb9c3aaa9387",
-								"created_at": "2017-09-11T07:42:22+00:00",
-								"user_type": "developer",
-								"email": "lalakis@mail.com"
-				};	        	*/
-
+	       		$scope.info= datas;
 	        })
 
    		}

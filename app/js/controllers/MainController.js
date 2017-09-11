@@ -111,6 +111,12 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
                      $scope.checkTokenValidity();
            }
 
+    $rootScope.getGKHeaders = function(){
+      var header = {};
+      header = {'Content-Type': 'application/json',
+                    'Authorization': 'Bearer '+$rootScope.getStorage('sonata-token')};
+                    return header;
+    }
     
     $rootScope.logout = function(){
       $rootScope.is_user_logged_in = false;
