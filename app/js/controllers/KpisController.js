@@ -690,9 +690,14 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                 headers : $rootScope.getGKHeaders()
               })
                 .success(function(datas) {
-                		
-                        $('#modal1').closeModal();
+                	
+
+
                         $scope.resl = (datas.data.metrics?datas.data.metrics:[]);
+
+                        if($scope.resl.length<1)
+                            $('#modal1').closeModal();
+                        
                         $scope.selected_data_pie = [];
                         
                         $scope.ss_states = [];
