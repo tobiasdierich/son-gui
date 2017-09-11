@@ -43,7 +43,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
            $http({
                 method  : 'GET',
                 url: $scope.apis.gatekeeper.kpis+'?name=vms_sum',
-                headers : $rootScope.gk_headers
+                headers : $rootScope.getGKHeaders()
               })
                 .success(function(datas) {
 
@@ -83,7 +83,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
             $http({
                 method  : 'GET',
                 url: $scope.apis.gatekeeper.kpis+'?name=http_requests_total',
-                headers : $rootScope.gk_headers
+                headers : $rootScope.getGKHeaders()
               })
                 .success(function(datas) {
                         
@@ -146,7 +146,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
             $http({
                 method  : 'GET',
                 url: $scope.apis.gatekeeper.kpis+'?name=synch_monitoring_data_requests&start='+start+'&end='+end+'&step='+step,
-                headers : $rootScope.gk_headers
+                headers : $rootScope.getGKHeaders()
               })
                .success(function(datas) {
                 
@@ -222,7 +222,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
             $http({
                 method  : 'GET',
                 url: $scope.apis.gatekeeper.kpis+'?name=user_registrations&start='+start+'&end='+end+'&step='+step,
-                headers : $rootScope.gk_headers
+                headers : $rootScope.getGKHeaders()
               })
                .success(function(datas) {
                 
@@ -299,7 +299,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
             $http({
                 method  : 'GET',
                 url: $scope.apis.gatekeeper.kpis+'?name=package_on_boardings&start='+start+'&end='+end+'&step='+step,
-                headers : $rootScope.gk_headers
+                headers : $rootScope.getGKHeaders()
               })
                .success(function(datas) {
                 
@@ -373,7 +373,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
             $http({
                 method  : 'GET',
                 url: $scope.apis.gatekeeper.kpis+'?name=synch_monitoring_data_requests&start='+start+'&end='+end+'&step='+step,
-                headers : $rootScope.gk_headers
+                headers : $rootScope.getGKHeaders()
               })
                 .success(function(datas) {
                     console.log("getSyncRequests");
@@ -389,7 +389,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
             $http({
                 method  : 'GET',
                 url: $scope.apis.gatekeeper.kpis+'?name=vms_sum&start='+start+'&end='+end+'&step='+step,
-                headers : $rootScope.gk_headers
+                headers : $rootScope.getGKHeaders()
               })
                 .success(function(datas) {
                     console.log("getVMS_sum");
@@ -405,7 +405,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
             $http({
                 method  : 'GET',
                 url: $scope.apis.gatekeeper.kpis+'?name=http_requests_total&start='+start+'&end='+end+'&step='+step,
-                headers : $rootScope.gk_headers
+                headers : $rootScope.getGKHeaders()
               })
                 .success(function(datas) {
                     console.log("getHttpTotalRequests");
@@ -498,7 +498,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
             $http({
                 method  : 'GET',
                 url: $scope.apis.gatekeeper.kpis+'?name=vms_state',
-                headers : $rootScope.gk_headers
+                headers : $rootScope.getGKHeaders()
             })
             .success(function(datas) {
             
@@ -564,10 +564,10 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
             $http({
                 method  : 'GET',
                 url: $scope.apis.gatekeeper.kpis+'?name=user_registrations&start='+start+'&end='+end+'&step='+step,
-                headers : $rootScope.gk_headers
+                headers : $rootScope.getGKHeaders()
               })
                 .success(function(datas) {
-                        
+                        console.log(datas);
                         $scope.resl = datas.data.metrics;
                         $scope.selected_data_pie = [];
                         
@@ -625,7 +625,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
             $http({
                 method  : 'GET',
                 url: $scope.apis.gatekeeper.kpis+'?name=package_on_boardings&start='+start+'&end='+end+'&step='+step,
-                headers : $rootScope.gk_headers
+                headers : $rootScope.getGKHeaders()
               })
                 .success(function(datas) {
                         
@@ -670,6 +670,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
     }
 
     $scope.getKPIDetails = function(kpi){
+        $('#resultChart').html('');
         $scope.kpi_timeline_data = [];
         var start = new Date(new Date().getTime() - 10000*60000).toISOString();
         var end = new Date().toISOString();
@@ -686,12 +687,12 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
     		$http({
                 method  : 'GET',
                 url: $scope.apis.gatekeeper.kpis+'?name='+kpi.api_name+'&start='+start+'&end='+end+'&step='+step,
-                headers : $rootScope.gk_headers
+                headers : $rootScope.getGKHeaders()
               })
                 .success(function(datas) {
                 		
-                        $scope.resl = [];
-                        $scope.resl = datas.data.metrics;
+                        $('#modal1').closeModal();
+                        $scope.resl = (datas.data.metrics?datas.data.metrics:[]);
                         $scope.selected_data_pie = [];
                         
                         $scope.ss_states = [];
