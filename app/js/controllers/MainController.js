@@ -38,12 +38,9 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
     }
 
     $rootScope.getToken = function(){
-      if($rootScope.getStorage('sonata-token')>0){
+      
         return $rootScope.getStorage('sonata-token');
-      }
-      else{
-        return '';
-      }
+      
     }
 
     $rootScope.getUserName = function(){

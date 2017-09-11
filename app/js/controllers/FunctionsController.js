@@ -44,7 +44,7 @@ SonataApp.controller('FunctionsController',['$rootScope','$http','$scope',functi
              $http({
                 method  : 'GET',
                 url     : $scope.apis.gatekeeper.functions,
-                headers : { 'Content-Type': 'application/json','AUTHORIZATION': 'Bearer '+$rootScope.getToken() }
+                headers : $rootScope.gk_headers
                })
                 .success(function(data) {
                   console.info('Get functions From Url: '+$scope.apis.gatekeeper.functions);
