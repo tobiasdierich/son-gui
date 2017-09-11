@@ -316,8 +316,8 @@ $scope.getWimDetails = function(wim){
 
      
      $scope.$on("$destroy", function() {
-         $scope.wims.clear();
-         $scope.vims.clear();
+         $scope.wims = [];
+         $scope.vims = [];
     });
     
 }]);

@@ -34,6 +34,11 @@ SonataApp.controller('LoginController',['$rootScope','$http','$scope','$routePar
           $scope.error_message=" ";
           $scope.loading=0;
           console.log("LoginController");
+          if(window.localStorage['sonata-token'])
+            delete window.localStorage['sonata-token'];
+          
+          if(window.localStorage['sonata-username'])
+            delete window.localStorage['sonata-username'];
           
 
 

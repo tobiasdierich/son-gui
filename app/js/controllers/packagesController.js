@@ -42,7 +42,7 @@ SonataApp.controller('PackagesController',['$rootScope','$http','$scope',functio
              $http({
                 method  : 'GET',
                 url     : $scope.apis.gatekeeper.packages,
-                headers : {"Content-Type":"application/zip",'Authorization': 'Bearer '+$rootScope.getToken()}
+                headers : { 'Content-Type': 'application/json','AUTHORIZATION': 'Bearer '+$rootScope.getToken() }
                })
                 .success(function(data) {
                   
@@ -75,7 +75,7 @@ SonataApp.controller('PackagesController',['$rootScope','$http','$scope',functio
 
 
     $scope.$on("$destroy", function() {
-         $scope.packages.clear();
+         $scope.packages=[];
     });
 
            

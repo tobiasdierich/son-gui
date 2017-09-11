@@ -382,7 +382,7 @@ console.log("DRAW MEM CHART");
                                                         timestamp = parseInt(timestamp);
                                                       
                                                       series.addPoint([timestamp, parseFloat(y)], true, true);
-                                                      $scope.container.currentMemoryUsage = 1-y; 
+                                                      $scope.container.currentMemoryUsage = parseFloat(y); 
                                                       $scope.drawGauges();
 
                                                   })
