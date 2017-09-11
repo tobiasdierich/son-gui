@@ -30,7 +30,7 @@ partner consortium (www.sonata-nfv.eu).
 		<div class="col s12">
     <div class="col s12">
 			<div class="card-panel">
-				<strong>Exported Instance:</strong><!-- <a href="javascript:void(0)" class="cursored" ng-click="changeHash('/vm/'+container.exported_instance)"> -->{{container.exported_instance}}<!-- </a> --><br/>
+				<strong>Exported Instance:</strong>{{container.exported_instance}}<br/>
 				<strong>Image Name:</strong>{{container.image_name}}<br/>
 				<strong>Id:</strong>{{container.id}}<br/>
 			</div>
@@ -41,7 +41,7 @@ partner consortium (www.sonata-nfv.eu).
         <div class="card-panel">
           <div class="row">
             <div class="center-align">              
-              <div id="cnt_vCPUschart" class="col s12 m6 push-m4"></div>              
+              <div id="cnt_vCPUschart" class="col s12 m6 push-m4 hchart"></div>              
             </div>
           </div>
           
@@ -51,20 +51,19 @@ partner consortium (www.sonata-nfv.eu).
     	<div class="col s12">
           <div class="card-panel">
             <span class="card-title">CPUs</span>
-            <div id="cnt_cpu_chart_new"></div>
+            <div id="cnt_cpu_chart_new" class="hchart"></div>
           </div>
         </div>
         <div class="col s12">
           <div class="card-panel">
             <span class="card-title">Memory</span>
-            <div id="cnt_mem_chart_new"></div>
+            <div id="cnt_mem_chart_new" class="hchart"></div>
           </div>
-        </div>
-      
+        </div>      
         <div class="col s12">
           <div class="card-panel">
             <span class="card-title">Rx/Tx</span>
-            <div id="cnt_rxtx_chart_new"></div>
+            <div id="cnt_rxtx_chart_new" class="hchart"></div>
           </div>
         </div>
 

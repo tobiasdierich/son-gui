@@ -32,8 +32,9 @@ SonataApp.controller('VimSettingsController',['$rootScope','$scope','$routeParam
 	$scope.new_vim = {};
   $scope.new_vim.compute_configuration={};
   $scope.new_vim.networking_configuration={};
-  
   $scope.new_wim = {};
+  $scope.getVimsTries = 0;
+  $scope.getWimsTries = 0;
 
 
 $scope.getVimDetails = function(vim){
@@ -43,8 +44,6 @@ $scope.getVimDetails = function(vim){
 
 $scope.getWimDetails = function(wim){
   $scope.selected_wim = wim;
-  console.log("SELECTED WIM");
-  console.log($scope.selected_wim);
   $('#wim_details').openModal();  
 }
 
@@ -59,11 +58,9 @@ $scope.getWimDetails = function(wim){
           data    : $scope.new_vim
          })
           .success(function(data) {
-            $scope.regetVims();
-  	        
+            $scope.regetVims();  	        
 	        $('#new_vim_installed').openModal();  
-        });
-	
+        });	
   }
 
 
@@ -83,9 +80,7 @@ $scope.getWimDetails = function(wim){
         });
   }
 
-	$scope.addAVim = function(){
-			
-	}
+	
 
   $scope.regetVims = function(){
     $scope.loading =1;
@@ -132,6 +127,7 @@ $scope.getWimDetails = function(wim){
           });
 
   }
+
 	$scope.getVims = function(){
       $scope.zero_vims = 0;
       $scope.loading =1;
@@ -152,17 +148,28 @@ $scope.getWimDetails = function(wim){
               .error(function (data, status, headers, config) {
                   $scope.zero_vims = 1;
                   $scope.loading=0;
+                  
+                  if($scope.getVimsTries<5){
+                    
+                    $scope.regetVims();
+                    $scope.getVimsTries++;
+
+                  }
               })
               .success(function(datamm) {
-                console.log("Vims");
-                console.log(datamm);
-
+                
                 $scope.vims = new Array();
                 $scope.vims=datamm;
 
                 if($scope.vims.length==0){
                   $scope.zero_vims = 1;
                   $scope.loading=0;
+
+                  if($scope.getVimsTries<5){                    
+                    $scope.regetVims();
+                    $scope.getVimsTries++;
+                  }
+
                 }else{
                   $scope.vims.forEach(function(vim,index){
                     $scope.setVimStatus(vim);
@@ -185,7 +192,7 @@ $scope.getWimDetails = function(wim){
 
 
   $scope.regetWims = function(){
-    console.log("MM");
+    
       $scope.zero_wims = 0;
       $scope.loading_wims =1;
 
@@ -210,22 +217,14 @@ $scope.getWimDetails = function(wim){
                 $scope.wims = new Array();
                 $scope.select = {};
                 $scope.select.wims = new Array();
-
                 
                 $scope.m=datamm;
-                               
-
-
 
                  if($scope.m.length==0){
                   $scope.zero_wims = 1;
                   $scope.loading_wims=0;
                 }else{
                   $scope.m.forEach(function(wim,index){
-
-
-                   
-                    
                     
                     var x = {};
                     x.uuid = wim.uuid;
@@ -235,18 +234,11 @@ $scope.getWimDetails = function(wim){
                     $scope.wims.push(x);
                     $scope.select.wims.push(x);
 
-
                   });  
 
                   $scope.zero_wims=0;
                     $scope.loading_wims=0;
                 }
-
-
-                
-                   
-                
-
 
               });   
 
@@ -274,31 +266,34 @@ $scope.getWimDetails = function(wim){
              }).error(function (data, status, headers, config) {
                   $scope.zero_wims = 1;
                   $scope.loading_wims=0;
+
+                  if($scope.getWimsTries<5){                    
+                    $scope.regetWims();
+                    $scope.getWimsTries++;
+                  }
               })
               .success(function(datamm) {
-                console.log("WWWWWims");
-                console.log(datamm);
-
-                $scope.wims = new Array();
-
                 
+                $scope.wims = new Array();                
                 $scope.m=datamm;
-                $scope.m.forEach(function(wim,index){
+                
+                if($scope.getWimsTries<5 && datamm.length==0){                    
+                    $scope.regetWims();
+                    $scope.getWimsTries++;
+                }else{
+                  
+                  $scope.m.forEach(function(wim,index){
+                  
                     var x = {};
                     x.uuid = wim.uuid;
                     x.name = wim.name;
                     x.attached_vims = wim.attached_vims;
                     x.status = "-";
                     $scope.wims.push(x);
-                    
-
-                });
-                console.log("Wims");
-                console.log($scope.wims);
+                  });                  
+                }               
                 
-                   $('select').material_select();
-                   console.log("oook");
-                
+                $('select').material_select();                
 
               });   
 

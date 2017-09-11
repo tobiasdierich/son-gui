@@ -166,6 +166,8 @@ div.gauge_div table {
     min-height: 200px;
     padding: 5px 10px;
     cursor: pointer;
+    background: #5ba092;
+    border-radius: 9px;
 }
 .green-kpi{
     background: #246C60;
@@ -195,4 +197,36 @@ span.tags {
     padding: 10px;
     border-radius: 3px;
     font-weight: bold
+}
+
+.pop_one{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(47, 47, 47, 0.6);
+    left: 0;
+    top: 0;
+    z-index: 9999;
+}
+.pop_one .box {
+    position: absolute;
+    top: 100px;
+    left: 50%;
+    width: 40%;
+    color: white;
+    background: #8089c9;
+    padding: 10px 30px;
+    z-index: 999999;
+    margin-left: -20%;
+    /* margin-top: 100px; */
+}
+.pop_one .buttons{float: right;cursor: pointer;}
+
+.btn_flat {
+    width: 100px;
+    background: #5766d6;
+    margin: 11px;
+    padding: 10px 16px;
+    text-align: center;
+    float: left;
 }

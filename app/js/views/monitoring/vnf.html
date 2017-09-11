@@ -37,8 +37,8 @@ partner consortium (www.sonata-nfv.eu).
             <strong>ID:</strong> {{vnf.id}}<br/>
           </div>
             <div class="row">
-              <div class="col s12 m12 center"><div id="vCPUschart" class="gauge_div" style="width:100%;margin: 0 auto;display: block;"></div></div>
-              <div class="col s12 m12 center"><div id="vRAMschart"  class="gauge_div" style="margin: 0 auto;display: block;"></div></div>
+              <div class="col s12 m12 center"><div id="vCPUschart" class="gauge_div hchart" style="width:100%;margin: 0 auto;display: block;"></div></div>
+              <div class="col s12 m12 center"><div id="vRAMschart"  class="gauge_div hchart" style="margin: 0 auto;display: block;"></div></div>
 
             </div>  
             <div class="row" style="text-align: center;">
@@ -56,7 +56,7 @@ partner consortium (www.sonata-nfv.eu).
               <i class="fa fa-refresh" aria-hidden="true" ng-click="updateBox(box)"></i>               
               <i class="fa fa-times" aria-hidden="true" ng-click="removeBox(box)"></i>
             </span>
-          <div id="{{box.id}}" class="predefined_box"></div>
+          <div id="{{box.id}}" class="predefined_box hchart"></div>
         </div>
       </div>
 
@@ -64,39 +64,24 @@ partner consortium (www.sonata-nfv.eu).
         <div class="col s12">
           <div class="card-panel">
             <span class="card-title">CPUs</span>
-            <div id="cpu_chart_new_vnf"></div>
+            <div id="cpu_chart_new_vnf" class="hchart"></div>
           </div>
         </div>
         <div class="col s12">
           <div class="card-panel">
             <span class="card-title">RAM</span>
-            <div id="ram_chart_new_vnf"></div>
+            <div id="ram_chart_new_vnf" class="hchart"></div>
           </div>
         </div>
 
         <div class="col s12">
           <div class="card-panel">
             <span class="card-title">Hard Disk</span>
-            <div id="disk_chart_new_vnf"></div>
+            <div id="disk_chart_new_vnf" class="hchart"></div>
           </div>
         </div>
 
-        <!-- 
-        <div class="col s12">
-          <div class="cardss-panel">
-            <span class="card-title">Rx/Tx Packages Per Second</span>
-            <div id="rx_tx_pps_chart_new"></div>
-          </div>
-        </div>
-        <div class="col s12">
-          <div class="cardss-panel">
-            <span class="card-title">Rx/Tx Bits Per Second</span>
-            <div id="rx_tx_chart"></div>
-          </div>
-        </div>
-         -->
-
-
+   
         <div class="col s12" ng-show="containers.length">
           <div class="cardss-panel">
             <h5 class="center-align">Containers</h5>

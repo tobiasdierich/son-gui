@@ -26,44 +26,59 @@ acknowledge the contributions of their colleagues of the SONATA
 partner consortium (www.sonata-nfv.eu).
 -->
 
- <div class="row">
+ <div class="row" ng-controller="UserSettingsController">
         <div class="col s12 m12">
+          <div class=" red accent-1" style="padding: 10px;text-align: center;color: white;font-weight: bold;" ng-show="error_message_view">{{error_message_text}}</div>
           <div class="card grey lighten-5">
             <div class="card-content">
               <div class="row">
-                <div class="input-field col s6">
-                  <input id="first_name" type="text" class="validate">
+                <div class="input-field col s12 m4">
+                  <input id="first_name" ng-model="info.first_name" type="text" class="validate">
                   <label for="first_name">First Name</label>
                 </div>
-                <div class="input-field col s6">
-                  <input id="last_name" type="text" class="validate">
+                <div class="input-field col s12 m4">
+                  <input id="last_name" ng-model="info.last_name"  type="text" class="validate">
                   <label for="last_name">Last Name</label>
                 </div>
-              </div>
-              <div class="row">
-                <div class="input-field col s6">
-                  <input id="first_name" type="text" class="validate">
-                  <label for="first_name">Username</label>
-                </div>
-                <div class="input-field col s6">
-                  <input id="last_name" type="text" class="validate">
-                  <label for="last_name">Password</label>
+
+                <div class="input-field col s12 m4">
+                  <input id="username" ng-model="info.username" type="text" class="validate">
+                  <label for="username">Username</label>
                 </div>
               </div>
               <div class="row">
-                <div class="input-field col s4">
-                  <input id="first_name" type="text" class="validate">
-                  <label for="first_name">Email</label>
+                
+                <div class="input-field col s12 m4">
+                  <input id="password_one"  ng-model="info.password_one" type="text" class="validate">
+                  <label for="password_one">Password</label>
+                </div>
+                <div class="input-field col s12 m4">
+                  <input id="password_two"  ng-model="info.password_two" type="text" class="validate">
+                  <label for="password_two">Repeat Password</label>
                 </div>
                 <div class="input-field col s4">
-                  <input id="last_name" type="text" class="validate">
-                  <label for="last_name">Mobile</label>
+                  <input id="email"  ng-model="info.email" type="text" class="validate">
+                  <label for="i">Email</label>
                 </div>
               </div>
+              
               <div class="row text-right">
-                <a class="waves-effect waves-light btn right"><i class="material-icons right">send</i>SAVE</a>
+                <a class="waves-effect waves-light btn right" ng-click="saveUserInfo()"><i class="material-icons right">send</i>SAVE</a>
               </div>
             </div>      
           </div>
         </div>
+
+        <div class="pop_one" ng-show="pop_one_view"> 
+          <div class="box">
+            <h3 class="pop_h3">User Credentials Update</h3>
+            <p class="pop_p">You selected to update your credentials. If you click ok, they will change but you will need to login again. Do you want to continue?</p>
+            <div class="buttons">
+              <div class="btn_flat" ng-click="logged_again_ok()">OK</div>
+              <div class="btn_flat" ng-click="cancel_pressed()">Cancel</div>
+            </div>
+          </div>
+        </div>
+
+
       </div>

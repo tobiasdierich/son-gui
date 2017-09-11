@@ -28,27 +28,98 @@ partner consortium (www.sonata-nfv.eu).
 
   <div class="row" ng-controller="KpisController">
     <div class="col s12">
+        <div class="col s12 m6 l4" style="margin-top:10px" ng-click="getPackageOnBoardingDetails()">
+          <div class="kpi">
+            <div class="kpi-subtitle">How many packages have been on-boarded</div>
+            <div class="row">
+              <div class="col s12 m6">
+                <div class="kpi-number">{{total_packages_on_board}}</div>
+              </div>
+              <div class="col s12 m6" style="top: 29px;position: relative;line-height: 53px;">
+                <div id="sparkline8" ></div>                    
+              </div>
+            </div>
+          </div>
+        </div>
 
-      <div class="col s12 m6 l4" ng-repeat="kpi in kpis" ng-click="getKPIDetails(kpi)" style="margin-top:10px">
+        <div class="col s12 m6 l4" style="margin-top:10px" ng-click="getRegisteredUsersDetails()">
+          <div class="kpi">
+            <div class="kpi-subtitle">How many users have been registered</div>
+            <div class="row">
+              <div class="col s12 m6">
+                <div class="kpi-number">{{total_registered_users}}</div>
+              </div>
+              <div class="col s12 m6" style="top: 29px;position: relative;line-height: 53px;">
+                <div id="sparkline_registered_users" ></div>                    
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col s12 m6 l4" style="margin-top:10px" ng-click="getKPIDetails(sync_requests_kpi)">
+          <div class="kpi">
+            <div class="kpi-subtitle">Synchronous monitoring data requests</div>
+            <div class="row">
+              <div class="col s12 m6">
+                <div class="kpi-number">{{total_sync_requests}}</div>
+              </div>
+              <div class="col s12 m6" style="top: 29px;position: relative;line-height: 53px;">
+                <div id="sparkline_sync_requests" ></div>                    
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col s12 m6 l4" style="margin-top:10px" ng-click="getHttPTotalsDetails()">
+          <div class="kpi">
+            <div class="kpi-subtitle">Total number of HTTP requests made.</div>
+            <div class="row">
+              <div class="col s12 m6">
+                <div class="kpi-number" style="font-size: 48pt!important">{{total_http_requests_text}}</div>
+              </div>
+              <div class="col s12 m6" style="top: 29px;position: relative;line-height: 53px;">
+                <div id="sparkline_http_requests" ></div>                    
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col s12 m6 l4" style="margin-top:10px" ng-click="getVMsDetails()">
+          <div class="kpi">
+            <div class="kpi-subtitle">Total number of VMs</div>
+            <div class="row">
+              <div class="col s12 m6">
+                <div class="kpi-number" style="font-size: 48pt!important">{{total_vms}}</div>
+              </div>
+              <div class="col s12 m6" style="top: 29px;position: relative;line-height: 53px;">
+                <div id="sparkline_vms" ></div>                    
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+     <!--  <div class="col s12 m6 l4" ng-repeat="kpi in kpis" ng-click="getKPIDetails(kpi)" style="margin-top:10px">
         <div class="kpi" ng-class="kpi.class">
           <div class="kpi-number">{{kpi.sum}}</div>
           <div class="kpi-subtitle">{{kpi.description}}</div>
         </div>
-      </div>
+      </div> -->
 
-      <div class="col s12 m6 l4" ng-click="getVMsDetails()" style="margin-top:10px">
+     <!--  <div class="col s12 m6 l4" ng-click="getVMsDetails()" style="margin-top:10px">
         <div class="kpi" ng-class="vms_sum.class">
           <div class="kpi-number">{{vms_sum.sum}}</div>
           <div class="kpi-subtitle">{{vms_sum.description}}</div>
         </div>
-      </div>
+      </div> -->
 
-      <div class="col s12 m6 l4" ng-click="getHttPTotalsDetails()" style="margin-top:10px">
+      <!-- <div class="col s12 m6 l4" ng-click="getHttPTotalsDetails()" style="margin-top:10px">
         <div class="kpi" ng-class="http_sum.class">
           <div class="kpi-number" >{{http_sum.sum}}</div>
           <div class="kpi-subtitle" >{{http_sum.description}}</div>
         </div>
-      </div>
+      </div> -->
 
      
 
@@ -133,3 +204,9 @@ partner consortium (www.sonata-nfv.eu).
 
   </div>
           
+<style>
+.jqstooltip {
+    width: auto!important;
+    height: 33px!important;
+}
+</style>
