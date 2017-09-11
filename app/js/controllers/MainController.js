@@ -22,7 +22,7 @@ partner consortium (www.sonata-nfv.eu).
 */
 
 SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$location', '$http',function($rootScope,$scope, $routeParams, $location, $http) {
-   $scope.debug=false;
+   $scope.debug=(window.location.origin=="http://localhost"?true:false);
    
     
     $scope.todos = new Array();
@@ -107,7 +107,7 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
               $rootScope.gk_headers = { 
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer '+$rootScope.getStorage('sonata-token')
-                     };
+              };
                      $scope.checkTokenValidity();
            }
 
@@ -120,9 +120,11 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
     
     $rootScope.logout = function(){
       $rootScope.is_user_logged_in = false;
+      $rootScope.gk_headers = {};
+      $rootScope.token = '';
       delete window.localStorage['sonata-token'];
       delete window.localStorage['sonata-username'];
-      $rootScope.token = '';
+      
       location.hash='/login';
 
     }
@@ -156,7 +158,7 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
           $http({
               method  : 'GET',
                 url: $scope.apis.gatekeeper.users,
-                headers : $rootScope.gk_headers
+                headers : $rootScope.getGKHeaders()
           }).then(function successCallback(response) {
             console.log("TOKEN is Valid");
           }, function errorCallback(response) {

@@ -34,7 +34,6 @@ SonataApp.controller('FunctionsController',['$rootScope','$http','$scope',functi
              $scope.modal = {};
              $scope.modal.content = {};
              $scope.modal.content.title=functionss.vnfd.name;
-
              $scope.modal.content.function = functionss;
            }
 
@@ -44,7 +43,7 @@ SonataApp.controller('FunctionsController',['$rootScope','$http','$scope',functi
              $http({
                 method  : 'GET',
                 url     : $scope.apis.gatekeeper.functions,
-                headers : $rootScope.gk_headers
+                headers : $rootScope.getGKHeaders()
                })
                 .success(function(data) {
                   console.info('Get functions From Url: '+$scope.apis.gatekeeper.functions);

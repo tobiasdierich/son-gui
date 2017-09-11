@@ -39,7 +39,7 @@ SonataApp.controller('UserSettingsController', function($scope, $routeParams, $l
 			$http({
                 method  : 'PUT',
                 url: $scope.apis.gatekeeper.users+'?username='+$rootScope.username,
-                headers : $rootScope.gk_headers,
+                headers : $rootScope.getGKHeaders(),
                 data:{
                 	'username':$scope.info.username,
                 	'password':$scope.info.password_one,

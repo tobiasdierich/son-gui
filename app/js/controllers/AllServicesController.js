@@ -38,7 +38,7 @@ SonataApp.controller('AllServicesController',['$rootScope','$http','$scope',func
             $http({
                 method  : 'POST',
                 url     : $scope.apis.gatekeeper.requests,
-                headers : $rootScope.gk_headers,
+                headers : $rootScope.getGKHeaders(),
                 data:{
                     'name':id
                   }
@@ -58,7 +58,7 @@ SonataApp.controller('AllServicesController',['$rootScope','$http','$scope',func
              $http({
                 method  : 'GET',
                 url     : $scope.apis.gatekeeper.services,
-                headers : $rootScope.gk_headers
+                headers : $rootScope.getGKHeaders()
                })
                 .success(function(data) {
                   
