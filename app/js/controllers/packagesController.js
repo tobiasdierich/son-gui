@@ -28,6 +28,8 @@ partner consortium (www.sonata-nfv.eu).
 
 SonataApp.controller('PackagesController',['$rootScope','$http','$scope',function($rootScope,$http,$scope){
 (function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
+           console.log("TOKEN");
+           console.log($rootScope.getToken());
            $scope.openServiceInfo = function(package){
              $('#modal1').openModal();
              $scope.modal = {};
@@ -42,29 +44,13 @@ SonataApp.controller('PackagesController',['$rootScope','$http','$scope',functio
              $http({
                 method  : 'GET',
                 url     : $scope.apis.gatekeeper.packages,
-                headers : { 'Content-Type': 'application/json','AUTHORIZATION': 'Bearer '+$rootScope.getToken() }
+                headers : $rootScope.gk_headers
                })
                 .success(function(data) {
                   
                   console.info('Get Packages From Url: '+$scope.apis.gatekeeper.packages);
                   console.log(data);
                   $scope.packages = data;
-                  /*
-                  var blob=new Blob([data], {
-                              type: 'application/zip'
-                          });
-                  $scope.pack = {};
-                  $scope.pack.href = window.URL.createObjectURL(blob);
-                  $scope.pack.filename = "packages.zip";
-                  $scope.pack.show = true;
-                  var zip = new JSZip();
-                  zip.file("Hello.txt", "Hello World\n");
-                  var img = zip.folder("images");
-                  zip.file(data, {base64: true});
-                  zip.generateAsync({type:"blob"})
-                  .then(function(content) {                      
-                      saveAs(content, "example.zip");
-                    });*/
                 })
                 .error(function(data){
                   console.error('Get Packages Failed. Get Url: '+$scope.apis.gatekeeper.packages);
