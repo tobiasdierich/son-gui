@@ -40,10 +40,9 @@ partner consortium (www.sonata-nfv.eu).
                   <input id="last_name" ng-model="info.last_name"  type="text" class="validate">
                   <label for="last_name">Last Name</label>
                 </div>
-
-                <div class="input-field col s12 m4">
-                  <input id="username" ng-model="info.username" type="text" class="validate">
-                  <label for="username">Username</label>
+                 <div class="input-field col s4">
+                  <input id="email"  ng-model="info.email" type="text" class="validate">
+                  <label for="email">Email</label>
                 </div>
               </div>
               <div class="row">
@@ -56,10 +55,7 @@ partner consortium (www.sonata-nfv.eu).
                   <input id="password_two"  ng-model="info.password_two" type="text" class="validate">
                   <label for="password_two">Repeat Password</label>
                 </div>
-                <div class="input-field col s4">
-                  <input id="email"  ng-model="info.email" type="text" class="validate">
-                  <label for="i">Email</label>
-                </div>
+               
               </div>
               
               <div class="row text-right">
@@ -76,6 +72,17 @@ partner consortium (www.sonata-nfv.eu).
             <div class="buttons">
               <div class="btn_flat" ng-click="logged_again_ok()">OK</div>
               <div class="btn_flat" ng-click="cancel_pressed()">Cancel</div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="pop_up" ng-show="pop_up"> 
+          <div class="box">
+            <h3 class="pop_h3">{{pop_up_h3}}</h3>
+            <p class="pop_p">{{pop_up_p}}</p>
+            <div class="buttons">
+              <div class="btn_flat" ng-click="pop_up_close()">OK</div>
             </div>
           </div>
         </div>

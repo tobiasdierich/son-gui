@@ -31,6 +31,9 @@ SonataApp.controller('UserSettingsController', function($scope, $routeParams, $l
 		$scope.cancel_pressed = function(){
 			$scope.pop_one_view = 0;
 		}
+		$scope.pop_up_close = function(){
+			$scope.pop_up_view = 0;
+		}
 		$scope.logged_again_ok = function(){
 			
 			$http({
@@ -73,7 +76,7 @@ SonataApp.controller('UserSettingsController', function($scope, $routeParams, $l
 			                url: $scope.apis.gatekeeper.users+'?username='+$rootScope.username,
 			                headers : $rootScope.gk_headers,
 			                data:{
-			                	'username':$scope.info.username,
+			                	'username':$rootScope.username,
 			                	'password':$rootScope.password,
 			                	'email':$scope.info.email,
 			                	'user_type':'developer',
@@ -82,8 +85,11 @@ SonataApp.controller('UserSettingsController', function($scope, $routeParams, $l
 			                }
 			              })
 				       .success(function(datas) {
-				       	
-				       		$rootScope.logout();	        	
+				       		$scope.pop_up_view = 1;
+				       		$scope.pop_up_h3 = 'User Profile Updated';
+				       		$scope.pop_up_p = 'The user profile has been updated correctly';
+				       		
+				       		/*$rootScope.logout();*/	        	
 
 				        });
 				}
