@@ -108,7 +108,7 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer '+$rootScope.getToken()
                      };
-
+                     $scope.checkTokenValidity();
            }
 
     
@@ -143,6 +143,27 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
       }
     }
     $scope.checkAuthorization();
+
+    $scope.checkTokenValidity = function(){
+      
+
+          $http({
+              method  : 'GET',
+                url: $scope.apis.gatekeeper.users,
+                headers : $rootScope.gk_headers
+          }).then(function successCallback(response) {
+            console.log("TOKEN is Valid");
+          }, function errorCallback(response) {
+            console.log("The token is not valid");
+            console.log(response);
+            $rootScope.logout();
+          });
+
+        
+
+      }
+      
+    
     
         
     

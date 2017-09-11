@@ -166,7 +166,7 @@ div.gauge_div table {
     min-height: 200px;
     padding: 5px 10px;
     cursor: pointer;
-    background: #5ba092;
+    background: rgb(60, 67, 80);
     border-radius: 9px;
 }
 .green-kpi{
@@ -179,11 +179,11 @@ div.gauge_div table {
     background: #698873;
 }
 .kpi-number{
-    font-size: 90px;
+    font-size: 80pt;
     width: 100%;
 }
 .kpi-subtitle{
-    font-size: 23px;
+    font-size: 15pt;
 }
 .pencile-kpi{
     background: #79508a;
