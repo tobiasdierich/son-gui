@@ -106,7 +106,7 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
               $rootScope.apis = $scope.apis;
               $rootScope.gk_headers = { 
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer '+$rootScope.getToken()
+                    'Authorization': 'Bearer '+$rootScope.getStorage('sonata-token')
                      };
                      $scope.checkTokenValidity();
            }

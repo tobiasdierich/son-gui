@@ -40,6 +40,9 @@ SonataApp.controller('PackagesController',['$rootScope','$http','$scope',functio
            }
 
            $scope.getPackages = function(){
+            console.log("HEADERS");
+            console.log($rootScope.gk_headers);
+            
             console.info('Get Packages call started. Url:'+$scope.apis.gatekeeper.packages);
              $http({
                 method  : 'GET',
