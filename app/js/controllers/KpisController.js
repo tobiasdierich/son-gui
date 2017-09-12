@@ -164,7 +164,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                         if(package.labels.elapsed_time>max)
                             max=package.labels.elapsed_time;
 
-                        if(package.labels.elapsed_time<min || min==0)
+                        if(package.labels.elapsed_time<min || (min==0 && datas.data.metrics.length>1))
                             min=package.labels.elapsed_time;
                         
                         $scope.total_sync_requests+=parseFloat(package.value);
@@ -240,7 +240,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                         if(package.labels.elapsed_time>max)
                             max=package.labels.elapsed_time;
 
-                        if(package.labels.elapsed_time<min || min==0)
+                        if(package.labels.elapsed_time<min || (min==0 && datas.data.metrics.length>1))
                             min=package.labels.elapsed_time;
                         
                         $scope.total_registered_users+=parseFloat(package.value);
@@ -316,7 +316,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                         if(package.labels.elapsed_time>max)
                             max=package.labels.elapsed_time;
 
-                        if(package.labels.elapsed_time<min || min==0)
+                        if(package.labels.elapsed_time<min || (min==0 && datas.data.metrics.length>1))
                             min=package.labels.elapsed_time;
                         
                         $scope.total_packages_on_board+=parseFloat(package.value);
@@ -586,7 +586,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                                         if(package.labels.elapsed_time>max)
                                             max=package.labels.elapsed_time;
 
-                                        if(package.labels.elapsed_time<min || min==0)
+                                        if(package.labels.elapsed_time<min || (min==0 && $scope.resl.length>1))
                                             min=package.labels.elapsed_time;
                                         
                             });
@@ -698,7 +698,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                                         if(package.labels.elapsed_time>max)
                                             max=package.labels.elapsed_time;
 
-                                        if(package.labels.elapsed_time<min || min==0)
+                                        if(package.labels.elapsed_time<min || (min==0 && $scope.resl.length>1))
                                             min=package.labels.elapsed_time;
                                         
                                         
