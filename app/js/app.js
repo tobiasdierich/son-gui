@@ -40,7 +40,9 @@ SonataApp.run(function($rootScope, $route, $location){
 
    $rootScope.$on('$locationChangeSuccess', function() {
         $rootScope.actualLocation = $location.path();
-		$rootScope.checkTokenValidity();
+		
+		if($rootScope.actualLocation!='/signup' && $rootScope.actualLocation!='/login')
+			$rootScope.checkTokenValidity();
     });        
 
    $rootScope.$watch(function () {return $location.path()}, function (newLocation, oldLocation) {

@@ -26,7 +26,7 @@ acknowledge the contributions of their colleagues of the SONATA
 partner consortium (www.sonata-nfv.eu).
 */
 
-SonataApp.controller('UserSettingsController', function($scope, $routeParams, $location, $http,$rootScope) {
+SonataApp.controller('UserSettingsController', function($scope, $routeParams, $location, $http,$rootScope,$filter) {
 
 		$scope.cancel_pressed = function(){
 			$scope.pop_one_view = 0;
@@ -104,7 +104,14 @@ SonataApp.controller('UserSettingsController', function($scope, $routeParams, $l
 	       .success(function(datas) {
 	       		console.log("GET User INFO");
 	       		console.log(datas);
-	       		$scope.info= datas;
+	       		if($rootScope.username=='sonata'){
+	       			console.log("FILTER");
+	       			$scope.info = $filter('filter')(datas, {username:"sonata"})[0];
+	       			console.log($scope.info);
+	       		}else{
+	       			$scope.info = datas;	
+	       		}
+	       		
 	        })
 
    		}
