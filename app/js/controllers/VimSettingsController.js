@@ -101,6 +101,15 @@ $scope.getWimDetails = function(wim){
               .error(function (data, status, headers, config) {
                   $scope.zero_vims = 1;
                   $scope.loading=0;
+
+                  if($scope.getVimsTries<5){
+                    
+                    $scope.getVimsTries++;
+                    $scope.regetVims();
+
+                  }
+
+                  //EDO
               })
               .success(function(datamm) {
                 $scope.vims = new Array();
@@ -151,8 +160,8 @@ $scope.getWimDetails = function(wim){
                   
                   if($scope.getVimsTries<5){
                     
-                    $scope.regetVims();
                     $scope.getVimsTries++;
+                    $scope.regetVims();
 
                   }
               })
@@ -165,9 +174,9 @@ $scope.getWimDetails = function(wim){
                   $scope.zero_vims = 1;
                   $scope.loading=0;
 
-                  if($scope.getVimsTries<5){                    
-                    $scope.regetVims();
+                  if($scope.getVimsTries<5){
                     $scope.getVimsTries++;
+                    $scope.regetVims();
                   }
 
                 }else{
@@ -211,6 +220,12 @@ $scope.getWimDetails = function(wim){
              }).error(function (data, status, headers, config) {
                   $scope.zero_wims = 1;
                   $scope.loading_wims=0;
+
+                  if($scope.getWimsTries<5){                    
+                    
+                    $scope.getWimsTries++;
+                    $scope.regetWims();                    
+                  }
               })
               .success(function(datamm) {
                 
@@ -268,18 +283,19 @@ $scope.getWimDetails = function(wim){
                   $scope.loading_wims=0;
 
                   if($scope.getWimsTries<5){                    
-                    $scope.regetWims();
                     $scope.getWimsTries++;
+                    $scope.regetWims();
                   }
               })
               .success(function(datamm) {
                 
                 $scope.wims = new Array();                
-                $scope.m=datamm;
+                $scope.m=(datamm?datamm:[]);
                 
                 if($scope.getWimsTries<5 && datamm.length==0){                    
-                    $scope.regetWims();
                     $scope.getWimsTries++;
+                    $scope.regetWims();
+                    
                 }else{
                   
                   $scope.m.forEach(function(wim,index){

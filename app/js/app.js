@@ -40,13 +40,14 @@ SonataApp.run(function($rootScope, $route, $location){
 
    $rootScope.$on('$locationChangeSuccess', function() {
         $rootScope.actualLocation = $location.path();
-		
+		$rootScope.checkTokenValidity();
     });        
 
    $rootScope.$watch(function () {return $location.path()}, function (newLocation, oldLocation) {
         
         if($rootScope.actualLocation === newLocation) {
 			$('.lean-overlay').hide();
+			
            /* $('.modal').each(function(m){
             	$(m).modal('close');
             })*/

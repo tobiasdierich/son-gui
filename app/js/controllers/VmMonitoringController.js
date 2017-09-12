@@ -283,6 +283,7 @@ $scope.getCurrentMemory = function(){
             
           });
 }
+$scope.getCurrentMemory();
 
 $scope.getCurrentCPU = function(){
   
@@ -302,7 +303,7 @@ $scope.getCurrentCPU = function(){
             $scope.vm.currentCPUUsage = data.metrics.result[0].values[0][1];
           });
 }
-
+$scope.getCurrentCPU();
 
 $scope.getCPU_History = function(){
   

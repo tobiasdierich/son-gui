@@ -36,7 +36,12 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
 
     
     
-
+    $scope.closePackagesModal = function(){
+        $('#modal_packages_details').closeModal();
+    }
+    $scope.closeUserModal = function(){
+        $('#modal_user_details').closeModal();
+    }
 
      $scope.getTotalVMs = function(){
             
@@ -558,8 +563,8 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
             $scope.tags = [];
             $scope.modal = {};
             
-            $('#modal1').openModal();
-            $scope.modal.title = 'Registered Users';
+            $('#modal_user_details').openModal();
+
 
             $http({
                 method  : 'GET',
@@ -567,12 +572,59 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                 headers : $rootScope.getGKHeaders()
               })
                 .success(function(datas) {
-                        console.log(datas);
+
                         $scope.resl = datas.data.metrics;
                         $scope.selected_data_pie = [];
-                        
+                        var groups=[0,0,0,0];
                         $scope.ss_states = [];
+                        var max = 0;
+                        var min = 0;
                         if($scope.resl.length>0){
+
+                            angular.forEach($scope.resl,function(package,index){
+
+                                        if(package.labels.elapsed_time>max)
+                                            max=package.labels.elapsed_time;
+
+                                        if(package.labels.elapsed_time<min || min==0)
+                                            min=package.labels.elapsed_time;
+                                        
+                                        $scope.total_registered_users+=parseFloat(package.value);
+                            });
+                    
+                            var step = 0;                            
+                            var offset = [];
+                    
+                            if(max>min){
+
+                                step = (max-min)/4;   
+                                offset[0]=parseFloat(min).toFixed(2)+"-"+parseFloat(parseFloat(min)+parseFloat(step)).toFixed(2)+' sec';
+                                offset[1]=parseFloat(parseFloat(min)+parseFloat(step)+parseFloat(0.01)).toFixed(2)+"-"+parseFloat(parseFloat(min)+2*parseFloat(step)).toFixed(2)+' sec';
+                                offset[2]=parseFloat(parseFloat(min)+2*parseFloat(step)+parseFloat(0.01)).toFixed(2)+"-"+parseFloat(parseFloat(min)+3*parseFloat(step)).toFixed(2)+' sec';
+                                offset[3]=parseFloat(parseFloat(min)+3*parseFloat(step)+parseFloat(0.01)).toFixed(2)+"-"+parseFloat(parseFloat(min)+4*parseFloat(step)).toFixed(2)+' sec';
+
+                                angular.forEach($scope.resl,function(package,index){
+                                    var elapsed_time = package.labels.elapsed_time;
+                                
+                                    if(elapsed_time>=min && elapsed_time<(parseFloat(min)+parseFloat(step)))
+                                        groups[0]++;
+                                    else if(elapsed_time>=(parseFloat(min)+parseFloat(step)) && elapsed_time<(parseFloat(min)+2*parseFloat(step)))
+                                        groups[1]++;
+                                    else if(elapsed_time>=(parseFloat(min)+2*parseFloat(step)) && elapsed_time<(parseFloat(min)+3*parseFloat(step)))
+                                        groups[2]++;
+                                    else if(elapsed_time>=(parseFloat(min)+3*parseFloat(step)))
+                                        groups[3]++;                        
+
+                                });
+
+                            }
+
+
+
+
+
+
+
 
                             $scope.resl.forEach(function(kpi,index){
                                 var x = new Date(kpi.labels.time_stamp);                           
@@ -603,10 +655,12 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                             });
 
                         }                        
-                        $scope.setResultChart('resultChart');                        
+                        $scope.setUserChart();
+                        $scope.setUserBarChart(offset,groups);
                        
                     });
     }
+
     $scope.getPackageOnBoardingDetails = function(){
 
         $scope.kpi_timeline_data = [];
@@ -619,9 +673,8 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
             $scope.tags = [];
             $scope.modal = {};
             
-            $('#modal1').openModal();
-            $scope.modal.title = 'Packages on boarding';
-
+            $('#modal_packages_details').openModal();
+            
             $http({
                 method  : 'GET',
                 url: $scope.apis.gatekeeper.kpis+'?name=package_on_boardings&start='+start+'&end='+end+'&step='+step,
@@ -629,11 +682,59 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
               })
                 .success(function(datas) {
                         
+
+
+
+
                         $scope.resl = datas.data.metrics;
                         $scope.selected_data_pie = [];
-                        
+                        var groups=[0,0,0,0];
                         $scope.ss_states = [];
+                        var max = 0;
+                        var min = 0;
                         if($scope.resl.length>0){
+
+                            angular.forEach($scope.resl,function(package,index){
+
+                                        if(package.labels.elapsed_time>max)
+                                            max=package.labels.elapsed_time;
+
+                                        if(package.labels.elapsed_time<min || min==0)
+                                            min=package.labels.elapsed_time;
+                                        
+                                        $scope.total_registered_users+=parseFloat(package.value);
+                            });
+                    
+                            var step = 0;                            
+                            var offset = [];
+                    
+                            if(max>min){
+
+                                step = (max-min)/4;   
+                                offset[0]=parseFloat(min).toFixed(2)+"-"+parseFloat(parseFloat(min)+parseFloat(step)).toFixed(2)+' sec';
+                                offset[1]=parseFloat(parseFloat(min)+parseFloat(step)+parseFloat(0.01)).toFixed(2)+"-"+parseFloat(parseFloat(min)+2*parseFloat(step)).toFixed(2)+' sec';
+                                offset[2]=parseFloat(parseFloat(min)+2*parseFloat(step)+parseFloat(0.01)).toFixed(2)+"-"+parseFloat(parseFloat(min)+3*parseFloat(step)).toFixed(2)+' sec';
+                                offset[3]=parseFloat(parseFloat(min)+3*parseFloat(step)+parseFloat(0.01)).toFixed(2)+"-"+parseFloat(parseFloat(min)+4*parseFloat(step)).toFixed(2)+' sec';
+
+                                angular.forEach($scope.resl,function(package,index){
+                                    var elapsed_time = package.labels.elapsed_time;
+                                
+                                    if(elapsed_time>=min && elapsed_time<(parseFloat(min)+parseFloat(step)))
+                                        groups[0]++;
+                                    else if(elapsed_time>=(parseFloat(min)+parseFloat(step)) && elapsed_time<(parseFloat(min)+2*parseFloat(step)))
+                                        groups[1]++;
+                                    else if(elapsed_time>=(parseFloat(min)+2*parseFloat(step)) && elapsed_time<(parseFloat(min)+3*parseFloat(step)))
+                                        groups[2]++;
+                                    else if(elapsed_time>=(parseFloat(min)+3*parseFloat(step)))
+                                        groups[3]++;                        
+
+                                });
+
+                            }
+
+
+
+                        
 
                             $scope.resl.forEach(function(kpi,index){
                                 var x = new Date(kpi.labels.time_stamp);                           
@@ -664,11 +765,12 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                             });
 
                         }                        
-                        $scope.setResultChart('resultChart');                        
+                        $scope.setPackagesPieChart();                        
+                        $scope.setPackagesBarChart(offset,groups);
                        
                     });
     }
-
+   
     $scope.getKPIDetails = function(kpi){
         $('#resultChart').html('');
         $scope.kpi_timeline_data = [];
@@ -681,9 +783,8 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
 			$scope.tags = [];
 			$scope.modal = {};
             
-			$('#modal1').openModal();
-			$scope.modal.title = kpi.description;
 
+			
     		$http({
                 method  : 'GET',
                 url: $scope.apis.gatekeeper.kpis+'?name='+kpi.api_name+'&start='+start+'&end='+end+'&step='+step,
@@ -695,8 +796,11 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
 
                         $scope.resl = (datas.data.metrics?datas.data.metrics:[]);
 
-                        if($scope.resl.length<1)
-                            $('#modal1').closeModal();
+                        if($scope.resl.length>0){
+                            $('#modal1').openModal();
+                            $scope.modal.title = kpi.description;
+                        }
+                            
                         
                         $scope.selected_data_pie = [];
                         
@@ -707,7 +811,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                         $scope.resl.forEach(function(kpi,index){
                             var x = new Date(kpi.labels.time_stamp);
                            
-                            $scope.kpi_timeline_data.push([x.getTime(), 1]);
+                            $scope.kpi_timeline_data.push([x.getTime(), 1+index]);
                         
                             if($scope.ss_states.indexOf(kpi.labels.result)>=0){
                                 var result = {};
@@ -764,6 +868,239 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
 
 
 
+$scope.setUserBarChart = function(categories,registrations){
+    Highcharts.chart('user_bar_chart', {
+        chart: {
+            type: 'bar'
+        },
+        title: {
+            text: 'User Registrations'
+        },
+        subtitle: {
+            text: 'Grouped by Elapsed time'
+        },
+        xAxis: {
+            categories: categories,
+            title: {
+                text: null
+            }
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Seconds',
+                align: 'high'
+            },
+            labels: {
+                overflow: 'justify'
+            }
+        },
+        tooltip: {
+            valueSuffix: ' '
+        },
+        plotOptions: {
+            bar: {
+                dataLabels: {
+                    enabled: true
+                }
+            }
+        },
+        credits: {
+            enabled: false
+        },
+        series: [{
+            name: 'Registrations',
+            data: registrations,
+            color:'#78a891'
+        }]
+    });
+}
+
+
+$scope.setPackagesBarChart = function(categories,packages){
+    Highcharts.chart('packages_bar_chart', {
+        chart: {
+            type: 'bar'
+        },
+        title: {
+            text: 'Packages on Board'
+        },
+        subtitle: {
+            text: 'Grouped by Elapsed time'
+        },
+        xAxis: {
+            categories: categories,
+            title: {
+                text: null
+            }
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Seconds',
+                align: 'high'
+            },
+            labels: {
+                overflow: 'justify'
+            }
+        },
+        tooltip: {
+            valueSuffix: ' '
+        },
+        plotOptions: {
+            bar: {
+                dataLabels: {
+                    enabled: true
+                }
+            }
+        },
+        credits: {
+            enabled: false
+        },
+        series: [{
+            name: 'Packages',
+            data: packages,
+            color:'#78a891'
+        }]
+    });
+}
+$scope.setPackagesPieChart = function(){
+    Highcharts.chart('PackagesPieChart', {
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false,
+        type: 'pie'
+    },
+    title: {
+        text: 'Packages on Board'
+    },
+    tooltip: {
+        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    credits: {
+      enabled: false
+    },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+                enabled: true,
+                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                style: {
+                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                }
+            }
+        }
+    },
+    series: [{
+        name: 'Results',
+        colorByPoint: true,
+        data: $scope.selected_data_pie
+    }]
+});  
+}
+$scope.setUserChart = function(){
+    
+ Highcharts.chart('UserPieChart', {
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false,
+        type: 'pie'
+    },
+    title: {
+        text: 'Registered Users'
+    },
+    tooltip: {
+        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    credits: {
+      enabled: false
+    },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+                enabled: true,
+                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                style: {
+                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                }
+            }
+        }
+    },
+    series: [{
+        name: 'Results',
+        colorByPoint: true,
+        data: $scope.selected_data_pie
+    }]
+});  
+
+                /*var data = $scope.kpi_timeline_data;*/
+                /*Highcharts.chart('kpi_timeline', {
+                              chart: {
+                                  zoomType: 'x',
+                              },
+                              title: {
+                                  text: 'ΤimeLine'
+                              },
+                              subtitle: {
+                                  text: document.ontouchstart === undefined ?
+                                          'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
+                              },
+                              xAxis: {
+                                  type: 'datetime'
+                              },
+                              yAxis: {
+                                  title: {
+                                      text: ''
+                                  }
+                              },
+                              legend: {
+                                  enabled: false
+                              },
+                              credits: {
+                                enabled: false
+                              },
+                              plotOptions: {
+                                  area: {
+                                      fillColor: {
+                                          linearGradient: {
+                                              x1: 0,
+                                              y1: 0,
+                                              x2: 0,
+                                              y2: 1
+                                          },
+                                          stops: [
+                                              [0, '#262B33'],
+                                              [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                                          ]
+                                      },
+                                      marker: {
+                                          radius: 2
+                                      },
+                                      lineWidth: 1,
+                                      states: {
+                                          hover: {
+                                              lineWidth: 1
+                                          }
+                                      },
+                                      threshold: null
+                                  }
+                              },
+                            series: [{
+                                name: $scope.modal.title,
+                                data: data
+                            }]                              
+                          });*/
+
+}
+
+
+
 $scope.setResultChart = function(where){
     
 
@@ -804,28 +1141,6 @@ $scope.setResultChart = function(where){
 });  
 
 var data = $scope.kpi_timeline_data;
-//The following code is for testing purposes only.
-/*if(data.length>4124114)
-data = [
-            [Date.UTC(2017, 1, 21), 0],
-            [Date.UTC(2017, 2, 4), 1],
-            [Date.UTC(2017, 2, 9), 1],
-            [Date.UTC(2017, 2, 27), 1],
-            [Date.UTC(2017, 3, 2), 1],
-            [Date.UTC(2017, 3, 26), 2],
-            [Date.UTC(2017, 4, 29), 3],
-            [Date.UTC(2017, 5, 1), 3],
-            [Date.UTC(2017, 5, 2), 4],
-            [Date.UTC(2017, 5, 3), 5],
-            [Date.UTC(2017, 5, 11), 5],
-            [Date.UTC(2017, 5, 25), 6],
-            [Date.UTC(2017, 6, 11), 7],
-            [Date.UTC(2017, 6, 11), 7],
-            [Date.UTC(2017, 6, 19), 8],
-            [Date.UTC(2017, 6, 25), 8],
-            [Date.UTC(2017, 6, 29), 8],
-            [Date.UTC(2017, 6, 30), 9]
-        ];*/
                 Highcharts.chart('kpi_timeline', {
                               chart: {
                                   zoomType: 'x',
@@ -882,10 +1197,6 @@ data = [
                                 data: data
                             }]                              
                           });
-
-
-
-
 
 }
 

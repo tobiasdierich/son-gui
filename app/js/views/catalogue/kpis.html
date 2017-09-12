@@ -56,7 +56,7 @@ partner consortium (www.sonata-nfv.eu).
           </div>
         </div>
 
-        <div class="col s12 m6 l4" style="margin-top:10px" ng-click="getKPIDetails(sync_requests_kpi)">
+        <div class="col s12 m6 l4" style="margin-top:10px"  ng-click="getKPIDetails(sync_requests_kpi)">
           <div class="kpi">
             <div class="kpi-subtitle">Synchronous monitoring data requests</div>
             <div class="row">
@@ -128,7 +128,88 @@ partner consortium (www.sonata-nfv.eu).
     </div>
     
 
+    <div id="container" style="min-width: 310px; max-width: 800px; height: 400px; margin: 0 auto"></div>
     
+   
+
+
+        <div id="modal_packages_details" class="modal modal-fixed-footer">
+          <div class="modal-content">
+             <h4>Packages On Board</h4>
+              <div class="col s12 m6">
+                  <div id="packages_bar_chart" style="width: 100%"></div>
+              </div>
+                <div class="col s12 m6">
+                    <div id="PackagesPieChart" style="width: 100%"></div>
+                </div>
+                <div class="col s12">                  
+                    <span class="tags" ng-repeat="tag in tags">{{tag.name+" ("+tag.counter+")"}}</span>                    
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Uuid</th>
+                          <th>Instance</th>
+                          <th>Result</th>
+                          <th>Elapsed Time</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr ng-repeat="result in resl">
+                          <td>{{result.labels.uuid}}</td>
+                          <td>{{result.labels.instance}}</td>
+                          <td>{{result.labels.result}}</td>
+                          <td>{{result.labels.elapsed_time}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  
+                </div>
+                
+          </div>
+          <div class="modal-footer">
+            <a href="javascript:void(0)" ng-click="closePackagesModal()" class="modal-action modal-close waves-effect waves-green btn-flat ">Close</a>
+          </div>
+        </div>
+
+
+    <div id="modal_user_details" class="modal modal-fixed-footer">
+          <div class="modal-content">
+             <h4>Registered Users</h4>
+              <div class="col s12 m6">
+                  <div id="user_bar_chart" style="width: 100%"></div>
+              </div>
+                <div class="col s12 m6">
+                    <div id="UserPieChart" style="width: 100%"></div>
+                </div>
+                <div class="col s12">                  
+                    <span class="tags" ng-repeat="tag in tags">{{tag.name+" ("+tag.counter+")"}}</span>                    
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Uuid</th>
+                          <th>Instance</th>
+                          <th>Result</th>
+                          <th>Elapsed Time</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr ng-repeat="result in resl">
+                          <td>{{result.labels.uuid}}</td>
+                          <td>{{result.labels.instance}}</td>
+                          <td>{{result.labels.result}}</td>
+                          <td>{{result.labels.elapsed_time}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  
+                </div>
+                
+          </div>
+          <div class="modal-footer">
+            <a href="javascript:void(0)" ng-click="closeUserModal()" class="modal-action modal-close waves-effect waves-green btn-flat ">Close</a>
+          </div>
+        </div>
+
     <div id="modalhttps_details" class="modal modal-fixed-footer">
       <div class="modal-content">
             <div class="col s12">
