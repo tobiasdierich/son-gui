@@ -39,6 +39,9 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
     $scope.closePackagesModal = function(){
         $('#modal_packages_details').closeModal();
     }
+    $scope.closeSyncModal = function(){
+        $('#modal_sync_requests_details').closeModal();
+    }
     $scope.closeUserModal = function(){
         $('#modal_user_details').closeModal();
     }
@@ -551,7 +554,108 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                     });
         
     }
+    $scope.getSyncDetails = function(){
 
+        $scope.kpi_timeline_data = [];
+        var start = new Date(new Date().getTime() - 10000*60000).toISOString();
+        var end = new Date().toISOString();
+        var step = '10m';
+
+            $scope.results_type = [];
+            $scope.results =[];
+            $scope.tags = [];
+            $scope.modal = {};
+            $scope.kpi_timeline_data = [];
+            $('#modal_sync_requests_details').openModal();
+
+
+            $http({
+                method  : 'GET',
+                url: $scope.apis.gatekeeper.kpis+'?name=synch_monitoring_data_requests&start='+start+'&end='+end+'&step='+step,
+                headers : $rootScope.getGKHeaders()
+              })
+                .success(function(datas) {
+                        $scope.resl =[];
+                        $scope.resl = datas.data.metrics;
+                        $scope.selected_data_pie = [];
+                        var groups=[0,0,0,0];
+                        $scope.ss_states = [];
+                        var max = 0;
+                        var min = 0;
+                        if($scope.resl.length>0){
+
+                            angular.forEach($scope.resl,function(package,index){
+
+                                        if(package.labels.elapsed_time>max)
+                                            max=package.labels.elapsed_time;
+
+                                        if(package.labels.elapsed_time<min || (min==0 && $scope.resl.length>1))
+                                            min=package.labels.elapsed_time;
+                                        
+                            });
+                    
+                            var step = 0;                            
+                            var offset = [];
+                    
+                            if(max>min){
+
+                                step = (max-min)/4;   
+                                offset[0]=parseFloat(min).toFixed(2)+"-"+parseFloat(parseFloat(min)+parseFloat(step)).toFixed(2)+' sec';
+                                offset[1]=parseFloat(parseFloat(min)+parseFloat(step)+parseFloat(0.01)).toFixed(2)+"-"+parseFloat(parseFloat(min)+2*parseFloat(step)).toFixed(2)+' sec';
+                                offset[2]=parseFloat(parseFloat(min)+2*parseFloat(step)+parseFloat(0.01)).toFixed(2)+"-"+parseFloat(parseFloat(min)+3*parseFloat(step)).toFixed(2)+' sec';
+                                offset[3]=parseFloat(parseFloat(min)+3*parseFloat(step)+parseFloat(0.01)).toFixed(2)+"-"+parseFloat(parseFloat(min)+4*parseFloat(step)).toFixed(2)+' sec';
+
+                                angular.forEach($scope.resl,function(package,index){
+                                    var elapsed_time = package.labels.elapsed_time;
+                                
+                                    if(elapsed_time>=min && elapsed_time<(parseFloat(min)+parseFloat(step)))
+                                        groups[0]++;
+                                    else if(elapsed_time>=(parseFloat(min)+parseFloat(step)) && elapsed_time<(parseFloat(min)+2*parseFloat(step)))
+                                        groups[1]++;
+                                    else if(elapsed_time>=(parseFloat(min)+2*parseFloat(step)) && elapsed_time<(parseFloat(min)+3*parseFloat(step)))
+                                        groups[2]++;
+                                    else if(elapsed_time>=(parseFloat(min)+3*parseFloat(step)))
+                                        groups[3]++;                        
+
+                                });
+
+                            }
+
+
+                            $scope.resl.forEach(function(kpi,index){
+                                var x = new Date(kpi.labels.time_stamp);                           
+                                $scope.kpi_timeline_data.push([x.getTime(), 1]);
+                                
+                                if($scope.ss_states.indexOf(kpi.labels.result)>=0){
+
+                                    var result = {};
+                                        result = $scope.selected_data_pie.filter(function( obj ) {
+                                    
+                                         if(obj.name==kpi.labels.result){
+                                            return obj;
+                                         }
+                                            
+                                    });
+
+                                    result[0].y++;
+
+                                }else{
+
+                                    $scope.ss_states.push(kpi.labels.result);                                    
+                                    $scope.selected_data_pie.push({
+                                        name:kpi.labels.result,
+                                        y:1,
+                                        sliced: true
+                                    });                                    
+                                }                            
+                            });
+
+                        }                        
+                        $scope.setSynchChart();
+                        $scope.setSynchBarChart(offset,groups);
+                       
+                    });
+    }
     $scope.getRegisteredUsersDetails = function(){
         $scope.kpi_timeline_data = [];
         var start = new Date(new Date().getTime() - 10000*60000).toISOString();
@@ -866,7 +970,53 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
         }
 
 
-
+$scope.setSynchBarChart = function(categories,registrations){
+    Highcharts.chart('sync_bar_chart', {
+        chart: {
+            type: 'bar'
+        },
+        title: {
+            text: 'Synchronous monitoring data requests'
+        },
+        subtitle: {
+            text: 'Grouped by Elapsed time'
+        },
+        xAxis: {
+            categories: categories,
+            title: {
+                text: null
+            }
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Seconds',
+                align: 'high'
+            },
+            labels: {
+                overflow: 'justify'
+            }
+        },
+        tooltip: {
+            valueSuffix: ' '
+        },
+        plotOptions: {
+            bar: {
+                dataLabels: {
+                    enabled: true
+                }
+            }
+        },
+        credits: {
+            enabled: false
+        },
+        series: [{
+            name: 'Sync requests',
+            data: registrations,
+            color:'#78a891'
+        }]
+    });
+}
 $scope.setUserBarChart = function(categories,registrations){
     Highcharts.chart('user_bar_chart', {
         chart: {
@@ -1000,6 +1150,46 @@ $scope.setPackagesPieChart = function(){
     }]
 });  
 }
+$scope.setSynchChart = function(){
+
+ Highcharts.chart('SyncPieChart', {
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false,
+        type: 'pie'
+    },
+    title: {
+        text: 'Synchronous monitoring data requests'
+    },
+    tooltip: {
+        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    credits: {
+      enabled: false
+    },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+                enabled: true,
+                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                style: {
+                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                }
+            }
+        }
+    },
+    series: [{
+        name: 'Results',
+        colorByPoint: true,
+        data: $scope.selected_data_pie
+    }]
+});  
+
+};
+
 $scope.setUserChart = function(){
     
  Highcharts.chart('UserPieChart', {
@@ -1038,63 +1228,6 @@ $scope.setUserChart = function(){
     }]
 });  
 
-                /*var data = $scope.kpi_timeline_data;*/
-                /*Highcharts.chart('kpi_timeline', {
-                              chart: {
-                                  zoomType: 'x',
-                              },
-                              title: {
-                                  text: 'ΤimeLine'
-                              },
-                              subtitle: {
-                                  text: document.ontouchstart === undefined ?
-                                          'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
-                              },
-                              xAxis: {
-                                  type: 'datetime'
-                              },
-                              yAxis: {
-                                  title: {
-                                      text: ''
-                                  }
-                              },
-                              legend: {
-                                  enabled: false
-                              },
-                              credits: {
-                                enabled: false
-                              },
-                              plotOptions: {
-                                  area: {
-                                      fillColor: {
-                                          linearGradient: {
-                                              x1: 0,
-                                              y1: 0,
-                                              x2: 0,
-                                              y2: 1
-                                          },
-                                          stops: [
-                                              [0, '#262B33'],
-                                              [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                                          ]
-                                      },
-                                      marker: {
-                                          radius: 2
-                                      },
-                                      lineWidth: 1,
-                                      states: {
-                                          hover: {
-                                              lineWidth: 1
-                                          }
-                                      },
-                                      threshold: null
-                                  }
-                              },
-                            series: [{
-                                name: $scope.modal.title,
-                                data: data
-                            }]                              
-                          });*/
 
 }
 
