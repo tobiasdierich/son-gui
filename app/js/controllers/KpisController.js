@@ -566,7 +566,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
             $scope.tags = [];
             $scope.modal = {};
             $scope.kpi_timeline_data = [];
-            $('#modal_sync_requests_details').openModal();
+            
 
 
             $http({
@@ -583,6 +583,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                         var max = 0;
                         var min = 0;
                         if($scope.resl.length>0){
+                            $('#modal_sync_requests_details').openModal();
 
                             angular.forEach($scope.resl,function(package,index){
 
