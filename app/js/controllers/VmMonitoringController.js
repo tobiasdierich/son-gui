@@ -112,7 +112,15 @@ $scope.getAllPotentialMeasurements = function(){
           headers : { 'Content-Type': 'application/json' }
          })
           .success(function(data) {
-           $scope.potential_graphs = data.metrics;
+           $scope.potential_graphs = [];
+
+            angular.forEach(data.metrics,function(d){
+              console.log(d);
+              if(d.startsWith("vm_") && d!='vm_status' && d!='vm_power_state' && d!='vm_last_update'){
+                
+                $scope.potential_graphs.push(d);
+              }
+            });           
             
           });
 }
@@ -372,10 +380,9 @@ $scope.historyCPU = function(){
 
                        $scope.g_charts.push(Highcharts.stockChart('cpu_chart_new', {
                               chart: {
-                                  /*zoomType: 'x',*/
+                                  zoomType: 'x',
                                   events: {
                                       load: function () {
-
                                           
                                           var series = this.series[0];
                                           $scope.intervals.push($interval(function () {
@@ -625,7 +632,7 @@ $scope.historyRAM = function(){
                                           },
                                           stops: [
                                               [0, '#262B33'],
-                                              [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0.4).get('rgba')]
+                                              [1, '#FFFFFF']
                                           ]
                                       },
                                       marker: {

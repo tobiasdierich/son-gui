@@ -112,7 +112,15 @@ $scope.getAllPotentialMeasurements = function(){
           headers : { 'Content-Type': 'application/json' }
          })
           .success(function(data) {
-           $scope.potential_graphs = data.metrics;
+           $scope.potential_graphs = [];
+
+            angular.forEach(data.metrics,function(d){
+              console.log(d);
+              if(d.startsWith("vm_") && d!='vm_status' && d!='vm_power_state' && d!='vm_last_update'){
+                
+                $scope.potential_graphs.push(d);
+              }
+            });   
             
           });
 }
@@ -162,11 +170,17 @@ $http({
                        });
 
 
-                     $scope.g_charts.push(Highcharts.chart(box.id, {
+                     $scope.g_charts.push(Highcharts.stockChart(box.id, {
                               chart: {
                                   zoomType: 'x'
                               },
                               animation:false,
+                              rangeSelector: {
+                                  enabled: false
+                              },
+                              navigator: {
+                                  enabled: false
+                              },
                               title: {
                                   text: box.measurement
                               },
@@ -199,7 +213,7 @@ $http({
                                           },
                                           stops: [
                                               [0, '#262B33'],
-                                              [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                                              [1, '#FFFFFF']
                                           ]
                                       },
                                       marker: {
@@ -216,7 +230,7 @@ $http({
                               },
 
                               series: [{
-                                  type: 'area',
+                                  type: 'line',
                                   color: '#454e5d',
                                   name: box.measurement,
                                   data: $scope.data
@@ -446,9 +460,16 @@ $scope.historyRAM = function(){
 
 
 
-                $scope.g_charts.push(Highcharts.chart('ram_chart_new_vnf', {
+                $scope.g_charts.push(Highcharts.stockChart('ram_chart_new_vnf', {
                               chart: {
-                                  zoomType: 'x',
+                                zoomType: 'x',
+                                animation:false,
+                                  rangeSelector: {
+                                    enabled: false
+                                  },
+                                  navigator: {
+                                    enabled: false
+                                  },
                                   animation:false,
                                   events: {
                                       load: function () {
@@ -523,6 +544,13 @@ $scope.historyRAM = function(){
                                       text: 'RAM %'
                                   }
                               },
+                              animation:false,
+                                  rangeSelector: {
+                                    enabled: false
+                                  },
+                                  navigator: {
+                                    enabled: false
+                                  },
                               legend: {
                                   enabled: false
                               },
@@ -616,10 +644,16 @@ $scope.historyCPU = function(){
 
              });
 
-                       $scope.g_charts.push(Highcharts.chart('cpu_chart_new_vnf', {
+                       $scope.g_charts.push(Highcharts.stockChart('cpu_chart_new_vnf', {
                               chart: {
                                   zoomType: 'x',
                                   animation:false,
+                                  rangeSelector: {
+                                    enabled: false
+                                  },
+                                  navigator: {
+                                    enabled: false
+                                  },
                                   events: {
                                       load: function () {
 
@@ -689,6 +723,13 @@ $scope.historyCPU = function(){
                                       text: 'CPU %'
                                   }
                               },
+                              animation:false,
+                                  rangeSelector: {
+                                    enabled: false
+                                  },
+                                  navigator: {
+                                    enabled: false
+                                  },
                               legend: {
                                   enabled: false
                               },
@@ -805,9 +846,15 @@ $scope.historyHardDisk = function(){
                       });
                   
             
-              $scope.g_charts.push(Highcharts.chart('disk_chart_new_vnf', {
+              $scope.g_charts.push(Highcharts.stockChart('disk_chart_new_vnf', {
                               chart: {
                                   zoomType: 'x',
+                              },
+                              rangeSelector: {
+                                  enabled: false
+                              },
+                              navigator: {
+                                  enabled: false
                               },
                               animation:false,
                               title: {
