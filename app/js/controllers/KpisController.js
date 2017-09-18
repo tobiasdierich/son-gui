@@ -501,16 +501,15 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
  
     $scope.getVMsDetails = function(){
         $('#modalvms_details').openModal();
-        /*$scope.modal.title = $scope.vms_sum.description;*/
-            
+
             $http({
                 method  : 'GET',
                 url: $scope.apis.gatekeeper.kpis+'?name=vms_state',
                 headers : $rootScope.getGKHeaders()
             })
             .success(function(datas) {
-            
-                        
+                        console.log("VMS details");
+                        console.log(datas);
 
                         $scope.resl = datas.data.metrics;
                         $scope.selected_data_pie = [];
@@ -520,36 +519,36 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
 
                             $scope.modal = {};
                             $scope.modal.title = "States of VMs";
+                            var instances = [];
 
+                            $scope.instances_list = [];
                         $scope.resl.forEach(function(kpi,index){
+                            var selected_data_pie = [];
+
+                           var position = $rootScope.getIndexOf($scope.instances_list,kpi.labels.instance,"instance");
+                           console.log("Position for "+kpi.labels.instance+" ="+position);
+                           if(position<0){
+                                var instance_obj = {'instance':kpi.labels.instance,'state':[],'data':selected_data_pie};
+                                $scope.instances_list.push(instance_obj);
+                                position = $rootScope.getIndexOf($scope.instances_list,kpi.labels.instance,"instance");
+                           }                           
                            
-                            if($scope.ss_states.indexOf(kpi.labels.result)>=0){
-                                var result = {};
-                                    result = $scope.selected_data_pie.filter(function( obj ) {
+                           if(position>-1){
                                 
-                                     if(obj.name==kpi.labels.state){
-                                        return obj;
-                                     }
-                                        
-                                });
-
-                                result[0].y++;                               
-                                
-
-                            }else{
-                                $scope.ss_states.push(kpi.labels.state);
-                                
-                                $scope.selected_data_pie.push({
+                                $scope.instances_list[position].state.push({'name':kpi.labels.state,'value':parseInt(kpi.value)});
+                                $scope.instances_list[position].data.push({
                                     name:kpi.labels.state,
                                     y:parseInt(kpi.value),
-                                    sliced: true
+                                    sliced: false
                                 });
-                                
-                            }                            
+                           }
+                                       
+
                         });
+                       
                          }
                         
-                            $scope.setResultChart('resultChartvms');                        
+                            
                        
                     });
         
@@ -1231,8 +1230,86 @@ $scope.setUserChart = function(){
 
 
 }
+$scope.setChartHere = function(instance){
+    setTimeout(function(){
+ 
+ Highcharts.chart('chart_'+instance.instance, {
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false,
+        type: 'pie'
+    },
+    title: {
+        text: instance.instance
+    },
+    tooltip: {
+        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    credits: {
+      enabled: false
+    },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+                enabled: true,
+                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                style: {
+                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                }
+            }
+        }
+    },
+    series: [{
+        name: 'Results',
+        colorByPoint: true,
+        data: instance.data
+    }]
+})},3000);
 
+}
+$scope.setVMsChart = function(name,data){
+    
+setTimeout(
+ Highcharts.chart('chart_'+name, {
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false,
+        type: 'pie'
+    },
+    title: {
+        text: name
+    },
+    tooltip: {
+        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    credits: {
+      enabled: false
+    },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+                enabled: true,
+                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                style: {
+                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                }
+            }
+        }
+    },
+    series: [{
+        name: 'Results',
+        colorByPoint: true,
+        data: data
+    }]
+}), 3000);  
 
+}
 
 $scope.setResultChart = function(where){
     

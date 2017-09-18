@@ -59,7 +59,16 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
       return angular.isUndefined(val) || val === null 
     }
 
-   
+   $rootScope.getIndexOf=function(arr, val, prop) {
+      var l = arr.length,
+        k = 0;
+      for (k = 0; k < l; k = k + 1) {
+        if (arr[k][prop] === val) {
+          return k;
+        }
+      }
+      return -1;
+    }
 
      $scope.getServices = function(){
 
