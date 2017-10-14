@@ -96,6 +96,7 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
                           'services' :gk_url+'/services',
                           'packages' :gk_url+'/packages',
                           'functions':gk_url+'/functions',
+                          'cloud_services': gk_url+'/cloud-services',
                           'requests' :gk_url+'/requests',
                           'kpis'     :gk_url+'/kpis',
                           'users'    :gk_url+'/users',

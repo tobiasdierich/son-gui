@@ -86,6 +86,11 @@ SonataApp.config(function($routeProvider) {
 				disableCache: true,
 				controller  : 'MainController'
 			})
+			.when('/catalogue/cloudServices', {
+        templateUrl : 'js/views/catalogue/cloud_services.html',
+        disableCache: true,
+        controller  : 'MainController'
+			})
 			.when('/vim_settings', {
 				templateUrl : 'js/views/settings/vim.html',
 				disableCache: true,
