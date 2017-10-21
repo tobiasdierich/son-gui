@@ -69,8 +69,11 @@ SonataApp.controller('AllServicesController',['$rootScope','$http','$scope',func
                  console.info('Get Services From Url: '+$scope.apis.gatekeeper.services);
 
                  data.forEach(function (service, index) {
-                  service.type = 'Network Service';
+                   service.data = service.nsd;
+                   service.type = 'Network Service';
                  });
+
+                 data = data.filter(function(n){ return Object.keys(n).length > 0; });
 
                  if (!$scope.services) {
                    $scope.services = data;
@@ -99,8 +102,12 @@ SonataApp.controller('AllServicesController',['$rootScope','$http','$scope',func
                  console.info('Get Complex Services From Url: '+$scope.apis.gatekeeper.complex_services);
 
                  data.forEach(function (service, index) {
+                   service.data = service.cosd;
                    service.type = 'Complex Service';
                  });
+
+                 data = data.filter(function(n){ return Object.keys(n).length > 0; });
+
 
                  if (!$scope.services) {
                    $scope.services = data;
