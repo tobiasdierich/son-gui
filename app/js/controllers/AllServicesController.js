@@ -73,7 +73,7 @@ SonataApp.controller('AllServicesController',['$rootScope','$http','$scope',func
                    service.type = 'Network Service';
                  });
 
-                 data = data.filter(function(n){ return Object.keys(n).length > 0; });
+                 data = data.filter(function(n){ return n.nsd; });
 
                  if (!$scope.services) {
                    $scope.services = data;
@@ -106,7 +106,7 @@ SonataApp.controller('AllServicesController',['$rootScope','$http','$scope',func
                    service.type = 'Complex Service';
                  });
 
-                 data = data.filter(function(n){ return Object.keys(n).length > 0; });
+                 data = data.filter(function(n){ return n.cosd; });
 
 
                  if (!$scope.services) {
