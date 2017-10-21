@@ -23,24 +23,24 @@ partner consortium (www.sonata-nfv.eu).
 
 SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$location', '$http',function($rootScope,$scope, $routeParams, $location, $http) {
    $scope.debug=(window.location.origin=="http://localhost"?true:false);
-   
-    
+
+
     $scope.todos = new Array();
     (function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
-    
-    
+
+
     $rootScope.setStorage = function(valuename,valuevalue){
       window.localStorage.setItem(valuename,valuevalue);
     }
-    
+
     $rootScope.getStorage = function(valuename){
       return window.localStorage.getItem(valuename);
     }
 
     $rootScope.getToken = function(){
-      
+
         return $rootScope.getStorage('sonata-token');
-      
+
     }
 
     $rootScope.getUserName = function(){
@@ -50,30 +50,30 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
 
 
     $rootScope.checkIfValid = function(token){
-      
+
       return true;
 
     }
-    
+
     $rootScope.checkIfNull = function(val){
-      return angular.isUndefined(val) || val === null 
+      return angular.isUndefined(val) || val === null
     }
 
-   
+
 
      $scope.getServices = function(){
 
                 if($scope.debug==false){
                   var protocol  = window.location.protocol;
-                  var host      = window.location.hostname;               
+                  var host      = window.location.hostname;
 
                   var gk_url = protocol+'//'+host+'/api/v2';
                   var mon_url = protocol+'//'+host+'/monitoring';
                   var vims_url = protocol+'//'+host+'/api/v2';
                   var logs_url = protocol+'//'+host+'/logs';
-                
+
                 }else{
-                  
+
                   var gk_url = 'http://sp.int3.sonata-nfv.eu:32001/api/v2';
                   var mon_url = 'http://sp.int3.sonata-nfv.eu:8000';
                   var vims_url = 'http://sp.int3.sonata-nfv.eu:32001/api/v2';
@@ -94,6 +94,7 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
                         'wims':vims_url+'/wims',
                         'gatekeeper':{
                           'services' :gk_url+'/services',
+                          'complex_services':gk_url+'/complex-services',
                           'packages' :gk_url+'/packages',
                           'functions':gk_url+'/functions',
                           'cloud_services': gk_url+'/cloud-services',
@@ -103,9 +104,9 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
                           'user_sessions':gk_url+'/sessions',
                         }
                       };
-              
+
               $rootScope.apis = $scope.apis;
-              $rootScope.gk_headers = { 
+              $rootScope.gk_headers = {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer '+$rootScope.getStorage('sonata-token')
               };
@@ -118,31 +119,31 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
                     'Authorization': 'Bearer '+$rootScope.getStorage('sonata-token')};
                     return header;
     }
-    
+
     $rootScope.logout = function(){
       $rootScope.is_user_logged_in = false;
       $rootScope.gk_headers = {};
       $rootScope.token = '';
       delete window.localStorage['sonata-token'];
       delete window.localStorage['sonata-username'];
-      
+
       location.hash='/login';
 
     }
 
     $scope.checkAuthorization = function(){
       if($rootScope.is_user_logged_in==false){
-        $rootScope.logout();        
+        $rootScope.logout();
       }
       if($location.url()!='/signup' && $location.url()!='/login'){
-      
+
             var localStorageToken = $rootScope.getStorage('sonata-token');
 
             if($rootScope.checkIfNull(localStorageToken)){
-      
-              $rootScope.is_user_logged_in = false;    
+
+              $rootScope.is_user_logged_in = false;
               delete window.localStorage['sonata-token'];
-              location.hash='/login';            
+              location.hash='/login';
             }
             else{
               if($rootScope.checkIfValid(localStorageToken)){
@@ -154,7 +155,7 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
     $scope.checkAuthorization();
 
     $scope.checkTokenValidity = function(){
-      
+
 
           $http({
               method  : 'GET',
@@ -168,23 +169,23 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
             $rootScope.logout();
           });
 
-        
+
 
       }
-      
-    
-    
-        
-    
 
 
-$scope.alerts_visibility = 0;           
+
+
+
+
+
+$scope.alerts_visibility = 0;
 
 
 $rootScope.FixTimestamp = function(timestamp){
 
     timestamp = timestamp.replace('.','');
-                
+
     if(timestamp.length==12)
         timestamp=timestamp+'0';
     else if(timestamp.length==11)
@@ -204,8 +205,8 @@ $rootScope.FixTimestamp = function(timestamp){
 
   $rootScope.checkIfFilesAreThere = function(){
 
-    return 1; 
-  }         
-    
+    return 1;
+  }
+
 
     }]);

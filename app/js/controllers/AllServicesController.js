@@ -54,31 +54,69 @@ SonataApp.controller('AllServicesController',['$rootScope','$http','$scope',func
 
 
            $scope.getServices = function(){
-              console.info('Get Services call started. Url:'+$scope.apis.gatekeeper.services);
-             $http({
-                method  : 'GET',
-                url     : $scope.apis.gatekeeper.services,
-                headers : $rootScope.getGKHeaders()
-               })
-                .success(function(data) {
-                  
-                  console.info('Get Services From Url: '+$scope.apis.gatekeeper.services);
-                  $scope.services = data;
-
-
-                   $scope.services.forEach( function(service, index) {
-                    service.checked = 0; 
-                  });
-
-
-
-                  console.log(data);
-                })
-                .error(function(data){
-                    console.error('Get Services Failed. Get Url: '+$scope.apis.gatekeeper.services);
-                })
+              $scope.getNetworkServices();
+              $scope.getComplexServices();
            }
 
+           $scope.getNetworkServices = function(){
+             $http({
+               method  : 'GET',
+               url     : $scope.apis.gatekeeper.services,
+               headers : $rootScope.getGKHeaders()
+             })
+               .success(function(data) {
+
+                 console.info('Get Services From Url: '+$scope.apis.gatekeeper.services);
+
+                 data.forEach(function (service, index) {
+                  service.type = 'Network Service';
+                 });
+
+                 if (!$scope.services) {
+                   $scope.services = data;
+                 } else {
+                   $scope.services.push.apply($scope.services, data);
+                 }
+
+                 $scope.services.forEach( function(service, index) {
+                   service.checked = 0;
+                 });
+
+               })
+               .error(function(data){
+                 console.error('Get Services Failed. Get Url: '+$scope.apis.gatekeeper.services);
+               })
+           }
+
+           $scope.getComplexServices = function(){
+             $http({
+               method  : 'GET',
+               url     : $scope.apis.gatekeeper.complex_services,
+               headers : $rootScope.getGKHeaders()
+             })
+               .success(function(data) {
+
+                 console.info('Get Complex Services From Url: '+$scope.apis.gatekeeper.complex_services);
+
+                 data.forEach(function (service, index) {
+                   service.type = 'Complex Service';
+                 });
+
+                 if (!$scope.services) {
+                   $scope.services = data;
+                 } else {
+                   $scope.services.push.apply($scope.services, data);
+                 }
+
+                 $scope.services.forEach( function(service, index) {
+                   service.checked = 0;
+                 });
+
+               })
+               .error(function(data){
+                 console.error('Get Complex Services Failed. Get Url: '+$scope.apis.gatekeeper.services);
+               })
+           }
 
            $scope.openServiceInfo = function(service){
              $('#modal1').openModal();

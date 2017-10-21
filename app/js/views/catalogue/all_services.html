@@ -56,7 +56,10 @@ partner consortium (www.sonata-nfv.eu).
                      <!-- <td> 
                         <input type="checkbox" class="filled-in" id="{{service.nsd.name+service.nsd.version}}" ng-model="service.checked" ng-change="remakeChecked(service)" /><label for="{{service.nsd.name+service.nsd.version}}"></label>
                      </td> -->
-                      <td>{{service.nsd.name}}</td>
+                      <td>
+                          {{service.nsd.name}}<br>
+                          <span class="grey-text text-darken-2"><small>{{service.type}}</small></span>
+                      </td>
                       <td>{{service.nsd.version}}</td>
                       <td>{{service.nsd.description}}</td>
                       <td><i ng-click="openServiceInfo(service)" class="Small material-icons cursored">info_outline</i></td> 
