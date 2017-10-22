@@ -221,79 +221,115 @@ partner consortium (www.sonata-nfv.eu).
       </div>
       </div>
       <div class="row">
-      <div class="col s12 m6">
-        <h6>Compute Configuration</h6>
-          
-          <div class="input-field col s12">
-            <select class="" id="compute_vim_type" ng-model="new_vim.compute_configuration.vim_type" material-select watch>
-                <option value="">Select vim vendor</option>
-                <option value="heat">Heat</option>
-                <option value="SPVim">SPVim</option>
-            </select>
-            <label for="compute_vim_type">Vim Vendor</label>
+          <div class="col s12 m6">
+              <h6>
+                  {{ new_vim.vim_type == 'kubernetes' ? 'Cloud' : 'Compute' }} Configuration
+              </h6>
+
+              <div class="input-field col s12">
+                  <select class="" id="compute_vim_type" ng-model="new_vim.vim_type"
+                          material-select watch>
+                      <option value="">Select vim vendor</option>
+                      <option value="heat">Heat</option>
+                      <option value="SPVim">SPVim</option>
+                      <option value="kubernetes">Kubernetes</option>
+                  </select>
+                  <label for="compute_vim_type">Vim Vendor</label>
+              </div>
+
+              <div ng-if="new_vim.vim_type != 'kubernetes'">
+                  <div class="input-field col s6">
+                      <input id="compute_configurationtenant_id"
+                             ng-model="new_vim.compute_configuration.tenant_id" type="text" class="validate">
+                      <label for="compute_configurationtenant_id">Tenant ID</label>
+                  </div>
+
+                  <div class="input-field col s6">
+                      <input id="compute_configurationvim_address"
+                             ng-model="new_vim.compute_configuration.vim_address" type="text"
+                             class="validate">
+                      <label for="compute_configurationvim_address">Vim address</label>
+                  </div>
+
+                  <div class="input-field col s6">
+                      <input id="compute_configurationtenant_ext_net"
+                             ng-model="new_vim.compute_configuration.tenant_ext_net" type="text"
+                             class="validate">
+                      <label for="compute_configurationtenant_ext_net">Tenant External Network ID</label>
+                  </div>
+
+                  <div class="input-field col s6">
+                      <input id="compute_configurationtenant_ext_router"
+                             ng-model="new_vim.compute_configuration.tenant_ext_router" type="text"
+                             class="validate">
+                      <label for="compute_configurationtenant_ext_router">Tenant External Router ID</label>
+                  </div>
+
+                  <div class="input-field col s6">
+                      <input id="compute_configurationusername"
+                             ng-model="new_vim.compute_configuration.username" type="text" class="validate">
+                      <label for="compute_configurationusername">Username</label>
+                  </div>
+
+                  <div class="input-field col s6">
+                      <input id="compute_configurationpassword" ng-model="new_vim.compute_configuration.pass"
+                             type="password" class="validate">
+                      <label for="compute_configurationpassword">Password</label>
+                  </div>
+              </div>
+
+              <div ng-if="new_vim.vim_type === 'kubernetes'">
+                  <div class="input-field col s6">
+                      <input id="cloud_configurationvim_address"
+                             ng-model="new_vim.cloud_configuration.vim_address" type="text"
+                             class="validate">
+                      <label for="cloud_configurationvim_address">Vim address</label>
+                  </div>
+
+                  <div class="input-field col s6">
+                      <input id="cloud_configurationusername"
+                             ng-model="new_vim.cloud_configuration.username" type="text" class="validate">
+                      <label for="cloud_configurationusername">Username</label>
+                  </div>
+
+                  <div class="input-field col s6">
+                      <input id="cloud_configurationpassword" ng-model="new_vim.cloud_configuration.pass"
+                             type="password" class="validate">
+                      <label for="cloud_configurationpassword">Password</label>
+                  </div>
+              </div>
           </div>
 
-          <div class="input-field col s6">
-            <input id="compute_configurationtenant_id" ng-model="new_vim.compute_configuration.tenant_id" type="text" class="validate">
-            <label for="compute_configurationtenant_id">Tenant ID</label>
-          </div> 
-          
-          <div class="input-field col s6">
-            <input id="compute_configurationvim_address" ng-model="new_vim.compute_configuration.vim_address" type="text" class="validate">
-            <label for="compute_configurationvim_address">Vim address</label>
-          </div>
+          <div class="col s12 m6" ng-if="new_vim.vim_type != 'kubernetes'">
+              <h6>Networking Configuration</h6>
 
-          <div class="input-field col s6">
-            <input id="compute_configurationtenant_ext_net" ng-model="new_vim.compute_configuration.tenant_ext_net" type="text" class="validate">
-            <label for="compute_configurationtenant_ext_net">Tenant External Network ID</label>
-          </div>
-          
-          <div class="input-field col s6">
-            <input id="compute_configurationtenant_ext_router" ng-model="new_vim.compute_configuration.tenant_ext_router" type="text" class="validate">
-            <label for="compute_configurationtenant_ext_router">Tenant External Router ID</label>
-          </div>
-
-          <div class="input-field col s6">
-            <input id="compute_configurationusername" ng-model="new_vim.compute_configuration.username" type="text" class="validate">
-            <label for="compute_configurationusername">Username</label>
-          </div>
-          
-          <div class="input-field col s6">
-            <input id="compute_configurationpassword" ng-model="new_vim.compute_configuration.pass" type="password" class="validate">
-            <label for="compute_configurationpassword">Password</label>
-          </div>
-
-      </div>
-      <div class="col s12 m6">
-        <h6>Networking Configuration</h6>
-
-          <div class="input-field col s12">
-            <select class="" id="network_vim_type" ng-model="new_vim.networking_configuration.vim_type" material-select watch>
-                <option value="">Select vim vendor</option>
-                <option value="OVS">OVS</option>
-                <option value="SPVim">SPVim</option>
-            </select>
-            <label for="network_vim_type">Network configuration VIM Type</label>
-          </div>
-          <div class="input-field col s12">
-            <input id="vim_address" ng-model="new_vim.networking_configuration.vim_address" type="text" class="validate">
-            <label for="vim_address">Vim address</label>
-          </div>
-
-        
-
-          <div class="input-field col s6">
-            <input id="username" ng-model="new_vim.networking_configuration.username" type="text" class="validate">
-            <label for="username">Username</label>
-          </div>
-          
-          <div class="input-field col s6">
-            <input id="password" ng-model="new_vim.networking_configuration.pass" type="password" class="validate">
-            <label for="password">Password</label>
-          </div>
+              <div class="input-field col s12">
+                  <select class="" id="network_vim_type" ng-model="new_vim.networking_configuration.vim_type" material-select watch>
+                      <option value="">Select vim vendor</option>
+                      <option value="OVS">OVS</option>
+                      <option value="SPVim">SPVim</option>
+                  </select>
+                  <label for="network_vim_type">Network configuration VIM Type</label>
+              </div>
+              <div class="input-field col s12">
+                  <input id="vim_address" ng-model="new_vim.networking_configuration.vim_address" type="text" class="validate">
+                  <label for="vim_address">Vim address</label>
+              </div>
 
 
-      </div>
+
+              <div class="input-field col s6">
+                  <input id="username" ng-model="new_vim.networking_configuration.username" type="text" class="validate">
+                  <label for="username">Username</label>
+              </div>
+
+              <div class="input-field col s6">
+                  <input id="password" ng-model="new_vim.networking_configuration.pass" type="password" class="validate">
+                  <label for="password">Password</label>
+              </div>
+
+
+          </div>
       </div>
      
 
