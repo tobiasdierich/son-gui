@@ -44,6 +44,7 @@ partner consortium (www.sonata-nfv.eu).
                <thead>
                 <tr>
                   <th data-field="uuid">Uuid</th>
+                  <th data-field="">Vendor</th>
                   <th data-field="">Cores</th>
                   <th data-field="">Memory</th>
                   <th data-field="actions"></th>
@@ -68,6 +69,7 @@ partner consortium (www.sonata-nfv.eu).
                   </tr>
                   <tr ng-repeat="vim in vims" ng-show="!loading">
                     <td>{{vim.vim_uuid}}</td>
+                    <td>{{vim.vim_type}}</td>
                     <td>{{vim.core_used}}/{{vim.core_total}}</td>
                     <td>{{vim.memory_used}}/{{vim.memory_total}}</td>
                     <td><a ng-click="getVimDetails(vim)" class="modal-trigger waves-effect waves-light"><i class="material-icons left">library_add</i></a></td>
