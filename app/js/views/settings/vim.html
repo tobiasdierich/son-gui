@@ -281,19 +281,19 @@ partner consortium (www.sonata-nfv.eu).
               <div ng-if="new_vim.vim_type === 'kubernetes'">
                   <div class="input-field col s6">
                       <input id="cloud_configurationvim_address"
-                             ng-model="new_vim.cloud_configuration.vim_address" type="text"
+                             ng-model="new_vim.compute_configuration.vim_address" type="text"
                              class="validate">
                       <label for="cloud_configurationvim_address">Vim address</label>
                   </div>
 
                   <div class="input-field col s6">
                       <input id="cloud_configurationusername"
-                             ng-model="new_vim.cloud_configuration.username" type="text" class="validate">
+                             ng-model="new_vim.compute_configuration.username" type="text" class="validate">
                       <label for="cloud_configurationusername">Username</label>
                   </div>
 
                   <div class="input-field col s6">
-                      <input id="cloud_configurationpassword" ng-model="new_vim.cloud_configuration.pass"
+                      <input id="cloud_configurationpassword" ng-model="new_vim.compute_configuration.pass"
                              type="password" class="validate">
                       <label for="cloud_configurationpassword">Password</label>
                   </div>

@@ -31,7 +31,6 @@ SonataApp.controller('VimSettingsController',['$rootScope','$scope','$routeParam
 (function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
 	$scope.new_vim = {};
   $scope.new_vim.compute_configuration={};
-  $scope.new_vim.cloud_configuration = {}
   $scope.new_vim.networking_configuration={};
   $scope.new_wim = {};
   $scope.getVimsTries = 0;
@@ -51,12 +50,6 @@ $scope.getWimDetails = function(wim){
 
 
 	$scope.post_a_vim = function(){
-	  if ($scope.new_vim.vim_type === 'kubernetes') {
-	    $scope.new_vim.cloud_configuration.vim_type = $scope.new_vim.vim_type;
-    } else {
-	    $scope.new_vim.compute_configuration.vim_type = $scope.new_vim.vim_type;
-    }
-
 		$http({
           method  : 'POST',
           url     : $scope.apis.vims,
