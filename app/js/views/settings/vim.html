@@ -281,23 +281,29 @@ partner consortium (www.sonata-nfv.eu).
               </div>
 
               <div ng-if="new_vim.vim_type === 'kubernetes'">
-                  <div class="input-field col s6">
-                      <input id="cloud_configurationvim_address"
-                             ng-model="new_vim.compute_configuration.vim_address" type="text"
-                             class="validate">
-                      <label for="cloud_configurationvim_address">Vim address</label>
+                  <div class="row">
+                      <div class="input-field col s12">
+                          <input id="cloud_configurationvim_address"
+                                 ng-model="new_vim.compute_configuration.vim_address" type="text"
+                                 class="validate">
+                          <label for="cloud_configurationvim_address">Vim address</label>
+                      </div>
                   </div>
 
-                  <div class="input-field col s6">
-                      <input id="cloud_configurationusername"
-                             ng-model="new_vim.compute_configuration.username" type="text" class="validate">
-                      <label for="cloud_configurationusername">Username</label>
+                  <div class="row">
+                      <div class="input-field col s12">
+                          <input id="cloud_configurationservicetoken"
+                                 ng-model="new_vim.compute_configuration.password" type="text" class="validate">
+                          <label for="cloud_configurationservicetoken">Service Token</label>
+                      </div>
                   </div>
 
-                  <div class="input-field col s6">
-                      <input id="cloud_configurationpassword" ng-model="new_vim.compute_configuration.pass"
-                             type="password" class="validate">
-                      <label for="cloud_configurationpassword">Password</label>
+                  <div class="row">
+                      <div class="input-field col s612">
+                      <textarea id="cloud_configurationca" ng-model="new_vim.compute_configuration.authkey"
+                                class="validate materialize-textarea"></textarea>
+                          <label for="cloud_configurationca">Cluster CA File (PEM encoded)</label>
+                      </div>
                   </div>
               </div>
           </div>
