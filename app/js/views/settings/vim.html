@@ -67,15 +67,17 @@ partner consortium (www.sonata-nfv.eu).
                       </div>
                     </td>
                   </tr>
+
                   <tr ng-repeat="vim in vims" ng-show="!loading">
                     <td>{{vim.vim_uuid}}</td>
                     <td>{{vim.vim_type}}</td>
-                    <td>{{vim.core_used}}/{{vim.core_total}}</td>
-                    <td>{{vim.memory_used}}/{{vim.memory_total}}</td>
+                    <td ng-if="vim.vim_type != 'Kubernetes'">{{vim.core_used}}/{{vim.core_total}}</td>
+                    <td ng-if="vim.vim_type == 'Kubernetes'">{{vim.core_total / 1000}} Cores (Load: {{vim.core_used / 1000}})</td>
+                    <td>{{vim.memory_used}}MiB / {{vim.memory_total}}MiB</td>
                     <td><a ng-click="getVimDetails(vim)" class="modal-trigger waves-effect waves-light"><i class="material-icons left">library_add</i></a></td>
                   </tr>
                    <tr ng-show="zero_vims">
-                    <td colspan="6" class="center" ng-show="!zero_vims">There are no vims</td>
+                    <td colspan="6" class="center" ng-show="zero_vims">There are no vims</td>
                   </tr>
                 </tbody>
             </table>
