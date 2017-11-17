@@ -59,7 +59,16 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
       return angular.isUndefined(val) || val === null 
     }
 
-   
+   $rootScope.getIndexOf=function(arr, val, prop) {
+      var l = arr.length,
+        k = 0;
+      for (k = 0; k < l; k = k + 1) {
+        if (arr[k][prop] === val) {
+          return k;
+        }
+      }
+      return -1;
+    }
 
      $scope.getServices = function(){
 
@@ -108,7 +117,7 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer '+$rootScope.getStorage('sonata-token')
               };
-                     $scope.checkTokenValidity();
+                     $rootScope.checkTokenValidity();
            }
 
     $rootScope.getGKHeaders = function(){
@@ -129,7 +138,25 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
 
     }
 
+
+$rootScope.checkTokenValidity = function(){     
+
+          $http({
+              method  : 'GET',
+                url: $scope.apis.gatekeeper.users,
+                headers : $rootScope.getGKHeaders()
+          }).then(function successCallback(response) {
+            console.log("TOKEN is Valid");
+          }, function errorCallback(response) {
+            console.log("The token is not valid");
+            console.log(response);
+            $rootScope.logout();
+          });
+      }
+
+
     $scope.checkAuthorization = function(){
+
       if($rootScope.is_user_logged_in==false){
         $rootScope.logout();        
       }
@@ -152,24 +179,10 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
     }
     $scope.checkAuthorization();
 
-    $scope.checkTokenValidity = function(){
-      
-
-          $http({
-              method  : 'GET',
-                url: $scope.apis.gatekeeper.users,
-                headers : $rootScope.getGKHeaders()
-          }).then(function successCallback(response) {
-            console.log("TOKEN is Valid");
-          }, function errorCallback(response) {
-            console.log("The token is not valid");
-            console.log(response);
-            $rootScope.logout();
-          });
+    
 
         
 
-      }
       
     
     

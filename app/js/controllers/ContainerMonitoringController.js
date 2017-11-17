@@ -159,18 +159,25 @@ console.log("DRAW CPU CHART");
                   var timestamp = element[0].toString();
                   timestamp = timestamp.replace('.','');
                   if(timestamp.length==12)
-                                        timestamp=timestamp+'0';
-                                else if(timestamp.length==11)
-                                      timestamp = timestamp+'00';
-                                else if(timestamp.length==10)
-                                      timestamp = timestamp+'000';
-                                else if(timestamp.length==9)
-                                      timestamp = timestamp+'0000';
-                                else if(timestamp.length==8)
-                                      timestamp = timestamp+'00000';
+                          timestamp=timestamp+'0';
+                  else if(timestamp.length==11)
+                        timestamp = timestamp+'00';
+                  else if(timestamp.length==10)
+                        timestamp = timestamp+'000';
+                  else if(timestamp.length==9)
+                        timestamp = timestamp+'0000';
+                  else if(timestamp.length==8)
+                        timestamp = timestamp+'00000';
+
                   timestamp = parseInt(timestamp);
                   $scope.cpudata.push([timestamp,parseFloat(element[1])]);
-              
+                  
+                  if(index==data.metrics.result[0].values.length-1){
+                  
+                    $scope.container.currentCPUUsage = element[1]; 
+                    $scope.drawGauges();
+                  }
+                    
 
              });
 
@@ -222,15 +229,7 @@ console.log("DRAW CPU CHART");
                                                       $scope.container.currentCPUUsage = y; 
                                                       $scope.drawGauges();
 
-
                                                   })
-
-                                              
-
-
-
-
-
                                           }, 5000);
                                       
 
@@ -329,6 +328,12 @@ console.log("DRAW MEM CHART");
                                       timestamp = timestamp+'00000';
                   timestamp = parseInt(timestamp);
                   $scope.memdata.push([timestamp,parseFloat(element[1])]);
+
+                  if(index==data.metrics.result[0].values.length-1){
+                    
+                    $scope.container.currentMemoryUsage = parseFloat(element[1]); 
+                    $scope.drawGauges();
+                  }
             
 
              });
@@ -342,10 +347,6 @@ console.log("DRAW MEM CHART");
                                           
                                           var series = this.series[0];
                                           setInterval(function () {
-
-
-
-
 
                                           $http({
                                                   method  : 'POST',
@@ -386,13 +387,6 @@ console.log("DRAW MEM CHART");
                                                       $scope.drawGauges();
 
                                                   })
-
-                                              
-
-
-
-
-
                                           }, 5000);
                                       
 
@@ -462,7 +456,7 @@ $scope.drawCPUChartnew();
 $scope.drawMEMChartnew();
 
 
-     $scope.drawMEMChart = function(){
+  /*   $scope.drawMEMChart = function(){
        
        google.charts.setOnLoadCallback(drawChart);
       function drawChart() {
@@ -515,7 +509,7 @@ $scope.drawMEMChartnew();
           });
 
       }
-    }
+    }*/
 
 
 
