@@ -43,7 +43,7 @@ SonataApp.controller('DashboardController',['$interval','$rootScope','$scope','$
  $scope.random_num = 0;
  $scope.tips = [];
  $scope.tips.push('You can check all the available packages by clicking on the catalogue menu!');
- $scope.tips.push('You can access to monitoring data from your VNFs by clicking on the Monitoring tab on the right');
+ $scope.tips.push('You can access to monitoring data from your VNFs by clicking on the Monitoring tab on the left');
  $scope.tips.push('All the recent alerts and notifications are available on the relevant section (Alerts)');
  $scope.current_tip = $scope.tips[$scope.random_num];
   
