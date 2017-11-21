@@ -28,6 +28,12 @@ partner consortium (www.sonata-nfv.eu).
 
 SonataApp.controller('UserSettingsController', function($scope, $routeParams, $location, $http,$rootScope,$filter) {
 
+		$scope.change_password_request = false;
+		$scope.single_user = true;
+
+		$scope.changePass = function(){
+			$scope.change_password_request = true;
+		}
 		$scope.cancel_pressed = function(){
 			$scope.pop_one_view = 0;
 		}
@@ -41,50 +47,53 @@ SonataApp.controller('UserSettingsController', function($scope, $routeParams, $l
                 url: $scope.apis.gatekeeper.users+'?username='+$rootScope.username,
                 headers : $rootScope.getGKHeaders(),
                 data:{
-                	'username':$scope.info.username,
-                	'password':$scope.info.password_one,
-                	'email':$scope.info.email,
-                	'user_type':'developer',
-                	'last_name':$scope.info.last_name,
-                	'first_name':$scope.info.first_name
+                	'username'	:$rootScope.username,
+                	'password'	:$scope.thisuser.password_one,
+                	'email'		:$scope.thisuser.email,
+                	'user_type'	:$scope.thisuser.user_type,
+                	'last_name'	:$scope.thisuser.last_name,
+                	'first_name':$scope.thisuser.first_name
                 }
               })
 	       .success(function(datas) {
-	       	
 	       		$rootScope.logout();	        	
 
 	        });
 
 			
 		}
+
 		$scope.saveUserInfo = function(){
-			console.log($scope.info.password_one);
+			
+			
 			$scope.error_message_view = 0;
 			$scope.pop_one_view = 0;
 
-			if($scope.info.password_one != $scope.info.password_two){
+			if($scope.thisuser.password_one != $scope.thisuser.password_two){
 				$scope.error_message_view = 1;
 				$scope.error_message_text = "Password fields are not equal. Please check the password you will set";
 			}else{
 
-				if($scope.info.password_one!='' && $scope.info.password_one!='undefined' && $scope.info.password_one!=undefined){
+				if($scope.thisuser.password_one!='' && $scope.thisuser.password_one!='undefined' && $scope.thisuser.password_one!=undefined){
 					$scope.pop_one_view = 1;
 				
 				}else{
+					console.log("THIS WIILLLL");
 					$http({
 			                method  : 'PUT',
 			                url: $scope.apis.gatekeeper.users+'?username='+$rootScope.username,
 			                headers : $rootScope.getGKHeaders(),
 			                data:{
-			                	'username':$rootScope.username,
-			                	'password':$rootScope.password,
-			                	'email':$scope.info.email,
-			                	'user_type':'developer',
-			                	'last_name':$scope.info.last_name,
-			                	'first_name':$scope.info.first_name
+			                	'username'	:$rootScope.username,
+			                	'email' 	:$scope.thisuser.email,
+			                	'user_type'	:$scope.thisuser.user_type,
+			                	'last_name'	:$scope.thisuser.last_name,
+			                	'first_name':$scope.thisuser.first_name
 			                }
 			              })
 				       .success(function(datas) {
+				       		$scope.success_message_view = 1;
+				       		$scope.success_message_text = "The user profile has been updated correctly";
 				       		$scope.pop_up_view = 1;
 				       		$scope.pop_up_h3 = 'User Profile Updated';
 				       		$scope.pop_up_p = 'The user profile has been updated correctly';
@@ -102,14 +111,17 @@ SonataApp.controller('UserSettingsController', function($scope, $routeParams, $l
                 headers : $rootScope.getGKHeaders()
               })
 	       .success(function(datas) {
-	       		console.log("GET User INFO");
-	       		console.log(datas);
-	       		if($rootScope.username=='sonata'){
-	       			console.log("FILTER");
-	       			$scope.info = $filter('filter')(datas, {username:"sonata"})[0];
-	       			console.log($scope.info);
+	       		
+	       		if(datas.length>0){
+	       			$scope.single_user = false;
+	       			$scope.users = datas;
+
+	       			$scope.users.forEach(function(user,index){
+	       				if(user.username==$rootScope.username)
+	       					$scope.thisuser = user;
+	       			})
 	       		}else{
-	       			$scope.info = datas;	
+	       			$scope.thisuser = datas;	
 	       		}
 	       		
 	        })

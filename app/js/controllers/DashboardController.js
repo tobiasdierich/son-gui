@@ -26,7 +26,7 @@ acknowledge the contributions of their colleagues of the SONATA
 partner consortium (www.sonata-nfv.eu).
 */
 
-SonataApp.controller('DashboardController',['$interval','$rootScope','$scope','$routeParams','$location','$http',function($interval,$rootScope,$scope, $routeParams, $location, $http){
+SonataApp.controller('DashboardController',['$interval','$rootScope','$scope','$routeParams','$location','$http','Monitoring',function($interval,$rootScope,$scope, $routeParams, $location, $http,Monitoring){
 (function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
   
   console.log("DashboardController");
@@ -75,94 +75,83 @@ $scope.$on('$destroy', function() {
 
   $scope.FindAllVims = function(){
 
-     $http({
-          method  : 'POST',
-          url     : $rootScope.apis.monitoring,
-          data:  {
-                  "name": "vim_maxTotalInstances",
-                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "10m",
-                  "labels": []
-                    },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
-              
-              data.metrics.result.forEach(function(element,index){
-                element.id = index;       
-                element.vim_tenant = element.metric.vim_tenant;         
-                $scope.vims.push(element);              
-                $scope.select.choices.push(element.metric.exported_instance);
-                /*if(index==0){
-                  $scope.selected_vim = {};
-                  $scope.selected_vim.name = element.metric.exported_instance;
-                  
-                }*/
-              });
+     var start = new Date(new Date().getTime() - 20*60000).toISOString();
+                var end   = new Date().toISOString();
+                var name  = "vim_maxTotalInstances";
+                var step  = "10m";
 
+                var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                          "?end="+end+
+                          "&start="+start+
+                          "&name="+name+
+                          "&step="+step+
+                          "&labels[][labelid]=limits"+
+                          "&labels[][labeltag]=exported_job";
 
+                var m = Monitoring.getData(encodeURI(url));
+                m.then(function(data){
 
-          }).then(function(){
-            
+                  data.data.forEach(function(element,index){
+                    
+                    element.id = index;       
+                    element.vim_tenant = element.metric.vim_tenant;         
+                    $scope.vims.push(element);              
+                    $scope.select.choices.push(element.metric.exported_instance);
 
-            /*setTimeout(function(){
-              if($scope.v)
-              $scope.changeVisibleVim($scope.vims[0].metric.exported_instance);  
-            },3500);*/
-            
-
-          })
+                  });
+                });
   };
 
 
 
 
 $scope.setFloatingIps = function(){
-  $http({
-          method  : 'POST',
-          url     : $rootScope.apis.monitoring,
-          data:  {
-                  "name": "vim_maxTotalFloatingIpsUsed",
-                  "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "11m",
-                  "labels": [{"labeltag":"exported_instance", "labelid":$scope.selected_vim.name}]
-                    },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
-            $scope.selected_vim.totalIpsUsed = [];
+  var start = new Date(new Date().getTime() - 10*60000).toISOString();
+                var end   = new Date().toISOString();
+                var name  = "vim_maxTotalFloatingIpsUsed";
+                var step  = "11m";
 
-            if(data.metrics.result.length)
-              $scope.selected_vim.totalIpsUsed = data.metrics.result[0].values;
-            else
-              $scope.selected_vim.totalIpsUsed = 0;
+                var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                          "?end="+end+
+                          "&start="+start+
+                          "&name="+name+
+                          "&step="+step+
+                          "&labels[][labelid]="+$scope.selected_vim.name+
+                          "&labels[][labeltag]=exported_instance";
+
+                var m = Monitoring.getData(encodeURI(url));
+                m.then(function(data){
+
+                  $scope.selected_vim.totalIpsUsed = [];
+
+                  if(data.data.length)
+                    $scope.selected_vim.totalIpsUsed = data.data[0].values;
+                  else
+                    $scope.selected_vim.totalIpsUsed = 0;
               
+                  var start = new Date(new Date().getTime() - 10*60000).toISOString();
+                  var end   = new Date().toISOString();
+                  var name  = "vim_maxTotalFloatingIps";
+                  var step  = "11m";
 
+                  var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                            "?end="+end+
+                            "&start="+start+
+                            "&name="+name+
+                            "&step="+step+
+                            "&labels[][labelid]="+$scope.selected_vim.name+
+                            "&labels[][labeltag]=exported_instance";
 
-          }).then(function(){
-
-            
-               $http({
-                  method  : 'POST',
-                  url     : $rootScope.apis.monitoring,
-                  data:  {
-                          "name": "vim_maxTotalFloatingIps",
-                          "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
-                          "end": ""+new Date().toISOString(),
-                          "step": "11m",
-                          "labels": [{"labeltag":"exported_instance", "labelid":$scope.selected_vim.name}]
-                            },
-                  headers : { 'Content-Type': 'application/json' }
-                 })
-                  .success(function(data) {
-                    $scope.selected_vim.maxTotalIps = [];
-                    if(data.metrics.result.length)
-                      $scope.selected_vim.maxTotalIps = data.metrics.result[0].values[0][1];
-                    else
-                      $scope.selected_vim.maxTotalIps = 0;
-                  });
+                  var m = Monitoring.getData(encodeURI(url));
+                  m.then(function(data){
+                              
+                   
+                        $scope.selected_vim.maxTotalIps = [];
+                        if(data.data.length)
+                          $scope.selected_vim.maxTotalIps = data.data[0].values[0][1];
+                        else
+                          $scope.selected_vim.maxTotalIps = 0;
+                      });
 
 
           });
@@ -170,41 +159,44 @@ $scope.setFloatingIps = function(){
 }
 
 $scope.getRamGauge = function(){
-  $http({
-          method  : 'POST',
-          url     : $rootScope.apis.monitoring,
-          data:  {
-                  "name": "vim_maxTotalRAMSize",
-                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "5m",
-                  "labels": [{"labeltag":"exported_instance", "labelid":$scope.selected_vim.name}]
-                    },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
-            $scope.selected_vim.totalRAMSize = data.metrics.result[0].values[0][1];
-            $scope.selected_vim.maxTotalRamSize.push(data.metrics.result[0].values);
-            $scope.selected_vim.currently_totalRam = parseFloat(data.metrics.result[0].values[0][1]);
-          }).then(function(){
+  var start = new Date(new Date().getTime() - 20*60000).toISOString();
+  var end   = new Date().toISOString();
+  var name  = "vim_maxTotalRAMSize";
+  var step  = "5m";
 
-              
-               $http({
-                  method  : 'POST',
-                  url     : $rootScope.apis.monitoring,
-                  data:  {
-                          "name": "vim_totalRAMUsed",
-                          "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
-                          "end": ""+new Date().toISOString(),
-                          "step": "5m",
-                          "labels": [{"labeltag":"exported_instance", "labelid":$scope.selected_vim.name}]
-                            },
-                  headers : { 'Content-Type': 'application/json' }
-                 })
-                  .success(function(data) {
+  var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+            "?end="+end+
+            "&start="+start+
+            "&name="+name+
+            "&step="+step+
+            "&labels[][labelid]="+$scope.selected_vim.name+
+            "&labels[][labeltag]=exported_instance";
+
+  var m = Monitoring.getData(encodeURI(url));
+  m.then(function(data){
+
+            $scope.selected_vim.totalRAMSize = data.data[0].values[0][1];
+            $scope.selected_vim.maxTotalRamSize.push(data.data[0].values);
+            $scope.selected_vim.currently_totalRam = parseFloat(data.data[0].values[0][1]);
+          
+            var start = new Date(new Date().getTime() - 10*60000).toISOString();
+            var end   = new Date().toISOString();
+            var name  = "vim_totalRAMUsed";
+            var step  = "5m";
+
+            var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                      "?end="+end+
+                      "&start="+start+
+                      "&name="+name+
+                      "&step="+step+
+                      "&labels[][labelid]="+$scope.selected_vim.name+
+                      "&labels[][labeltag]=exported_instance";
+
+            var m = Monitoring.getData(encodeURI(url));
+            m.then(function(data){
                     
-                    $scope.selected_vim.totalRamUsed.push(data.metrics.result[0].values);
-                    $scope.selected_vim.currently_RamUsed = parseFloat(data.metrics.result[0].values[0][1]);
+                    $scope.selected_vim.totalRamUsed.push(data.data[0].values);
+                    $scope.selected_vim.currently_RamUsed = parseFloat(data.data[0].values[0][1]);
                     
                      var data = [
                         ['Label', 'Value'],
@@ -223,18 +215,11 @@ $scope.getRamGauge = function(){
                             height: 350
                         }
                       };                    
-
                       
                       $scope.drawGauge(data,options,'vim_ram_gauge');
-
-
+                      $scope.getRamGraphNew();
                   
-                  
-                  }).then(function(){
-                    /*$scope.getRamGraph();*/
-                    $scope.getRamGraphNew();
-                  })
-              
+                  });
           });
  }
 
@@ -256,42 +241,29 @@ $scope.waitForElementToDisplay = function(selector,time) {
 $scope.getRamGraphNew = function(){
 
 
-        $http({
-          method  : 'POST',
-          url     : $rootScope.apis.monitoring,
-          data:  { 
+        var start = new Date(new Date().getTime() - 30*60000).toISOString();
+            var end   = new Date().toISOString();
+            var name  = "vim_totalRAMUsed";
+            var step  = "5s";
 
-                  "name": "vim_totalRAMUsed",
-                  "start": ""+ new Date(new Date().getTime() - 30*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "5s",
-                  "labels": [{"labeltag":"exported_instance", "labelid":$scope.selected_vim.name}]
+            var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                      "?end="+end+
+                      "&start="+start+
+                      "&name="+name+
+                      "&step="+step+
+                      "&labels[][labelid]="+$scope.selected_vim.name+
+                      "&labels[][labeltag]=exported_instance";
 
-                  },
-          headers : { 'Content-Type': 'application/json' }
-         }).then(function(data){
+            var m = Monitoring.getData(encodeURI(url));
+            m.then(function(data){
+
             console.log(data);
             $scope.ramdata = [];    
             $scope.totalram = [];                                    
             
-            data.data.metrics.result[0].values.forEach(function(element, index) {
+            data.data[0].values.forEach(function(element, index) {
 
-              var timestamp = element[0].toString();
-              timestamp = timestamp.replace('.','');
-              timestamp = timestamp.replace('.','');
-              
-              if(timestamp.length==12)
-                      timestamp=timestamp+'0';
-              else if(timestamp.length==11)
-                    timestamp = timestamp+'00';
-              else if(timestamp.length==10)
-                    timestamp = timestamp+'000';
-              else if(timestamp.length==9)
-                    timestamp = timestamp+'0000';
-              else if(timestamp.length==8)
-                    timestamp = timestamp+'00000';
-
-              timestamp = parseInt(timestamp);
+              var timestamp = $rootScope.FixTimestamp(element[0]);
               $scope.ramdata.push([timestamp,parseFloat(element[1])]);
               $scope.totalram.push([timestamp,parseFloat($scope.selected_vim.totalRAMSize)]);
               
@@ -382,51 +354,52 @@ $scope.drawTheChart = function(data_array,options,element){
 
 
 $scope.getCoresGauge = function(){
-  $http({
-          method  : 'POST',
-          url     : $rootScope.apis.monitoring,
-          data:  {
-                  "name": "vim_totalCoresUsed",
-                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "5m",
-                  "labels": [{"labeltag":"exported_instance", "labelid":$scope.selected_vim.name}]
-                    },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
+  var start = new Date(new Date().getTime() - 20*60000).toISOString();
+        var end   = new Date().toISOString();
+        var name  = "vim_totalCoresUsed";
+        var step  = "5m";
+
+        var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                  "?end="+end+
+                  "&start="+start+
+                  "&name="+name+
+                  "&step="+step+
+                  "&labels[][labelid]="+$scope.selected_vim.name+
+                  "&labels[][labeltag]=exported_instance";
+
+        var m = Monitoring.getData(encodeURI(url));
+        m.then(function(data){
+
+        
             $scope.selected_vim.totalCoresUsed = [];
-            $scope.selected_vim.totalCoresUsed.push(data.metrics.result[0].values);
+            $scope.selected_vim.totalCoresUsed.push(data.data[0].values);
+            $scope.selected_vim.currently_usedCores = parseFloat(data.data[0].values[0][1]);              
             
-            $scope.selected_vim.currently_usedCores = parseFloat(data.metrics.result[0].values[0][1]);              
-            
-          }).then(function(){
+         
 
               $scope.vims.forEach(function(vim,index){
-             $http({
-                method  : 'POST',
-                url     : $rootScope.apis.monitoring,
-                data:  {
-                        "name": "vim_maxTotalCores",
-                        "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
-                        "end": ""+new Date().toISOString(),
-                        "step": "5m",
-                        "labels": [{"labeltag":"exported_instance", "labelid":$scope.selected_vim.name}]
-                          },
-                headers : { 'Content-Type': 'application/json' }
-               })
-                .success(function(data) {
+                  
+                  var start = new Date(new Date().getTime() - 20*60000).toISOString();
+                  var end   = new Date().toISOString();
+                  var name  = "vim_maxTotalCores";
+                  var step  = "5m";
+
+                  var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                            "?end="+end+
+                            "&start="+start+
+                            "&name="+name+
+                            "&step="+step+
+                            "&labels[][labelid]="+$scope.selected_vim.name+
+                            "&labels[][labeltag]=exported_instance";
+
+                  var m = Monitoring.getData(encodeURI(url));
+                  m.then(function(data){
+
                   $scope.selected_vim.maxTotalCores = [];
-                  $scope.selected_vim.totalCoresSize = parseFloat(data.metrics.result[0].values[0][1]);
-                  $scope.selected_vim.maxTotalCores.push(data.metrics.result[0].values);
-
-                  $scope.selected_vim.currently_totalCores = parseFloat(data.metrics.result[0].values[0][1]);              
+                  $scope.selected_vim.totalCoresSize = parseFloat(data.data[0].values[0][1]);
+                  $scope.selected_vim.maxTotalCores.push(data.data[0].values);
+                  $scope.selected_vim.currently_totalCores = parseFloat(data.data[0].values[0][1]);              
           
-                  /*$scope.coresChart(vim);*/
-             
-
-
-
                     var data = [
                         ['Label', 'Value'],
                         ['Cores', $scope.selected_vim.currently_usedCores],
@@ -446,13 +419,7 @@ $scope.getCoresGauge = function(){
                       };
 
                           $scope.drawGauge(data,options,'vim_cores_gauge');
-                          /*$scope.coresChart();*/
                           $scope.coresChartNew();
-
-                      
-
-
-
 
                 });
 
@@ -460,87 +427,37 @@ $scope.getCoresGauge = function(){
           });
             });
 }
-$scope.coresChart = function(){
-
- 
-
-      google.charts.setOnLoadCallback(drawChart());
-      
-      function drawChart() {
-        var data = [
-          ['Time', 'Used', 'Total']];
-
-          $scope.selected_vim.totalCoresUsed[0].forEach(function(metric,index){
-            
-            var timestamp = metric[0].toString();
-            timestamp = timestamp.replace('.','');
-            if(timestamp.length==12)
-                    timestamp=timestamp+'0';
-            timestamp = new Date(parseInt(timestamp));
-
-
-            data.push(new Array(timestamp,parseFloat(metric[1]),parseFloat($scope.selected_vim.maxTotalCores[0][index][1])));
-          });
-        
-
-        var options = {
-          title: 'Cores',
-          curveType: 'function',
-          legend: { position: 'bottom' }
-        };
-
-    $scope.drawTheChart(data,options,'vim_cores_chart');
-
-
-  }
-}
 
 
 
 $scope.coresChartNew = function(){
 
+var start = new Date(new Date().getTime() - 30*60000).toISOString();
+                  var end   = new Date().toISOString();
+                  var name  = "vim_totalCoresUsed";
+                  var step  = "5s";
 
-   $http({
-          method  : 'POST',
-          url     : $rootScope.apis.monitoring,
-          data:  { 
+                  var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                            "?end="+end+
+                            "&start="+start+
+                            "&name="+name+
+                            "&step="+step+
+                            "&labels[][labelid]="+$scope.selected_vim.name+
+                            "&labels[][labeltag]=exported_instance";
 
-                  "name": "vim_totalCoresUsed",
-                  "start": ""+ new Date(new Date().getTime() - 30*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "5s",
-                  "labels": [{"labeltag":"exported_instance", "labelid":$scope.selected_vim.name}]
-
-                  },
-          headers : { 'Content-Type': 'application/json' }
-         }).then(function(data){
+                  var m = Monitoring.getData(encodeURI(url));
+                  m.then(function(data){
             
-            $scope.coresdata = [];    
-            $scope.totalcores = [];                                    
-            console.log(data);
-            data.data.metrics.result[0].values.forEach(function(element, index) {
+                      $scope.coresdata = [];    
+                      $scope.totalcores = [];                                    
+                      console.log(data);
+                      data.data[0].values.forEach(function(element, index) {
 
-                    var timestamp = element[0].toString();
-                    timestamp = timestamp.replace('.','');
-                    timestamp = timestamp.replace('.','');
-                    
-                    if(timestamp.length==12)
-                            timestamp=timestamp+'0';
-                    else if(timestamp.length==11)
-                          timestamp = timestamp+'00';
-                    else if(timestamp.length==10)
-                          timestamp = timestamp+'000';
-                    else if(timestamp.length==9)
-                          timestamp = timestamp+'0000';
-                    else if(timestamp.length==8)
-                          timestamp = timestamp+'00000';
-
-                    timestamp = parseInt(timestamp);
-                    $scope.coresdata.push([timestamp,parseFloat(element[1])]);
-                    $scope.totalcores.push([timestamp,parseFloat($scope.selected_vim.totalCoresSize)]);
-              
-
-             });
+                              var timestamp = $rootScope.FixTimestamp(element[0]);
+                              $scope.coresdata.push([timestamp,parseFloat(element[1])]);
+                              $scope.totalcores.push([timestamp,parseFloat($scope.selected_vim.totalCoresSize)]);
+                      
+                      });
 
 
               Highcharts.chart('cores_chart_new_new', {
@@ -548,10 +465,7 @@ $scope.coresChartNew = function(){
                                   type:'line',
                                   zoomType: 'x',
                                   events: {
-                                      load: function () {                                    
-
-
-                                      }
+                                      load: function () {}
                                     }
                               },
                               title: {
@@ -616,45 +530,47 @@ $scope.coresChartNew = function(){
 }
 
 $scope.getInstancesGauge = function(){
-  $http({
-          method  : 'POST',
-          url     : $rootScope.apis.monitoring,
-          data:  {
-                  "name": "vim_totalInstancesUsed",
-                  "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "5m",
-                  "labels": [{"labeltag":"exported_instance", "labelid":$scope.selected_vim.name}]
-                    },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
-            $scope.selected_vim.totalInstancesUsed = [];
-            $scope.selected_vim.totalInstancesUsed.push(data.metrics.result[0].values);
-            $scope.selected_vim.currently_instancesUsed = parseFloat(data.metrics.result[0].values[0][1]);
-              
-              
+  var start = new Date(new Date().getTime() - 10*60000).toISOString();
+                  var end   = new Date().toISOString();
+                  var name  = "vim_totalInstancesUsed";
+                  var step  = "5m";
 
-          }).then(function(){
+                  var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                            "?end="+end+
+                            "&start="+start+
+                            "&name="+name+
+                            "&step="+step+
+                            "&labels[][labelid]="+$scope.selected_vim.name+
+                            "&labels[][labeltag]=exported_instance";
 
-            
-               $http({
-                  method  : 'POST',
-                  url     : $rootScope.apis.monitoring,
-                  data:  {
-                          "name": "vim_maxTotalInstances",
-                          "start": ""+ new Date(new Date().getTime() - 10*60000).toISOString(),
-                          "end": ""+new Date().toISOString(),
-                          "step": "5m",
-                          "labels": [{"labeltag":"exported_instance", "labelid":$scope.selected_vim.name}]
-                            },
-                  headers : { 'Content-Type': 'application/json' }
-                 })
-                  .success(function(data) {
+                  var m = Monitoring.getData(encodeURI(url));
+                  m.then(function(data){
+
+                      $scope.selected_vim.totalInstancesUsed = [];
+                      $scope.selected_vim.totalInstancesUsed.push(data.data[0].values);
+                      $scope.selected_vim.currently_instancesUsed = parseFloat(data.data[0].values[0][1]);
+                   
+                  var start = new Date(new Date().getTime() - 10*60000).toISOString();
+                  var end   = new Date().toISOString();
+                  var name  = "vim_maxTotalInstances";
+                  var step  = "5m";
+
+                  var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                            "?end="+end+
+                            "&start="+start+
+                            "&name="+name+
+                            "&step="+step+
+                            "&labels[][labelid]="+$scope.selected_vim.name+
+                            "&labels[][labeltag]=exported_instance";
+
+                  var m = Monitoring.getData(encodeURI(url));
+                  m.then(function(data){
+
+
                     $scope.selected_vim.maxTotalInstances = [];
-                    $scope.selected_vim.maxTotalInstances.push(data.metrics.result[0].values);
-                    $scope.selected_vim.totalInstances = data.metrics.result[0].values[0][1];
-                    $scope.selected_vim.currently_Totalinstances = parseFloat(data.metrics.result[0].values[0][1]);
+                    $scope.selected_vim.maxTotalInstances.push(data.data[0].values);
+                    $scope.selected_vim.totalInstances = data.data[0].values[0][1];
+                    $scope.selected_vim.currently_Totalinstances = parseFloat(data.data[0].values[0][1]);
                     
 
                      var data = [
@@ -676,16 +592,8 @@ $scope.getInstancesGauge = function(){
                       };
 
                       $scope.drawGauge(data,options,'vim_instances_gauge');
-
-
-
-                    /*$scope.instancesChart();*/
-                    $scope.instancesChartNew();
+                      $scope.instancesChartNew();
                   });
-                      
-            
-
-
 
           });
 }
@@ -694,62 +602,40 @@ $scope.getInstancesGauge = function(){
 
 $scope.instancesChartNew = function(){
 
+var start = new Date(new Date().getTime() - 30*60000).toISOString();
+                  var end   = new Date().toISOString();
+                  var name  = "vim_totalInstancesUsed";
+                  var step  = "5s";
 
+                  var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                            "?end="+end+
+                            "&start="+start+
+                            "&name="+name+
+                            "&step="+step+
+                            "&labels[][labelid]="+$scope.selected_vim.name+
+                            "&labels[][labeltag]=exported_instance";
 
-
-$http({
-          method  : 'POST',
-          url     : $rootScope.apis.monitoring,
-          data:  { 
-
-                  "name": "vim_totalInstancesUsed",
-                  "start": ""+ new Date(new Date().getTime() - 30*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "5s",
-                  "labels": [{"labeltag":"exported_instance", "labelid":$scope.selected_vim.name}]
-
-                  },
-          headers : { 'Content-Type': 'application/json' }
-         }).then(function(data){
+                  var m = Monitoring.getData(encodeURI(url));
+                  m.then(function(data){
             
-            $scope.instancesdata = [];    
-            $scope.totalinstances = [];                                    
-            
-            data.data.metrics.result[0].values.forEach(function(element, index) {
-
-                    var timestamp = element[0].toString();
-                    timestamp = timestamp.replace('.','');
-                    timestamp = timestamp.replace('.','');
+                    $scope.instancesdata = [];    
+                    $scope.totalinstances = [];                                    
                     
-                    if(timestamp.length==12)
-                            timestamp=timestamp+'0';
-                    else if(timestamp.length==11)
-                          timestamp = timestamp+'00';
-                    else if(timestamp.length==10)
-                          timestamp = timestamp+'000';
-                    else if(timestamp.length==9)
-                          timestamp = timestamp+'0000';
-                    else if(timestamp.length==8)
-                          timestamp = timestamp+'00000';
+                    data.data[0].values.forEach(function(element, index) {
 
-                    timestamp = parseInt(timestamp);
-                    $scope.instancesdata.push([timestamp,parseFloat(element[1])]);
-                    $scope.totalinstances.push([timestamp,parseFloat($scope.selected_vim.totalInstances)]);
+                      var timestamp = $rootScope.FixTimestamp(element[0]);
+                      $scope.instancesdata.push([timestamp,parseFloat(element[1])]);
+                      $scope.totalinstances.push([timestamp,parseFloat($scope.selected_vim.totalInstances)]);
               
 
-             });
+                    });
 
 
-              Highcharts.chart('vim_instances_chart_new', {
+                  Highcharts.chart('vim_instances_chart_new', {
                               chart: {
                                   type:'line',
                                   zoomType: 'x',
-                                  events: {
-                                      load: function () {                                    
-
-
-                                      }
-                                    }
+                                  events: {load: function () {}}
                               },
                               title: {
                                   text: 'Instances'
@@ -826,14 +712,8 @@ $scope.instancesChart = function(){
           ['Time', 'Used', 'Total']];
 
           $scope.selected_vim.totalInstancesUsed[0].forEach(function(metric,index){
-            
-            var timestamp = metric[0].toString();
-            timestamp = timestamp.replace('.','');
-            if(timestamp.length==12)
-                    timestamp=timestamp+'0';
+            var timestamp = $rootScope.FixTimestamp(metric[0]);
             timestamp = new Date(parseInt(timestamp));
-
-
             data.push(new Array(timestamp,parseFloat(metric[1]),parseFloat($scope.selected_vim.maxTotalInstances[0][index][1])));
           });
         
@@ -880,26 +760,24 @@ $scope.openVMInfo = function(service){
 
 $scope.getVms = function(){
       
-      $http({
-          method  : 'POST',
-          url     : $rootScope.apis.monitoring,
-          data:  {
-                  "name": "vm_last_update",
-                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "5m",
-                  "labels": [{"labeltag":"exported_instance", "labelid":$scope.selected_vim.name}]
+      var start = new Date(new Date().getTime() - 20*60000).toISOString();
+    var end   = new Date().toISOString();
+    var name  = "vm_last_update";
+    var step  = "5m";
 
-                    },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
+    var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+              "?end="+end+
+              "&start="+start+
+              "&name="+name+
+              "&step="+step+
+              "&labels[][labelid]="+$scope.selected_vim.name+
+              "&labels[][labeltag]=exported_instance";
 
-            console.log("VMS");
-            console.log(data);
+    var m = Monitoring.getData(encodeURI(url));
+    m.then(function(data){
 
             $scope.selected_vim.all_vms=data;
-            $scope.selected_vim.all_vms.metrics.result.forEach(function(vm,index){
+            $scope.selected_vim.all_vms.data.forEach(function(vm,index){
               
               timestamp = ""+vm.values[0][1]+"000";
               vm.metric.last_updated = timestamp;
@@ -912,52 +790,49 @@ $scope.getVms = function(){
 $scope.getStates = function(){
 
 
-      $http({
-          method  : 'POST',
-          url     : $rootScope.apis.monitoring,
-          data:  {
-                  "name": "vms_state",
-                  "start": ""+ new Date(new Date().getTime() - 3*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "5m",
-                  "labels": [{"labeltag":"exported_instance", "labelid":$scope.selected_vim.name}]
+      var start = new Date(new Date().getTime() - 3*60000).toISOString();
+    var end   = new Date().toISOString();
+    var name  = "vms_state";
+    var step  = "5m";
 
-                    },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
+    var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+              "?end="+end+
+              "&start="+start+
+              "&name="+name+
+              "&step="+step+
+              "&labels[][labelid]="+$scope.selected_vim.name+
+              "&labels[][labeltag]=exported_instance";
 
-            $scope.selected_vim.states = data.metrics.result;            
+    var m = Monitoring.getData(encodeURI(url));
+    m.then(function(data){
 
+            $scope.selected_vim.states = data.data;  
             google.charts.setOnLoadCallback(drawChart);
 
-      function drawChart() {
+                function drawChart() {
 
-        var d = ['State','Number of Vms'];
-        var data = new Array();
-        data.push(d);
+                  var d = ['State','Number of Vms'];
+                  var data = new Array();
+                  data.push(d);
 
-        sum = 0;
-        $scope.selected_vim.states.forEach(function(state,index){
-          data.push([state.metric.state,parseInt(state.values[0][1])]);
-          $scope.sum+=state.values[0][1];
-        });
-        
-        var final_data = google.visualization.arrayToDataTable(data);
+                  sum = 0;
+                  $scope.selected_vim.states.forEach(function(state,index){
+                    data.push([state.metric.state,parseInt(state.values[0][1])]);
+                    $scope.sum+=state.values[0][1];
+                  });
+                  
+                  var final_data = google.visualization.arrayToDataTable(data);
 
-        var kloptions = {
-          title: 'States of the VMs',          
-        };
+                  var kloptions = {
+                    title: 'States of the VMs',          
+                  };
 
-        var chart = new google.visualization.PieChart(document.getElementById('stateChart')); 
+                  var chart = new google.visualization.PieChart(document.getElementById('stateChart')); 
 
-        chart.draw(final_data, kloptions);
+                  chart.draw(final_data, kloptions);
 
-
-
-      }
-
-          })
+                }
+    })
 }
 
 $scope.VimSelected = function(){

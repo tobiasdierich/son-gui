@@ -101,6 +101,7 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
                         'logs':logs_url+'/search/universal/relative?',
                         'vims':vims_url+'/vims',
                         'wims':vims_url+'/wims',
+                        'monitoring_data':gk_url+'/kpis/collected',
                         'gatekeeper':{
                           'services' :gk_url+'/services',
                           'packages' :gk_url+'/packages',
@@ -195,6 +196,7 @@ $scope.alerts_visibility = 0;
 
 $rootScope.FixTimestamp = function(timestamp){
 
+    timestamp = timestamp.toString();
     timestamp = timestamp.replace('.','');
                 
     if(timestamp.length==12)
@@ -206,6 +208,7 @@ $rootScope.FixTimestamp = function(timestamp){
     else if(timestamp.length==9)
       timestamp = timestamp+'0000';
 
+    timestamp = parseInt(timestamp);
     return timestamp;
 }
 

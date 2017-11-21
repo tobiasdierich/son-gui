@@ -102,17 +102,28 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                        var offsetobj = {};
                        var groups = [];
                        $scope.total_http_requests = 0;
+                       var counter = 0;
 
                        datas.data.metrics.forEach(function(dat,index){
-                            $scope.http_handlers.push({                                           
-                                    name: dat.labels.handler+":"+dat.labels.method+":"+dat.labels.code+" (#"+parseInt(dat.value)+")",
-                                    y: parseInt(dat.value),
-                                    drilldown: dat.labels.handler        
-                                });                           
-                            offsetobj[index] = ""+dat.labels.handler+":"+dat.labels.method+":"+dat.labels.code+" (#"+parseInt(dat.value)+")";
-                            $scope.total_http_requests+=parseInt(dat.value);
-                            groups[index] = dat.value;
+                        if(!(dat.labels.handler=='push' && dat.labels.method=='put') && !(dat.labels.handler=='prometheus' && dat.labels.method=='get' && dat.labels.code=='200') ){
+
+                        
+                                
+                                $scope.http_handlers[counter]={                                           
+                                        name: dat.labels.handler+":"+dat.labels.method+":"+dat.labels.code+" (#"+parseInt(dat.value)+")",
+                                        y: parseInt(dat.value),
+                                        drilldown: dat.labels.handler        
+
+                                    };
+
+                                offsetobj[counter] = ""+dat.labels.handler+":"+dat.labels.method+":"+dat.labels.code+" (#"+parseInt(dat.value)+")";
+                                $scope.total_http_requests+=parseInt(dat.value);
+                                groups[counter] = dat.value;
+                                counter++;
+                            }
+                            
                         });
+                       console.log(groups);
                         
                         if($scope.total_http_requests>1000000000)
                             $scope.total_http_requests_text = parseFloat($scope.total_http_requests/1000000000).toFixed(2)+'B';

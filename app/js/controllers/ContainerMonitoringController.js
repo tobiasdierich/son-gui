@@ -26,7 +26,7 @@ acknowledge the contributions of their colleagues of the SONATA
 partner consortium (www.sonata-nfv.eu).
 */
 
-SonataApp.controller('ContainerMonitoring',['$rootScope','$scope','$routeParams','$location','$http',function($rootScope,$scope, $routeParams, $location, $http){
+SonataApp.controller('ContainerMonitoring',['$rootScope','$scope','$routeParams','$location','$http','Monitoring',function($rootScope,$scope, $routeParams, $location, $http,Monitoring){
 	(function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
   $scope.container = {};
   $scope.a_metrics = [];
@@ -36,25 +36,26 @@ SonataApp.controller('ContainerMonitoring',['$rootScope','$scope','$routeParams'
   $scope.ten_m_before = new Date($scope.current_time.getTime() - 20*60000);
 
 $scope.getContainer = function(){
-  $http({
-          method  : 'POST',
-          url     : $scope.apis.monitoring,
-          data:  {
-                  "name": "cnt_mem_perc",
-                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "10m",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.id}]
-                    },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
+  var start = new Date(new Date().getTime() - 20*60000).toISOString();
+        var end   = new Date().toISOString();
+        var name  = "cnt_mem_perc";
+        var step  = "10m";
+
+        var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                  "?end="+end+
+                  "&start="+start+
+                  "&name="+name+
+                  "&step="+step+
+                  "&labels[][labelid]="+$routeParams.id+
+                  "&labels[][labeltag]=id";
+
+        var m = Monitoring.getData(encodeURI(url));
+        m.then(function(data){
             
-           $scope.container.exported_instance = data.metrics.result[0].metric.exported_instance;
-           $scope.container.image_name= data.metrics.result[0].metric.image_name;
-           $scope.container.id = data.metrics.result[0].metric.id;
-            
-          });
+            $scope.container.exported_instance = data.data[0].metric.exported_instance;
+            $scope.container.image_name= data.data[0].metric.image_name;
+            $scope.container.id = data.data[0].metric.id;
+        });
 }
 
 
@@ -74,30 +75,6 @@ $scope.getLogs = function(){
 
 
 }
-
-$scope.getCPU_History = function(){
-  
-   $http({
-          method  : 'POST',
-          url     : $scope.apis.monitoring,
-          data:  {
-                  "name": "cnt_cpu_perc",
-
-                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "10s",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.id}]
-                    },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
-       
-            
-          });
-}
-
-
- 
 
 $scope.drawGauges = function(){
    google.charts.setOnLoadCallback(drawChart);
@@ -138,48 +115,29 @@ $scope.drawTheChart = function(data_array,options,element){
 
 
 $scope.drawCPUChartnew = function(){
-console.log("DRAW CPU CHART");
- $http({
-          method  : 'POST',
-          url     : $scope.apis.monitoring,
-          data:  {
-                  "name": "cnt_cpu_perc",
-                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "1s",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.id}]
-                    },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
+var start = new Date(new Date().getTime() - 20*60000).toISOString();
+        var end   = new Date().toISOString();
+        var name  = "cnt_cpu_perc";
+        var step  = "1s";
+
+        var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                  "?end="+end+
+                  "&start="+start+
+                  "&name="+name+
+                  "&step="+step+
+                  "&labels[][labelid]="+$routeParams.id+
+                  "&labels[][labeltag]=id";
+
+        var m = Monitoring.getData(encodeURI(url));
+        m.then(function(data){
 
             $scope.cpudata = [];                                        
-            data.metrics.result[0].values.forEach(function(element, index) {
+            data.data[0].values.forEach(function(element, index) {
 
-                  var timestamp = element[0].toString();
-                  timestamp = timestamp.replace('.','');
-                  if(timestamp.length==12)
-                          timestamp=timestamp+'0';
-                  else if(timestamp.length==11)
-                        timestamp = timestamp+'00';
-                  else if(timestamp.length==10)
-                        timestamp = timestamp+'000';
-                  else if(timestamp.length==9)
-                        timestamp = timestamp+'0000';
-                  else if(timestamp.length==8)
-                        timestamp = timestamp+'00000';
-
-                  timestamp = parseInt(timestamp);
+                  var timestamp = $rootScope.FixTimestamp(element[0]);
                   $scope.cpudata.push([timestamp,parseFloat(element[1])]);
-                  
-                  if(index==data.metrics.result[0].values.length-1){
-                  
-                    $scope.container.currentCPUUsage = element[1]; 
-                    $scope.drawGauges();
-                  }
-                    
-
              });
+            
 
                        $scope.g_charts.push(Highcharts.chart('cnt_cpu_chart_new', {
                               chart: {
@@ -191,45 +149,31 @@ console.log("DRAW CPU CHART");
                                           var series = this.series[0];
                                           setInterval(function () {
 
-                                          $http({
-                                                  method  : 'POST',
-                                                  url     : $scope.apis.monitoring,
-                                                  data:  {
-                                                        "name": "cnt_cpu_perc",
-                                                        "start": ""+ new Date().toISOString(),
-                                                        "end": ""+new Date().toISOString(),
-                                                        "step": "1m",
-                                                        "labels": [{"labeltag":"id","labelid":$routeParams.id}]
-                                                            },
-                                                  headers : { 'Content-Type': 'application/json' }
-                                                 })
-                                                  .success(function(data) {
+
+                                            var start = new Date().toISOString();
+                                            var end   = new Date().toISOString();
+                                            var name  = "cnt_cpu_perc";
+                                            var step  = "1m";
+
+                                            var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                                                      "?end="+end+
+                                                      "&start="+start+
+                                                      "&name="+name+
+                                                      "&step="+step+
+                                                      "&labels[][labelid]="+$routeParams.id+
+                                                      "&labels[][labeltag]=id";
+
+                                            var m = Monitoring.getData(encodeURI(url));
+                                            m.then(function(data){
                                                     
-                                                    
-                                                    var y = data.metrics.result[0].values[0][1];
-                                                    var x = data.metrics.result[0].values[0][0];
-                                                    var timestamp = x.toString();
-                                                        timestamp = timestamp.replace('.','');
+                                              var y = data.data[0].values[0][1];
+                                              var x = data.data[0].values[0][0];
+                                              var timestamp = $rootScope.FixTimestamp(x);
+                                              series.addPoint([timestamp, parseFloat(y)], true, true);
+                                              $scope.container.currentCPUUsage = y; 
+                                              $scope.drawGauges();
+                                            })
 
-                                                        if(timestamp.length==12)
-                                                                timestamp=timestamp+'0';
-                                                        else if(timestamp.length==11)
-                                                              timestamp = timestamp+'00';
-                                                        else if(timestamp.length==10)
-                                                              timestamp = timestamp+'000';
-                                                        else if(timestamp.length==9)
-                                                              timestamp = timestamp+'0000';
-                                                        else if(timestamp.length==8)
-                                                              timestamp = timestamp+'00000';
-
-                                                            
-                                                        timestamp = parseInt(timestamp);
-                                                      
-                                                      series.addPoint([timestamp, parseFloat(y)], true, true);
-                                                      $scope.container.currentCPUUsage = y; 
-                                                      $scope.drawGauges();
-
-                                                  })
                                           }, 5000);
                                       
 
@@ -296,44 +240,29 @@ console.log("DRAW CPU CHART");
 
 
 $scope.drawMEMChartnew = function(){
-console.log("DRAW MEM CHART");
- $http({
-          method  : 'POST',
-          url     : $scope.apis.monitoring,
-          data:  {
-                   "name": "cnt_mem_perc",
-                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "1s",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.id}]
-                    },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
+var start = new Date(new Date().getTime() - 20*60000).toISOString();
+          var end   = new Date().toISOString();
+          var name  = "cnt_mem_perc";
+          var step  = "1s";
+
+          var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                    "?end="+end+
+                    "&start="+start+
+                    "&name="+name+
+                    "&step="+step+
+                    "&labels[][labelid]="+$routeParams.id+
+                    "&labels[][labeltag]=id";
+
+          var m = Monitoring.getData(encodeURI(url));
+          m.then(function(data){
+
+          
 
             $scope.memdata = [];                                        
-            data.metrics.result[0].values.forEach(function(element, index) {
+            data.data[0].values.forEach(function(element, index) {
 
-                  var timestamp = element[0].toString();
-                  timestamp = timestamp.replace('.','');
-                  if(timestamp.length==12)
-                                        timestamp=timestamp+'0';
-                                else if(timestamp.length==11)
-                                      timestamp = timestamp+'00';
-                                else if(timestamp.length==10)
-                                      timestamp = timestamp+'000';
-                                else if(timestamp.length==9)
-                                      timestamp = timestamp+'0000';
-                                else if(timestamp.length==8)
-                                      timestamp = timestamp+'00000';
-                  timestamp = parseInt(timestamp);
+                  var timestamp = $rootScope.FixTimestamp(element[0]);
                   $scope.memdata.push([timestamp,parseFloat(element[1])]);
-
-                  if(index==data.metrics.result[0].values.length-1){
-                    
-                    $scope.container.currentMemoryUsage = parseFloat(element[1]); 
-                    $scope.drawGauges();
-                  }
             
 
              });
@@ -348,45 +277,33 @@ console.log("DRAW MEM CHART");
                                           var series = this.series[0];
                                           setInterval(function () {
 
-                                          $http({
-                                                  method  : 'POST',
-                                                  url     : $scope.apis.monitoring,
-                                                  data:  {
-                                                        "name": "cnt_mem_perc",
-                                                        "start": ""+ new Date().toISOString(),
-                                                        "end": ""+new Date().toISOString(),
-                                                        "step": "1m",
-                                                        "labels": [{"labeltag":"id","labelid":$routeParams.id}]
-                                                            },
-                                                  headers : { 'Content-Type': 'application/json' }
-                                                 })
-                                                  .success(function(data) {
-                                                    
-                                                    
-                                                    var y = data.metrics.result[0].values[0][1];
-                                                    var x = data.metrics.result[0].values[0][0];
-                                                    var timestamp = x.toString();
-                                                        timestamp = timestamp.replace('.','');
 
-                                                        if(timestamp.length==12)
-                                                                timestamp=timestamp+'0';
-                                                        else if(timestamp.length==11)
-                                                              timestamp = timestamp+'00';
-                                                        else if(timestamp.length==10)
-                                                              timestamp = timestamp+'000';
-                                                        else if(timestamp.length==9)
-                                                              timestamp = timestamp+'0000';
-                                                        else if(timestamp.length==8)
-                                                              timestamp = timestamp+'00000';
 
-                                                            
-                                                        timestamp = parseInt(timestamp);
-                                                      
+                                            var start = new Date().toISOString();
+                                            var end   = new Date().toISOString();
+                                            var name  = "cnt_mem_perc";
+                                            var step  = "1m";
+
+                                            var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                                                      "?end="+end+
+                                                      "&start="+start+
+                                                      "&name="+name+
+                                                      "&step="+step+
+                                                      "&labels[][labelid]="+$routeParams.id+
+                                                      "&labels[][labeltag]=id";
+
+                                            var m = Monitoring.getData(encodeURI(url));
+                                            m.then(function(data){
+                                                    
+                                                    var y = data.data[0].values[0][1];
+                                                    var x = data.data[0].values[0][0];
+                                                    var timestamp = $rootScope.FixTimestamp(x);
                                                       series.addPoint([timestamp, parseFloat(y)], true, true);
                                                       $scope.container.currentMemoryUsage = parseFloat(y); 
                                                       $scope.drawGauges();
 
-                                                  })
+                                            });
+
                                           }, 5000);
                                       
 
@@ -456,136 +373,58 @@ $scope.drawCPUChartnew();
 $scope.drawMEMChartnew();
 
 
-  /*   $scope.drawMEMChart = function(){
-       
-       google.charts.setOnLoadCallback(drawChart);
-      function drawChart() {
-        
-
-
-        var m=[
-          ['Time', 'Percent']
-        ];
-
-        $http({
-          method  : 'POST',
-          url     : $scope.apis.monitoring,
-          data:  {
-                  "name": "cnt_mem_perc",
-                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "30s",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.id}]
-                    },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
-       
-            data.metrics.result[0].values.forEach( function(element, index) {
-          
-           
-            var timestamp = element[0].toString();
-            timestamp = timestamp.replace('.','');
-            
-            timestamp = new Date(parseInt(timestamp));
-
-            m.push([timestamp,parseFloat(element[1])]);
-
-            });
-           
-
-
-            var options = {
-              title: 'Memory',
-              hAxis: {title: 'Time',  titleTextStyle: {color: '#333'}},
-              vAxis: {minValue: 0,maxValue:100}
-            };
-            
-
-
-              $scope.drawTheChart(m,options,'cnt_mem_chart');
-
-
-          });
-
-      }
-    }*/
-
-
-
 
 $scope.historyRXTX = function(){
 
-     $http({
-          method  : 'POST',
-          url     : $scope.apis.monitoring,
-          data    : {
-                  "name": "cnt_net_tx_MB",
-                  "start": ""+new Date(new Date().getTime() - 20*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "1s",
-                  "labels": [{"labeltag":"id","labelid":$routeParams.id}]
-                    },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
+     var start = new Date(new Date().getTime() - 20*60000).toISOString();
+            var end   = new Date().toISOString();
+            var name  = "cnt_net_tx_MB";
+            var step  = "1s";
+
+            var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                      "?end="+end+
+                      "&start="+start+
+                      "&name="+name+
+                      "&step="+step+
+                      "&labels[][labelid]="+$routeParams.id+
+                      "&labels[][labeltag]=id";
+
+            var m = Monitoring.getData(encodeURI(url));
+            m.then(function(data){
+
 
               $scope.the_in = data;
-          
-                  $http({
-                      method  : 'POST',
-                      url     : $scope.apis.monitoring,
-                      data    : {
-                              "name": "cnt_net_rx_MB",
-                              "start": ""+new Date(new Date().getTime() - 20*60000).toISOString(),
-                              "end": ""+new Date().toISOString(),
-                              "step": "1s",
-                              "labels": [{"labeltag":"id","labelid":$routeParams.id}]
-                                },
-                      headers : { 'Content-Type': 'application/json' }
-                  })
-                  .success(function(data) {
+
+                var start = new Date(new Date().getTime() - 20*60000).toISOString();
+                var end   = new Date().toISOString();
+                var name  = "cnt_net_rx_MB";
+                var step  = "1s";
+
+                var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                          "?end="+end+
+                          "&start="+start+
+                          "&name="+name+
+                          "&step="+step+
+                          "&labels[][labelid]="+$routeParams.id+
+                          "&labels[][labeltag]=id";
+
+                var m = Monitoring.getData(encodeURI(url));
+                m.then(function(data){
                       
                      $scope.the_out = data;
                      $scope.data_rx = [];
                      $scope.data_tx = [];
 
                      
-                    $scope.the_in.metrics.result[0].values.forEach(function(element,index){
+                    $scope.the_in.data[0].values.forEach(function(element,index){
 
-                            var timestamp = element[0].toString();
-                              timestamp = timestamp.replace('.','');
-                               if(timestamp.length==12)
-                                        timestamp=timestamp+'0';
-                                else if(timestamp.length==11)
-                                      timestamp = timestamp+'00';
-                                else if(timestamp.length==10)
-                                      timestamp = timestamp+'000';
-                                else if(timestamp.length==9)
-                                      timestamp = timestamp+'0000';
-                                else if(timestamp.length==8)
-                                      timestamp = timestamp+'00000';
-
-                              timestamp = parseInt(timestamp);
-                              $scope.data_rx.push([timestamp,parseFloat(element[1])]);
+                        var timestamp = $rootScope.FixTimestamp(element[0]);
+                        $scope.data_rx.push([timestamp,parseFloat(element[1])]);
                     });
 
-                    $scope.the_out.metrics.result[0].values.forEach(function(element,index){
+                    $scope.the_out.data[0].values.forEach(function(element,index){
 
-                            var timestamp = element[0].toString();
-                              timestamp = timestamp.replace('.','');
-                               if(timestamp.length==12)
-                                        timestamp=timestamp+'0';
-                                else if(timestamp.length==11)
-                                      timestamp = timestamp+'00';
-                                else if(timestamp.length==10)
-                                      timestamp = timestamp+'000';
-                                else if(timestamp.length==9)
-                                      timestamp = timestamp+'0000';
-                                else if(timestamp.length==8)
-                                      timestamp = timestamp+'00000';
-
-                              timestamp = parseInt(timestamp);
+                              var timestamp = $rootScope.FixTimestamp(element[0]);
                               $scope.data_tx.push([timestamp,parseFloat(element[1])]);
                     });
 
