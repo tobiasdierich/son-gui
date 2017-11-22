@@ -267,7 +267,6 @@ $scope.getRamGraphNew = function(){
               $scope.ramdata.push([timestamp,parseFloat(element[1])]);
               $scope.totalram.push([timestamp,parseFloat($scope.selected_vim.totalRAMSize)]);
               
-
              });
               Highcharts.chart('ram_chart_new_new', {
                               chart: {

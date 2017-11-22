@@ -71,7 +71,6 @@ partner consortium (www.sonata-nfv.eu).
           </div>
         </div>
         <div class="col s12 m12" ng-hide="thisuser.user_type!='admin'">
-          <div class=" red accent-1" style="padding: 10px;text-align: center;color: white;font-weight: bold;" ng-show="error_message_view">{{error_message_text}}</div>
           <div class="card grey lighten-5">
             <div class="card-content">
               <table>
@@ -88,9 +87,7 @@ partner consortium (www.sonata-nfv.eu).
                       <td>{{user.email}}</td>
                       <td>{{user.user_type}}</td>
                       <td>{{user.created_at | date:'medium'}}</td>
-                      <td>
-                          
-                          <a ng-hide="user.user_type=='admin'" class="waves-effect waves-teal btn" ng-click="deleteUser(user)">Delete</a></td>
+                      <td><a ng-hide="user.user_type=='admin'" class="waves-effect waves-teal btn" ng-click="delete_user(user)">Delete</a></td>
                   </tr>
                 </tbody>
               </table>
@@ -105,6 +102,38 @@ partner consortium (www.sonata-nfv.eu).
             <div class="buttons">
               <div class="btn_flat" ng-click="logged_again_ok()">OK</div>
               <div class="btn_flat" ng-click="cancel_pressed()">Cancel</div>
+            </div>
+          </div>
+        </div>
+
+        
+        <div class="pop_one" ng-show="delete_user_popup_view"> 
+          <div class="box">
+            <h3 class="pop_h3">Delete user</h3>
+            <p class="pop_p">
+              You are going to delete the user: {{selected_for_delete_user.username}}. Please confirm.
+            </p>
+
+            <div class="buttons">
+              <div class="btn_flat" ng-click="delete_user_confirmed()">OK</div>
+              <div class="btn_flat" ng-click="delete_user_popup_view=false">Cancel</div>
+            </div>
+          </div>
+        </div>
+
+
+
+        <div class="pop_one" ng-show="password_field_popup"> 
+          <div class="box">
+            <h3 class="pop_h3">User Credentials Update</h3>
+            <p class="pop_p">
+              You are going to update your profile. Please enter your password.
+              <input type="password" name="" ng-model="thisuser.password_ma" placeholder="password" />
+            </p>
+
+            <div class="buttons">
+              <div class="btn_flat" ng-click="update_credentials()">OK</div>
+              <div class="btn_flat" ng-click="cancel_password_field_pressed()">Cancel</div>
             </div>
           </div>
         </div>

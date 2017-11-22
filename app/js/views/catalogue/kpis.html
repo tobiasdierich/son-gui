@@ -42,6 +42,23 @@ partner consortium (www.sonata-nfv.eu).
           </div>
         </div>
 
+        <div class="col s12 m6 l4" style="margin-top:10px" ng-click="getInstatiationTimeDetails()">
+          <div class="kpi">
+            <div class="kpi-subtitle">Services instantiation time</div>
+            <div class="row">
+              <div class="col s12 m6">
+                <div class="kpi-number" style="font-size: 500%!important;word-wrap: normal">{{total_services}}</div>
+              </div>
+              <div class="col s12 m6" style="top: 29px;position: relative;line-height: 53px;">
+                <div id="sparkline_inst_time_requests"  class="hide-on-small-only"></div>                    
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        
+
         <div class="col s12 m6 l4" style="margin-top:10px" ng-click="getRegisteredUsersDetails()">
           <div class="kpi">
             <div class="kpi-subtitle">How many users have been registered</div>

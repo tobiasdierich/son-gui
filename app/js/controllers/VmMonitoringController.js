@@ -26,7 +26,7 @@ acknowledge the contributions of their colleagues of the SONATA
 partner consortium (www.sonata-nfv.eu).
 */
 
-SonataApp.controller('VmMonitoring',['$rootScope','$scope','$routeParams','$location','$http','$interval',function($rootScope,$scope, $routeParams, $location, $http,$interval,Monitoring){
+SonataApp.controller('VmMonitoring',['$rootScope','$scope','$routeParams','$location','$http','$interval','Monitoring',function($rootScope,$scope, $routeParams, $location, $http,$interval,Monitoring){
 	
   $scope.vm = {};
   $scope.a_metrics = [];
@@ -426,7 +426,7 @@ $scope.historyCPU = function(){
                                   events: {
                                       load: function () {
                                           
-                                          ar series = this.series[0];
+                                          var series = this.series[0];
                                           $scope.intervals.push($interval(function () {
 
                                               var end = new Date().toISOString();

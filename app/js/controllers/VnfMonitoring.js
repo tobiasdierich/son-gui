@@ -597,10 +597,6 @@ $scope.historyRAM = function(){
         var m = Monitoring.getData(encodeURI(url));
         m.then(function(datas){
 
-            console.log('RAM SUccess');
-            console.log(data);
-
-
           $scope.ramdata = [];
           $scope.vnf.currentMemoryUsage = 100-datas.data[0].values[datas.data[0].values.length-1][1];
            datas.data[0].values.forEach(function(element, index) {
@@ -609,7 +605,7 @@ $scope.historyRAM = function(){
                   $scope.ramdata.push([timestamp,parseFloat(100-element[1])]);
                   
 
-                if(index==data.metrics.result[0].values.length-1){
+                if(index==datas.data[0].values.length-1){
                   
                   $scope.vnf.currentMemoryUsage = parseFloat(100-element[1]);
                   $scope.drawGauges();

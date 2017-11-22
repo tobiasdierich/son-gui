@@ -48,6 +48,12 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
 
      $scope.getTotalVMs = function(){
             
+
+
+
+
+
+
            $http({
                 method  : 'GET',
                 url: $scope.apis.gatekeeper.kpis+'?name=vms_sum',
@@ -85,7 +91,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
 
                 })
     };
-
+    
     $scope.getHttPTotals = function(){
             
             $http({
@@ -309,6 +315,77 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
     }
 
 
+    $scope.getInstationTime = function(){
+         $http({
+                method  : 'GET',
+                url: $scope.apis.gatekeeper.kpis+'?name=service_instantiation_requests',
+                headers : $rootScope.getGKHeaders()
+              })
+                .success(function(datas) {
+                    
+                    var max = 0;
+                    var min = 0;
+                    $scope.total_services = 0;
+                    angular.forEach(datas.data.metrics,function(package,index){
+
+                        if(package.labels.elapsed_time>max)
+                            max=package.labels.elapsed_time;
+
+                        if(package.labels.elapsed_time<min || (min==0 && datas.data.metrics.length>1))
+                            min=package.labels.elapsed_time;
+                        
+                        $scope.total_services+=parseFloat(package.value);
+
+                    });
+                    var step = 0;
+                    var groups=[0,0,0,0];
+                    var offset = [];
+                    
+                    if(max>min){
+
+                        step = (max-min)/4;   
+                        offset[0]=parseFloat(min).toFixed(2)+"-"+parseFloat(parseFloat(min)+parseFloat(step)).toFixed(2);
+                        offset[1]=parseFloat(parseFloat(min)+parseFloat(step)).toFixed(2)+"-"+parseFloat(parseFloat(min)+2*parseFloat(step)).toFixed(2);
+                        offset[2]=parseFloat(parseFloat(min)+2*parseFloat(step)).toFixed(2)+"-"+parseFloat(parseFloat(min)+3*parseFloat(step)).toFixed(2);
+                        offset[3]=parseFloat(parseFloat(min)+3*parseFloat(step)).toFixed(2)+"-"+parseFloat(parseFloat(min)+4*parseFloat(step)).toFixed(2);
+
+                        angular.forEach(datas.data.metrics,function(package,index){
+                            var elapsed_time = package.labels.elapsed_time;
+                        
+                            if(elapsed_time>=min && elapsed_time<(parseFloat(min)+parseFloat(step)))
+                                groups[0]++;
+                            else if(elapsed_time>=(parseFloat(min)+parseFloat(step)) && elapsed_time<(parseFloat(min)+2*parseFloat(step)))
+                                groups[1]++;
+                            else if(elapsed_time>=(parseFloat(min)+2*parseFloat(step)) && elapsed_time<(parseFloat(min)+3*parseFloat(step)))
+                                groups[2]++;
+                            else if(elapsed_time>=(parseFloat(min)+3*parseFloat(step)))
+                                groups[3]++;                        
+
+                        });
+
+                    }
+                    
+                    $("#sparkline_inst_time_requests").sparkline(groups, {
+                        type: 'bar',
+                        barColor: '#1ab394',
+                        barWidth:'9px',
+                        tooltipFormat: '<div class="jqsfield"><span style="color: white">Elapsed time </span>{{offset:offset}}(sec) : {{value}}</div>',
+                        tooltipValueLookups: {
+                            'offset': {
+                                0: offset[0],
+                                1: offset[1],
+                                2: offset[2],
+                                3: offset[3]
+                            }
+                        }, 
+                        height: "70px",                        
+                        barwidth:"30px",
+                        negBarColor: '#c6c6c6'
+                    });
+
+                });
+    }
+
     $scope.getPackagesOnBoarding = function(){
     
 
@@ -439,6 +516,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
     /*$scope.getVMSsum();*/
     $scope.getHttPTotals();
     $scope.getTotalVMs();
+    $scope.getInstationTime();
     /*$scope.getHttpTotalRequests();*/
 
 
@@ -774,7 +852,114 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                        
                     });
     }
+    $scope.getInstatiationTimeDetails = function(){
+        $scope.kpi_timeline_data = [];
+        var start = new Date(new Date().getTime() - 10000*60000).toISOString();
+        var end = new Date().toISOString();
+        var step = '10m';
 
+            $scope.results_type = [];
+            $scope.results =[];
+            $scope.tags = [];
+            $scope.modal = {};
+            
+            $('#modal_packages_details').openModal();
+            
+            $http({
+                method  : 'GET',
+                url: $scope.apis.gatekeeper.kpis+'?name=service_instantiation_requests',
+                headers : $rootScope.getGKHeaders()
+              })
+                .success(function(datas) {
+                        console.log(datas);
+
+
+
+
+                        $scope.resl = datas.data.metrics;
+                        $scope.selected_data_pie = [];
+                        var groups=[0,0,0,0];
+                        $scope.ss_states = [];
+                        var max = 0;
+                        var min = 0;
+                        if($scope.resl.length>0){
+
+                            angular.forEach($scope.resl,function(package,index){
+
+                                        if(package.labels.elapsed_time>max)
+                                            max=package.labels.elapsed_time;
+
+                                        if(package.labels.elapsed_time<min || (min==0 && $scope.resl.length>1))
+                                            min=package.labels.elapsed_time;
+                                        
+                                        
+                            });
+                    
+                            var step = 0;                            
+                            var offset = [];
+                    
+                            if(max>min){
+
+                                step = (max-min)/4;   
+                                offset[0]=parseFloat(min).toFixed(2)+"-"+parseFloat(parseFloat(min)+parseFloat(step)).toFixed(2)+' sec';
+                                offset[1]=parseFloat(parseFloat(min)+parseFloat(step)+parseFloat(0.01)).toFixed(2)+"-"+parseFloat(parseFloat(min)+2*parseFloat(step)).toFixed(2)+' sec';
+                                offset[2]=parseFloat(parseFloat(min)+2*parseFloat(step)+parseFloat(0.01)).toFixed(2)+"-"+parseFloat(parseFloat(min)+3*parseFloat(step)).toFixed(2)+' sec';
+                                offset[3]=parseFloat(parseFloat(min)+3*parseFloat(step)+parseFloat(0.01)).toFixed(2)+"-"+parseFloat(parseFloat(min)+4*parseFloat(step)).toFixed(2)+' sec';
+
+                                angular.forEach($scope.resl,function(package,index){
+                                    var elapsed_time = package.labels.elapsed_time;
+                                
+                                    if(elapsed_time>=min && elapsed_time<(parseFloat(min)+parseFloat(step)))
+                                        groups[0]++;
+                                    else if(elapsed_time>=(parseFloat(min)+parseFloat(step)) && elapsed_time<(parseFloat(min)+2*parseFloat(step)))
+                                        groups[1]++;
+                                    else if(elapsed_time>=(parseFloat(min)+2*parseFloat(step)) && elapsed_time<(parseFloat(min)+3*parseFloat(step)))
+                                        groups[2]++;
+                                    else if(elapsed_time>=(parseFloat(min)+3*parseFloat(step)))
+                                        groups[3]++;                        
+
+                                });
+
+                            }
+
+
+
+                        
+
+                            $scope.resl.forEach(function(kpi,index){
+                                var x = new Date(kpi.labels.time_stamp);                           
+                                $scope.kpi_timeline_data.push([x.getTime(), 1]);
+                                
+                                if($scope.ss_states.indexOf(kpi.labels.result)>=0){
+
+                                    var result = {};
+                                        result = $scope.selected_data_pie.filter(function( obj ) {
+                                    
+                                         if(obj.name==kpi.labels.result){
+                                            return obj;
+                                         }
+                                            
+                                    });
+
+                                    result[0].y++;
+
+                                }else{
+
+                                    $scope.ss_states.push(kpi.labels.result);                                    
+                                    $scope.selected_data_pie.push({
+                                        name:kpi.labels.result,
+                                        y:1,
+                                        sliced: true
+                                    });                                    
+                                }                            
+                            });
+
+                        }                        
+                        $scope.setPackagesPieChart();                        
+                        $scope.setPackagesBarChart(offset,groups);
+                       
+                    });
+    }
     $scope.getPackageOnBoardingDetails = function(){
 
         $scope.kpi_timeline_data = [];
