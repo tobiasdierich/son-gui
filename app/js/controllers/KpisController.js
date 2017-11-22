@@ -863,7 +863,7 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
             $scope.tags = [];
             $scope.modal = {};
             
-            $('#modal_packages_details').openModal();
+            $('#modal_instatiation_details').openModal();
             
             $http({
                 method  : 'GET',
@@ -872,9 +872,6 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
               })
                 .success(function(datas) {
                         console.log(datas);
-
-
-
 
                         $scope.resl = datas.data.metrics;
                         $scope.selected_data_pie = [];
@@ -923,9 +920,6 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                             }
 
 
-
-                        
-
                             $scope.resl.forEach(function(kpi,index){
                                 var x = new Date(kpi.labels.time_stamp);                           
                                 $scope.kpi_timeline_data.push([x.getTime(), 1]);
@@ -955,8 +949,8 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                             });
 
                         }                        
-                        $scope.setPackagesPieChart();                        
-                        $scope.setPackagesBarChart(offset,groups);
+                        $scope.setInstationPieChart();                        
+                        $scope.setInstationBarChart(offset,groups);
                        
                     });
     }
@@ -1261,7 +1255,53 @@ $scope.setUserBarChart = function(categories,registrations){
     });
 }
 
-
+$scope.setInstationBarChart = function(categories,packages){
+    Highcharts.chart('instatiation_bar_chart', {
+        chart: {
+            type: 'bar'
+        },
+        title: {
+            text: 'Instatiation Time'
+        },
+        subtitle: {
+            text: 'Grouped by Elapsed time'
+        },
+        xAxis: {
+            categories: categories,
+            title: {
+                text: null
+            }
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Seconds',
+                align: 'high'
+            },
+            labels: {
+                overflow: 'justify'
+            }
+        },
+        tooltip: {
+            valueSuffix: ' '
+        },
+        plotOptions: {
+            bar: {
+                dataLabels: {
+                    enabled: true
+                }
+            }
+        },
+        credits: {
+            enabled: false
+        },
+        series: [{
+            name: 'Services',
+            data: packages,
+            color:'#78a891'
+        }]
+    });
+}
 $scope.setPackagesBarChart = function(categories,packages){
     Highcharts.chart('packages_bar_chart', {
         chart: {
@@ -1308,6 +1348,43 @@ $scope.setPackagesBarChart = function(categories,packages){
             color:'#78a891'
         }]
     });
+}
+$scope.setInstationPieChart = function(){
+    Highcharts.chart('InstationPieChart', {
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false,
+        type: 'pie'
+    },
+    title: {
+        text: 'Services Instatiation Time'
+    },
+    tooltip: {
+        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    credits: {
+      enabled: false
+    },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+                enabled: true,
+                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                style: {
+                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                }
+            }
+        }
+    },
+    series: [{
+        name: 'Results',
+        colorByPoint: true,
+        data: $scope.selected_data_pie
+    }]
+});  
 }
 $scope.setPackagesPieChart = function(){
     Highcharts.chart('PackagesPieChart', {
