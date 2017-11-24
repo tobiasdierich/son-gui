@@ -83,7 +83,8 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
                 
                 }else{
                   
-                  var gk_url = 'http://sp.int3.sonata-nfv.eu:32001/api/v2';
+                  var gk_url = 'https://sp.int3.sonata-nfv.eu/api/v2';
+                  //https://sp.int3.sonata-nfv.eu/api/v2/packages
                   var mon_url = 'http://sp.int3.sonata-nfv.eu:8000';
                   var vims_url = 'http://sp.int3.sonata-nfv.eu:32001/api/v2';
                   var logs_url = 'http://logs.sonata-nfv.eu:12900/logs';
