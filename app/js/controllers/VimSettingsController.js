@@ -298,15 +298,19 @@ $scope.getWimDetails = function(wim){
                     
                 }else{
                   
-                  $scope.m.forEach(function(wim,index){
+                  if($scope.m.length>0){
+                    
+                    $scope.m.forEach(function(wim,index){
                   
-                    var x = {};
-                    x.uuid = wim.uuid;
-                    x.name = wim.name;
-                    x.attached_vims = wim.attached_vims;
-                    x.status = "-";
-                    $scope.wims.push(x);
-                  });                  
+                      var x = {};
+                      x.uuid = wim.uuid;
+                      x.name = wim.name;
+                      x.attached_vims = wim.attached_vims;
+                      x.status = "-";
+                      $scope.wims.push(x);
+                    }); 
+                  }
+                                   
                 }               
                 
                 $('select').material_select();                
