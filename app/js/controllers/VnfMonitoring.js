@@ -34,6 +34,7 @@ SonataApp.controller('VnfMonitoring',['$rootScope','$scope','$routeParams','$loc
   $scope.vnf.currentMemoryUsage = 0;
   $scope.vnf.currentCPUUsage = 0;
   $scope.view_details = false;
+  $scope.btn_details_view = false;
   $scope.current_time = new Date();
   $scope.ten_m_before = new Date($scope.current_time.getTime() - 15*60000);
   $scope.settings_modal = {};
@@ -179,11 +180,8 @@ $scope.removeBox = function(box){
                      
                       vdu.vnfc_instance.forEach(function(vnfc,y){
                         if(vnfc.vc_id==$routeParams.name){
-                          console.log("Found R:"+i);
-                          console.log("Found VDU:"+x);
-                          console.log(r.virtual_deployment_units[i]);
-                          console.log("I found it "+vnfc.vc_id);
-                          console.log(vnfc);
+                          $scope.btn_details_view = true;
+                         
                           $scope.connection_points = vnfc.connection_points;
                           $scope.getDescriptor(r.descriptor_reference);
                           angular.forEach(r.virtual_deployment_units[i].monitoring_parameters,function(d){
@@ -354,12 +352,12 @@ $scope.fillnewBox = function(box){
                           }));
                      }else{
                       
-                      $('#'+box.id).html('No data Available');
+                      $('#'+box.id).html('No data available');
                      }
 
                     }else{
                       
-                      $('#'+box.id).html('No data Available for '+box.measurement);
+                      $('#'+box.id).html('No data available for '+box.measurement);
                      
                      }
 
