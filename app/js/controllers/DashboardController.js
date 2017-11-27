@@ -29,10 +29,8 @@ partner consortium (www.sonata-nfv.eu).
 SonataApp.controller('DashboardController',['$interval','$rootScope','$scope','$routeParams','$location','$http','Monitoring',function($interval,$rootScope,$scope, $routeParams, $location, $http,Monitoring){
 (function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
   
-  console.log("DashboardController");
   
   $rootScope.username = $rootScope.getStorage('sonata-username');
-  console.log($rootScope.username);
   
   $scope.vims = new Array();
 
@@ -60,8 +58,7 @@ SonataApp.controller('DashboardController',['$interval','$rootScope','$scope','$
           }, 5000);
 
 $scope.stopFight = function() {
-    console.log("STOP Interval");
-          if (angular.isDefined(stop)) {
+    if (angular.isDefined(stop)) {
             $interval.cancel(stop);
             stop = undefined;
           }
@@ -257,7 +254,6 @@ $scope.getRamGraphNew = function(){
             var m = Monitoring.getData(encodeURI(url));
             m.then(function(data){
 
-            console.log(data);
             $scope.ramdata = [];    
             $scope.totalram = [];                                    
             
@@ -449,7 +445,7 @@ var start = new Date(new Date().getTime() - 30*60000).toISOString();
             
                       $scope.coresdata = [];    
                       $scope.totalcores = [];                                    
-                      console.log(data);
+                      
                       data.data[0].values.forEach(function(element, index) {
 
                               var timestamp = $rootScope.FixTimestamp(element[0]);
@@ -774,9 +770,9 @@ $scope.getVms = function(){
 
     var m = Monitoring.getData(encodeURI(url));
     m.then(function(data){
-
-            $scope.selected_vim.all_vms=data;
-            $scope.selected_vim.all_vms.data.forEach(function(vm,index){
+          console.log(data);
+            $scope.selected_vim.all_vms=data.data;
+            $scope.selected_vim.all_vms.forEach(function(vm,index){
               
               timestamp = ""+vm.values[0][1]+"000";
               vm.metric.last_updated = timestamp;
@@ -875,7 +871,7 @@ $scope.init = function(){
 }
 
 $scope.drawGauge = function(data_array,options,element){
-        console.log(data_array);
+        
        var data = google.visualization.arrayToDataTable(data_array);
        var options = options;
        var chart = new google.visualization.Gauge(document.getElementById(element));

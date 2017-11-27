@@ -188,7 +188,7 @@ partner consortium (www.sonata-nfv.eu).
                     </div>
                   
                   </div>
-                  <table class="bordered responsive-table" ng-show="selected_vim.all_vms.metrics.result.length">
+                  <table class="bordered responsive-table" ng-show="selected_vim.all_vms.length">
                     <thead>
                       <th>Created</th>
                       <th>Uuid</th>
@@ -197,7 +197,7 @@ partner consortium (www.sonata-nfv.eu).
                       <th>Info</th>
                     </thead>
                     <tbody>
-                      <tr ng-repeat="vm in selected_vim.all_vms.metrics.result | orderBy:vm.metric.created:1">
+                      <tr ng-repeat="vm in selected_vim.all_vms | orderBy:vm.metric.created:1">
                         <td>{{vm.metric.created | date:'yyyy-MM-dd HH:mm' : 'UTC'}} UTC</td>
                         <td>{{vm.metric.uuid}}</td>
                         <td>{{vm.metric.tenant_id}}</td>

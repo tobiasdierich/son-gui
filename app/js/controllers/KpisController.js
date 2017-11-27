@@ -105,16 +105,17 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                        $scope.http_categories = [];
                        $scope.http_hndl = [];
                        $scope.http_handlers = [];
+                       $scope.http_handlers_large = [];
                        var offsetobj = {};
                        var groups = [];
+                       var groups_large = [];
                        $scope.total_http_requests = 0;
                        var counter = 0;
+                       var counter_large = 0;
 
                        datas.data.metrics.forEach(function(dat,index){
-                        if(!(dat.labels.handler=='push' && dat.labels.method=='put') && !(dat.labels.handler=='prometheus' && dat.labels.method=='get' && dat.labels.code=='200') ){
-
-                        
-                                
+                        if(parseInt(dat.value)<1000 ){
+        
                                 $scope.http_handlers[counter]={                                           
                                         name: dat.labels.handler+":"+dat.labels.method+":"+dat.labels.code+" (#"+parseInt(dat.value)+")",
                                         y: parseInt(dat.value),
@@ -126,6 +127,18 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
                                 $scope.total_http_requests+=parseInt(dat.value);
                                 groups[counter] = dat.value;
                                 counter++;
+                            }else{
+                                $scope.http_handlers_large[counter_large]={                                           
+                                        name: dat.labels.handler+":"+dat.labels.method+":"+dat.labels.code+" (#"+parseInt(dat.value)+")",
+                                        y: parseInt(dat.value),
+                                        drilldown: dat.labels.handler        
+
+                                    };
+
+                                offsetobj[counter_large] = ""+dat.labels.handler+":"+dat.labels.method+":"+dat.labels.code+" (#"+parseInt(dat.value)+")";
+                                $scope.total_http_requests+=parseInt(dat.value);
+                                groups_large[counter_large] = dat.value;
+                                counter_large++;
                             }
                             
                         });
@@ -531,58 +544,109 @@ SonataApp.controller('KpisController',['$rootScope','$http','$scope',function($r
     $scope.getHttPTotalsDetails = function(){
         $('#modalhttps_details').openModal();
 
-        Highcharts.chart('http_chart_container', {
-    chart: {
-        type: 'column'
-    },
-    title: {
-        text: 'Total number of HTTP requests made'
-    },
-    xAxis: {
-         type: 'category'
-    },
-    yAxis: {
-        min: 0,
-        title: {
-            text: 'Requests',
-            align: 'high'
-        },
-        labels: {
-            overflow: 'justify'
-        }
-    },
-    tooltip: {
-        valueSuffix: ' '
-    },
-    plotOptions: {
-        bar: {
-            dataLabels: {
-                enabled: true
-            }
-        }
-    },
-    legend: {
-        enabled: false,    
-        layout: 'vertical',
-        align: 'right',
-        verticalAlign: 'top',
-        x: -40,
-        y: 80,
-        floating: true,
-        borderWidth: 1,
-        backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
-        shadow: true
-    },
-    credits: {
-        enabled: false
-    },
-    series: [{
-        name: 'Handlers',
-        colorByPoint: true,
-        data: $scope.http_handlers
-    }]
+        Highcharts.chart('http_chart_container_large', {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: ''
+                },
+                xAxis: {
+                     type: 'category'
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Requests',
+                        align: 'high'
+                    },
+                    labels: {
+                        overflow: 'justify'
+                    }
+                },
+                tooltip: {
+                    valueSuffix: ' '
+                },
+                plotOptions: {
+                    bar: {
+                        dataLabels: {
+                            enabled: true
+                        }
+                    }
+                },
+                legend: {
+                    enabled: false,    
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'top',
+                    x: -40,
+                    y: 80,
+                    floating: true,
+                    borderWidth: 1,
+                    backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+                    shadow: true
+                },
+                credits: {
+                    enabled: false
+                },
+                series: [{
+                    name: 'Handlers',
+                    colorByPoint: true,
+                    data: $scope.http_handlers_large
+                }]
+        });
 
-});
+        Highcharts.chart('http_chart_container', {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Total number of HTTP requests made'
+                },
+                xAxis: {
+                     type: 'category'
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Requests',
+                        align: 'high'
+                    },
+                    labels: {
+                        overflow: 'justify'
+                    }
+                },
+                tooltip: {
+                    valueSuffix: ' '
+                },
+                plotOptions: {
+                    bar: {
+                        dataLabels: {
+                            enabled: true
+                        }
+                    }
+                },
+                legend: {
+                    enabled: false,    
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'top',
+                    x: -40,
+                    y: 80,
+                    floating: true,
+                    borderWidth: 1,
+                    backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+                    shadow: true
+                },
+                credits: {
+                    enabled: false
+                },
+                series: [{
+                    name: 'Handlers',
+                    colorByPoint: true,
+                    data: $scope.http_handlers
+                }]
+        });
 
 
     };
