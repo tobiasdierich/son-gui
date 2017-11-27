@@ -26,7 +26,7 @@ acknowledge the contributions of their colleagues of the SONATA
 partner consortium (www.sonata-nfv.eu).
 -->
 
-     <ul id="slide-out" class="side-nav fixed">
+     <ul id="slide-out" class="side-nav fixed" ng-controller="MainController">
       <li class="logo"><img src="media/sonata.jpg"/></li>
       <li class="no-padding menu_item_li">
         <a class="collapsible-header waves-effect waves-teal" href="#/home"><i class="fa fa-home"></i>Dashboard</a>
@@ -34,7 +34,7 @@ partner consortium (www.sonata-nfv.eu).
       <li class="no-padding">
          <ul class="collapsible">
           <li>
-            <a class="collapsible-header waves-effect waves-teal menu_item_li" href="#/user/profile"><i class="fa fa-user"></i> User Profile</a>
+            <a class="collapsible-header waves-effect waves-teal menu_item_li" href="#/user/profile" ><i class="fa fa-user"></i> User Profile</a>
           </li>
           </ul>         
       </li>
@@ -42,7 +42,7 @@ partner consortium (www.sonata-nfv.eu).
         <li class="no-padding">
          <ul class="collapsible collapsible-accordion">
           <li>
-            <a class="collapsible-header waves-effect waves-teal"><i class="fa fa-list"></i> Catalogue</a>
+            <a class="collapsible-header waves-effect waves-teal" ng-class="menu['catalogue'].class"><i class="fa fa-list"></i> Catalogue</a>
             <div class="collapsible-body">
               <ul>
                 <li class="waves-effect waves-teal menu_item_li"><a href="#/catalogue/packages">Packages</a></li>

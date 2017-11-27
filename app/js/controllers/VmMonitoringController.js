@@ -279,7 +279,11 @@ $scope.fillnewBox = function(box){
                                   data: $scope.data
                               }]
                           }));
-                    }
+                    }else{
+                      
+                      $('#'+box.id).html('No data Available for '+box.measurement);
+                
+                     }
                 });
 }
 
@@ -925,7 +929,6 @@ $scope.historyHardDisk = function(){
         $('.hchart').each(function(c){$(this).empty();});
         $('.highcharts-container').each(function(c){$(this).empty();});
         $scope.g_charts.forEach(function(chart){
-          chart.destroy();
           chart = null;
         });
         $scope.g_charts = null;

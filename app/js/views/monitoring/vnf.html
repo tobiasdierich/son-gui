@@ -43,16 +43,42 @@ partner consortium (www.sonata-nfv.eu).
             </div>  
             <div class="row" style="text-align: center;">
               <div class="btn btn-success blue-grey darken-2" ng-click="newChartBtn()">Add a Chart</div>
-            </div>  
+            </div>
+            
   
       </div>
 
     </div>
     <div class="col s12 m12 l9">
-        <div ng-repeat="box in boxes" ng-class="box.class">
+      <div class="row right">
+        <div class="btn btn-success teal darken-1" ng-click="toggleDetails()" ng-hide="view_details">View Details</div>
+        <div class="btn btn-success teal darken-1" ng-click="toggleDetails()" ng-show="view_details">Hide Details</div>
+      </div>
+      <div class="row" ng-show="view_details">
+        <div class="card-panel">
+          <h4 style="font-size: 20px">Connection Points:</h4>
+          <div ng-repeat="cp in connection_points" style="margin-bottom: 10px;background-color:#EFEFEF;padding: 10px">
+            <strong>Type:</strong> {{cp.type}}<br/>
+            <div class="interfaces" style="margin-bottom: 5px">
+              <span ng-show="cp.interface.address"><strong>Address:</strong> {{cp.interface.address}}<br/></span>
+              <span ng-show="cp.interface.hardware_address"><strong>Hardware Access:</strong> {{cp.interface.hardware_address}}<br/></span>
+              <span ng-show="cp.interface.netmask"><strong>Netmask:</strong> {{cp.interface.netmask}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-panel">
+          <h5>Monitoring Rules:</h5>
+            <div class="monitoring_rule" ng-repeat="mr in descriptor.vnfd.monitoring_rules" style="border-top: 1px solid #CCCCCC;margin: 10px ">
+              <strong>Condition:</strong> {{mr.condition}}<br/>
+              <strong>Duration: </strong> {{mr.duration}}{{mr.duration_unit}}<br/>
+              <strong>Description:</strong> {{mr.description}}<br/>
+            </div>
+        </div>
+      </div>
+
+        <div ng-repeat="box in custom_boxes track by $index" ng-class="box.class">
         <div class="card-panel">
             <span class="card-title">
-              <i class="fa fa-pencil" aria-hidden="true" ng-click="configureBox(box)"></i>
               <i class="fa fa-refresh" aria-hidden="true" ng-click="updateBox(box)"></i>               
               <i class="fa fa-times" aria-hidden="true" ng-click="removeBox(box)"></i>
             </span>
@@ -128,7 +154,7 @@ partner consortium (www.sonata-nfv.eu).
             <div class="col s12">
                 <label>Select Measurement</label>
               <select name="repeatSelect" id="repeatSelect" ng-model="settings_modal.measurement" style="display: block">
-                <option ng-repeat="option in potential_graphs" value="{{option}}">{{option}}</option>
+                <option ng-repeat="option in potential_graphs" value="{{option.name}}">{{option.name}}</option>
               </select>
             </div>
 

@@ -50,10 +50,9 @@ partner consortium (www.sonata-nfv.eu).
     </div>
 
       <div class="col s12 m12 l9">
-       <div ng-repeat="box in boxes" ng-class="box.class">
+       <div ng-repeat="box in custom_boxes track by $index" ng-class="box.class">
         <div class="card-panel">
             <span class="card-title">
-              <i class="fa fa-pencil" aria-hidden="true" ng-click="configureBox(box)"></i>
               <i class="fa fa-refresh" aria-hidden="true" ng-click="updateBox(box)"></i>               
               <i class="fa fa-times" aria-hidden="true" ng-click="removeBox(box)"></i>
             </span>

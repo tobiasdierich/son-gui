@@ -33,6 +33,7 @@ SonataApp.controller('VnfMonitoring',['$rootScope','$scope','$routeParams','$loc
   $scope.pagecharts = [];
   $scope.vnf.currentMemoryUsage = 0;
   $scope.vnf.currentCPUUsage = 0;
+  $scope.view_details = false;
   $scope.current_time = new Date();
   $scope.ten_m_before = new Date($scope.current_time.getTime() - 15*60000);
   $scope.settings_modal = {};
@@ -57,7 +58,7 @@ SonataApp.controller('VnfMonitoring',['$rootScope','$scope','$routeParams','$loc
   $scope.potential_step.push({id:6,step:'10min',val:'10m'});
 
   
-
+  $scope.potential_graphs = [];
 
   $scope.boxes = [];
 
@@ -90,7 +91,7 @@ $scope.saveBoxConfiguration = function(){
   $scope.selected_box.measurement = $scope.settings_modal.measurement;
   $scope.selected_box.time_range  = $scope.settings_modal.time_range;
   $scope.selected_box.step        = $scope.settings_modal.step;
-  console.log("Save Box Configuration Thing");
+  //console.log("Save Box Configuration Thing");
   $scope.addNewChart($scope.selected_box);
 }
 
@@ -108,11 +109,11 @@ $scope.addNewChart = function(new_chart){
 
 
 $scope.loadCustomBoxes = function(){
-      
+      console.log("Load Custom Boxes");
       $scope.custom_boxes = [];
       $scope.custom_boxes = $rootScope.getStorage('sonata_custom_charts_vnf_'+$routeParams.name);
       $scope.custom_boxes = JSON.parse($scope.custom_boxes);
-      console.log($scope.custom_boxes);
+      //console.log($scope.custom_boxes);
       
       if(!$rootScope.checkIfNull($scope.custom_boxes) && $scope.custom_boxes.length>0){
         
@@ -126,63 +127,11 @@ $scope.loadCustomBoxes = function(){
 }
 
 $scope.appearCustomCharts = function(){
+  console.log("appearCustomCharts");
   $scope.custom_boxes.forEach(function(e,i){
     $scope.fillnewBox(e);
   })
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 $scope.configureBox = function(box){
   $scope.selected_box = box;
@@ -193,24 +142,16 @@ $scope.updateBox = function(box){
   $scope.fillnewBox(box);
 }
 $scope.removeBox = function(box){
-  console.log(box);
-
-
 
   for (var i =0; i < $scope.boxes.length; i++){
-    if ($scope.boxes[i].id === box.id) {
+    
+    if($scope.boxes[i].id === box.id) {
       $scope.boxes.splice(i,1);
-      console.log("i found it:"+$scope.boxes[i].id);
-      console.log($scope.boxes);
-
-
       break;
    }
   }
-   
-
-
    for (var i =0; i < $scope.custom_boxes.length; i++){
+    
     if ($scope.custom_boxes[i].id === box.id) {
       $scope.custom_boxes.splice(i,1);
       $scope.custom_boxes.forEach(function(e,i){
@@ -224,123 +165,128 @@ $scope.removeBox = function(box){
 
 }
 
-$scope.saveBoxConfiguration = function(){
-  $scope.selected_box.measurement = $scope.settings_modal.measurement;
-  $scope.selected_box.time_range  = $scope.settings_modal.time_range;
-  $scope.selected_box.step        = $scope.settings_modal.step;
-  $scope.fillnewBox($scope.selected_box);
-}
 
+ $scope.getRecords = function(){
+      
 
+                var m = Monitoring.getRecords();
+                m.then(function(data){
+                  console.log("getRecord");
+                  console.log(data);
+                  data.data.forEach(function(r,i){
+                    console.log(r);
+                    r.virtual_deployment_units.forEach(function(vdu,x){
+                     
+                      vdu.vnfc_instance.forEach(function(vnfc,y){
+                        if(vnfc.vc_id==$routeParams.name){
+                          console.log("Found R:"+i);
+                          console.log("Found VDU:"+x);
+                          console.log(r.virtual_deployment_units[i]);
+                          console.log("I found it "+vnfc.vc_id);
+                          console.log(vnfc);
+                          $scope.connection_points = vnfc.connection_points;
+                          $scope.getDescriptor(r.descriptor_reference);
+                          angular.forEach(r.virtual_deployment_units[i].monitoring_parameters,function(d){
+                              $scope.potential_graphs.push(d);
+                          });
+                        }
+                      })
+                    })
+                  })
+                  if($scope.potential_graphs.length==0){
+                            $scope.addAlternativeParameters();
+                  }
+                });
+    }
+    $scope.getRecords();
 
+    $scope.getDescriptor = function(descriptor_reference){
+      $scope.descriptor = {}
+      $scope.descriptor.vnfd = {};
+      $scope.descriptor.vnfd.monitoring_rules = [];
+      $scope.descriptor.vnfd.monitoring_rules.push({"description":"Trigger events if CPU load is above 10 percent.","duration":"10","duration_unit":"s","condition":"vdu01:vm_cpu_perc > 10"});
+      $scope.descriptor.vnfd.monitoring_rules.push({"description":"Trigger events if CPU load is above 10 percent.","duration":"10","duration_unit":"s","condition":"vdu01:vm_cpu_perc > 10"});
 
+            $http({
+                method  : 'GET',
+                url     : $scope.apis.gatekeeper.functions,
+                headers : $rootScope.getGKHeaders()
+               })
+                .success(function(data) {
+                  angular.forEach(data,function(d){
+                      if(descriptor_reference==d.uuid){
+                        $scope.descriptor = d;
+                      }
+                  });
 
-
-
-
-
-
-
-
-
-
-
-
-
-$scope.getAllPotentialMeasurements = function(){
+                })
+                .error(function(data){
+                  console.error('Get functions Failed. Get Url: '+$scope.apis.gatekeeper.functions);
+                  console.error(data);
+                })
+    }
+    $scope.toggleDetails = function(){
+      $scope.view_details = !$scope.view_details;
+    }
+    $scope.addAlternativeParameters = function(){
   
-  $http({
-          method  : 'GET',
-          url     : $scope.apis.monitoring_list,
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
-           $scope.potential_graphs = [];
+        $http({
+                method  : 'GET',
+                url     : $scope.apis.monitoring_list,
+                headers : { 'Content-Type': 'application/json' }
+               })
+                .success(function(data) {
+                  data.metrics.forEach(function(metric,index){
+                    if(metric.startsWith('vm_')){
+                      var x = {};
+                      x.name = metric;
+                      
+                      $scope.potential_graphs.push(x);
+                    }
 
-            angular.forEach(data.metrics,function(d){
-              console.log(d);
-              if(d.startsWith("vm_") && d!='vm_status' && d!='vm_power_state' && d!='vm_last_update'){
-                
-                $scope.potential_graphs.push(d);
-              }
-            });   
-            
-          });
+                      
+                  })
+                 
+                  
+                });
 }
-$scope.getAllPotentialMeasurements();
-
 
 
 $scope.fillnewBox = function(box){
-
-
-  var tt = $scope.getObjById($scope.potential_timeranges, parseInt(box.time_range));              
-  var st = $scope.getObjById($scope.potential_step, parseInt(box.step));
-
-
-
-
-
+      
+        var tt = $scope.getObjById($scope.potential_timeranges, parseInt(box.time_range));              
+        var st = $scope.getObjById($scope.potential_step, parseInt(box.step));
         var start = new Date(new Date().getTime() - parseInt(tt.val)*60000).toISOString();
         var end   = new Date().toISOString();
         var name  = box.measurement;
         var step  = st.val;
-
-
-
-
-
-
-
 
         var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
                   "?end="+end+
                   "&start="+start+
                   "&name="+name+
                   "&step="+step+
-                  "&labels[][labelid]="+$routeParams.id+
+                  "&labels[][labelid]="+$routeParams.name+
                   "&labels[][labeltag]=id";
 
         var m = Monitoring.getData(encodeURI(url));
         m.then(function(datas){
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
+          
                     $scope.data = [];
                     if(datas.data[0]){
                      datas.data[0].values.forEach(function(element, index) {
 
                             var timestamp = $rootScope.FixTimestamp(element[0]);
-
-
-
-
-
-
-
-
-
-
-
-
                             $scope.data.push([timestamp,parseFloat(element[1])]);
                          
                        });
 
 
-                     $scope.g_charts.push(Highcharts.stockChart(box.id, {
+                     console.log("I will check");
+                     if($scope.data.length>0){
+                      console.log("NAI EXW:"+$scope.data);
+                      console.log($scope.data);
+                      $scope.g_charts.push(Highcharts.stockChart(box.id, {
                               chart: {
                                   zoomType: 'x'
                               },
@@ -406,15 +352,16 @@ $scope.fillnewBox = function(box){
                                   data: $scope.data
                               }]
                           }));
+                     }else{
+                      
+                      $('#'+box.id).html('No data Available');
+                     }
 
-
-
-                    }
-
-
-
-
-
+                    }else{
+                      
+                      $('#'+box.id).html('No data Available for '+box.measurement);
+                     
+                     }
 
                 });
 
@@ -440,23 +387,6 @@ $scope.getObjById = function(arr, id) {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 $scope.addPoints = function () {
@@ -502,7 +432,7 @@ $scope.getVM = function(){
                   "&name="+name+
                   "&step="+step+
                   "&labels[][labelid]=vnf"+
-                  "&labels[][labeltag]=exported_job"
+                  "&labels[][labeltag]=exported_job"+
                   "&labels[][labelid]="+$routeParams.name+
                   "&labels[][labeltag]=id";
 
@@ -1112,8 +1042,35 @@ $scope.getCurrentCPU = function(){
 
 
 
+    $scope.getRecords = function(){
+      
+    
 
-
+                var m = Monitoring.getRecords();
+                m.then(function(data){
+                  console.log("getRecord");
+                  console.log(data);
+                  data.data.forEach(function(r,i){
+               
+                    r.virtual_deployment_units.forEach(function(vdu,x){
+                     
+                      vdu.vnfc_instance.forEach(function(vnfc,y){
+                        if(vnfc.vc_id==$routeParams.name){
+                          console.log("Found R:"+i);
+                          console.log("Found VDU:"+x);
+                          console.log(r.virtual_deployment_units[i]);
+                          console.log("I found it "+vnfc.vc_id);
+                          console.log(vnfc);
+                          $scope.connection_points = vnfc.connection_points;
+                        }
+                      })
+                    })
+                    
+                    
+                  })
+                });
+    }
+    $scope.getRecords();
     
      $scope.getContainers = function(){
                 var start = new Date(new Date().getTime() - 15*60000).toISOString();
@@ -1164,7 +1121,7 @@ $scope.getCurrentCPU = function(){
         $('.highcharts-container').each(function(c){$(this).empty();});
 
         $scope.g_charts.forEach(function(chart){
-          chart.destroy();
+          //chart.destroy();
           chart = null;
         });
         $scope.g_charts = [];
