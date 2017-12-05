@@ -87,6 +87,7 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
                   }
 
                   $scope.apis = {
+                        'monitoring_css':mon_url+'/api/v1/cloud-services',
                         'monitoring':mon_url+'/api/v1/prometheus/metrics/data',
                         'monitoring_list':mon_url+'/api/v1/prometheus/metrics/list',
                         'logs':logs_url+'/search/universal/relative?',

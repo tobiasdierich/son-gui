@@ -136,6 +136,11 @@ SonataApp.config(function($routeProvider) {
 				disableCache: true,
 				controller 	: 'MainController'
 			})
+      .when('/monitoring/css',{
+        templateUrl	: 'js/views/monitoring/css.html',
+        disableCache: true,
+        controller 	: 'MainController'
+      })
 			.when('/catalogue/kpis',{
 				templateUrl	: 'js/views/catalogue/kpis.html',
 				disableCache: true,
