@@ -34,7 +34,7 @@ partner consortium (www.sonata-nfv.eu).
     <div ng-repeat="cs in css | filter:expression" class="col s12 m2 virtual-machine" ng-click="changeHash('/cs/'+cs.metric.id)">
       <div class="col s12 entire cursored">
         <i class="fa fa-desktop" aria-hidden="true"></i>
-        <span class="name col s12">{{ cs.name }} ({{ cs.sonata_cloud_service_id }})</span>
+        <span class="name col s12">{{ cs.vdu_id }} ({{ cs.cloud_service_record_uuid }}:{{ cs.csd_name }})</span>
       </div>
     </div>
     </div>
