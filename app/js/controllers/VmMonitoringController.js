@@ -194,7 +194,7 @@ $scope.fillnewBox = function(box){
         var name  = box.measurement;
         var step  = st.val;
 
-        var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+        var url = $rootScope.apis.monitoring_data+
                   "?end="+end+
                   "&start="+start+
                   "&name="+name+
@@ -309,7 +309,7 @@ $scope.getVM = function(){
         var name  = "vm_mem_perc";
         var step  = "10m";
 
-        var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+        var url = $rootScope.apis.monitoring_data+
                   "?end="+end+
                   "&start="+start+
                   "&name="+name+
@@ -335,7 +335,7 @@ $scope.getCurrentMemory = function(){
         var name  = "vm_mem_perc";
         var step  = "10m";
 
-        var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+        var url = $rootScope.apis.monitoring_data+
                   "?end="+end+
                   "&start="+start+
                   "&name="+name+
@@ -357,7 +357,7 @@ $scope.getCurrentCPU = function(){
         var name  = "vm_mem_perc";
         var step  = "1m";
 
-        var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+        var url = $rootScope.apis.monitoring_data+
                   "?end="+end+
                   "&start="+start+
                   "&name="+name+
@@ -402,7 +402,7 @@ $scope.historyCPU = function(){
         var name = "vm_cpu_perc";
         var step = "1s";
  
-        var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+        var url = $rootScope.apis.monitoring_data+
                   "?end="+end+
                   "&start="+start+
                   "&name="+name+
@@ -438,7 +438,7 @@ $scope.historyCPU = function(){
                                               var name = "vm_cpu_perc";
                                               var step = "10s";
                                        
-                                              var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                                              var url = $rootScope.apis.monitoring_data+
                                                         "?end="+end+
                                                         "&start="+start+
                                                         "&name="+name+
@@ -543,7 +543,7 @@ $scope.historyRAM = function(){
     var name = "vm_mem_perc";
     var step = "1s";
 
-    var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+    var url = $rootScope.apis.monitoring_data+
               "?end="+end+
               "&start="+start+
               "&name="+name+
@@ -581,7 +581,7 @@ $scope.historyRAM = function(){
                                             var name = "vm_mem_perc";
                                             var step = "10s";
 
-                                            var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                                            var url = $rootScope.apis.monitoring_data+
                                                       "?end="+end+
                                                       "&start="+start+
                                                       "&name="+name+
@@ -740,7 +740,7 @@ $scope.historyHardDisk = function(){
               var name = "vm_disk_usage_perc";
               var step = "5m";
 
-              var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+              var url = $rootScope.apis.monitoring_data+
                         "?end="+end+
                         "&start="+start+
                         "&name="+name+
@@ -770,7 +770,7 @@ $scope.historyHardDisk = function(){
                             var name = "vm_disk_usage_perc";
                             var step = "5m";
 
-                            var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                            var url = $rootScope.apis.monitoring_data+
                                       "?end="+end+
                                       "&start="+start+
                                       "&name="+name+
@@ -879,7 +879,7 @@ $scope.historyHardDisk = function(){
                             var name = "cnt_created";
                             var step = "20m";
 
-                            var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                            var url = $rootScope.apis.monitoring_data+
                                       "?end="+end+
                                       "&start="+start+
                                       "&name="+name+
