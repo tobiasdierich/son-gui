@@ -41,7 +41,7 @@ $scope.getContainer = function(){
         var name  = "cnt_mem_perc";
         var step  = "10m";
 
-        var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+        var url = $rootScope.apis.monitoring_data+
                   "?end="+end+
                   "&start="+start+
                   "&name="+name+
@@ -120,7 +120,7 @@ var start = new Date(new Date().getTime() - 20*60000).toISOString();
         var name  = "cnt_cpu_perc";
         var step  = "1s";
 
-        var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+        var url = $rootScope.apis.monitoring_data+
                   "?end="+end+
                   "&start="+start+
                   "&name="+name+
@@ -155,7 +155,7 @@ var start = new Date(new Date().getTime() - 20*60000).toISOString();
                                             var name  = "cnt_cpu_perc";
                                             var step  = "1m";
 
-                                            var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                                            var url = $rootScope.apis.monitoring_data+
                                                       "?end="+end+
                                                       "&start="+start+
                                                       "&name="+name+
@@ -245,7 +245,7 @@ var start = new Date(new Date().getTime() - 20*60000).toISOString();
           var name  = "cnt_mem_perc";
           var step  = "1s";
 
-          var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+          var url = $rootScope.apis.monitoring_data+
                     "?end="+end+
                     "&start="+start+
                     "&name="+name+
@@ -284,7 +284,7 @@ var start = new Date(new Date().getTime() - 20*60000).toISOString();
                                             var name  = "cnt_mem_perc";
                                             var step  = "1m";
 
-                                            var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                                            var url = $rootScope.apis.monitoring_data+
                                                       "?end="+end+
                                                       "&start="+start+
                                                       "&name="+name+
@@ -381,7 +381,7 @@ $scope.historyRXTX = function(){
             var name  = "cnt_net_tx_MB";
             var step  = "1s";
 
-            var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+            var url = $rootScope.apis.monitoring_data+
                       "?end="+end+
                       "&start="+start+
                       "&name="+name+
@@ -400,7 +400,7 @@ $scope.historyRXTX = function(){
                 var name  = "cnt_net_rx_MB";
                 var step  = "1s";
 
-                var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                var url = $rootScope.apis.monitoring_data+
                           "?end="+end+
                           "&start="+start+
                           "&name="+name+

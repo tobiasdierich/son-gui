@@ -77,7 +77,7 @@ $scope.$on('$destroy', function() {
                 var name  = "vim_maxTotalInstances";
                 var step  = "10m";
 
-                var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                var url = $rootScope.apis.monitoring_data+
                           "?end="+end+
                           "&start="+start+
                           "&name="+name+
@@ -108,7 +108,7 @@ $scope.setFloatingIps = function(){
                 var name  = "vim_maxTotalFloatingIpsUsed";
                 var step  = "11m";
 
-                var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                var url = $rootScope.apis.monitoring_data+
                           "?end="+end+
                           "&start="+start+
                           "&name="+name+
@@ -131,7 +131,7 @@ $scope.setFloatingIps = function(){
                   var name  = "vim_maxTotalFloatingIps";
                   var step  = "11m";
 
-                  var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                  var url = $rootScope.apis.monitoring_data+
                             "?end="+end+
                             "&start="+start+
                             "&name="+name+
@@ -161,7 +161,7 @@ $scope.getRamGauge = function(){
   var name  = "vim_maxTotalRAMSize";
   var step  = "5m";
 
-  var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+  var url = $rootScope.apis.monitoring_data+
             "?end="+end+
             "&start="+start+
             "&name="+name+
@@ -181,7 +181,7 @@ $scope.getRamGauge = function(){
             var name  = "vim_totalRAMUsed";
             var step  = "5m";
 
-            var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+            var url = $rootScope.apis.monitoring_data+
                       "?end="+end+
                       "&start="+start+
                       "&name="+name+
@@ -243,7 +243,7 @@ $scope.getRamGraphNew = function(){
             var name  = "vim_totalRAMUsed";
             var step  = "5s";
 
-            var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+            var url = $rootScope.apis.monitoring_data+
                       "?end="+end+
                       "&start="+start+
                       "&name="+name+
@@ -354,7 +354,7 @@ $scope.getCoresGauge = function(){
         var name  = "vim_totalCoresUsed";
         var step  = "5m";
 
-        var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+        var url = $rootScope.apis.monitoring_data+
                   "?end="+end+
                   "&start="+start+
                   "&name="+name+
@@ -379,7 +379,7 @@ $scope.getCoresGauge = function(){
                   var name  = "vim_maxTotalCores";
                   var step  = "5m";
 
-                  var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                  var url = $rootScope.apis.monitoring_data+
                             "?end="+end+
                             "&start="+start+
                             "&name="+name+
@@ -432,7 +432,7 @@ var start = new Date(new Date().getTime() - 30*60000).toISOString();
                   var name  = "vim_totalCoresUsed";
                   var step  = "5s";
 
-                  var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                  var url = $rootScope.apis.monitoring_data+
                             "?end="+end+
                             "&start="+start+
                             "&name="+name+
@@ -530,7 +530,7 @@ $scope.getInstancesGauge = function(){
                   var name  = "vim_totalInstancesUsed";
                   var step  = "5m";
 
-                  var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                  var url = $rootScope.apis.monitoring_data+
                             "?end="+end+
                             "&start="+start+
                             "&name="+name+
@@ -550,7 +550,7 @@ $scope.getInstancesGauge = function(){
                   var name  = "vim_maxTotalInstances";
                   var step  = "5m";
 
-                  var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                  var url = $rootScope.apis.monitoring_data+
                             "?end="+end+
                             "&start="+start+
                             "&name="+name+
@@ -602,7 +602,7 @@ var start = new Date(new Date().getTime() - 30*60000).toISOString();
                   var name  = "vim_totalInstancesUsed";
                   var step  = "5s";
 
-                  var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+                  var url = $rootScope.apis.monitoring_data+
                             "?end="+end+
                             "&start="+start+
                             "&name="+name+
@@ -760,7 +760,7 @@ $scope.getVms = function(){
     var name  = "vm_last_update";
     var step  = "5m";
 
-    var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+    var url = $rootScope.apis.monitoring_data+
               "?end="+end+
               "&start="+start+
               "&name="+name+
@@ -790,7 +790,7 @@ $scope.getStates = function(){
     var name  = "vms_state";
     var step  = "5m";
 
-    var url = "https://sp.int3.sonata-nfv.eu/api/v2/kpis/collected"+
+    var url = $rootScope.apis.monitoring_data+
               "?end="+end+
               "&start="+start+
               "&name="+name+
