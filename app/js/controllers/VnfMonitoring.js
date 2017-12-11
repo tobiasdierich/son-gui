@@ -173,9 +173,13 @@ $scope.removeBox = function(box){
                 var m = Monitoring.getRecords();
                 m.then(function(data){
                   console.log("getRecord");
-                  console.log(data);
+                  //console.log(data);
+
                   data.data.forEach(function(r,i){
-                    console.log(r);
+                    // console.log("Record");
+                    // console.log(r);
+                    var this_i = i;
+
                     r.virtual_deployment_units.forEach(function(vdu,x){
                      
                       vdu.vnfc_instance.forEach(function(vnfc,y){
@@ -184,8 +188,16 @@ $scope.removeBox = function(box){
                          
                           $scope.connection_points = vnfc.connection_points;
                           $scope.getDescriptor(r.descriptor_reference);
-                          angular.forEach(r.virtual_deployment_units[i].monitoring_parameters,function(d){
-                              $scope.potential_graphs.push(d);
+                          // console.log("virtual_deployment_units:"+i);
+                          // console.log(r.virtual_deployment_units);
+                          console.log(this_i);
+                          console.log(vnfc.vc_id);
+                          console.log("virtual_deployment_units");
+                          console.log(r.virtual_deployment_units);
+                          angular.forEach(r.virtual_deployment_units,function(d){
+                            angular.forEach(d.monitoring_parameters,function(mp){
+                              $scope.potential_graphs.push(mp);
+                            });
                           });
                         }
                       })
