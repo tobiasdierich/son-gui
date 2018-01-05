@@ -28,7 +28,6 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
     $scope.todos = new Array();
     (function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
 
-
     $rootScope.setStorage = function(valuename,valuevalue){
       window.localStorage.setItem(valuename,valuevalue);
     }
@@ -59,7 +58,16 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
       return angular.isUndefined(val) || val === null
     }
 
-
+   $rootScope.getIndexOf=function(arr, val, prop) {
+      var l = arr.length,
+        k = 0;
+      for (k = 0; k < l; k = k + 1) {
+        if (arr[k][prop] === val) {
+          return k;
+        }
+      }
+      return -1;
+    }
 
      $scope.getServices = function(){
 
@@ -73,8 +81,7 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
                   var logs_url = protocol+'//'+host+'/logs';
 
                 }else{
-
-                  var gk_url = 'http://sp.int3.sonata-nfv.eu:32001/api/v2';
+                  var gk_url = 'https://sp.int3.sonata-nfv.eu/api/v2';
                   var mon_url = 'http://sp.int3.sonata-nfv.eu:8000';
                   var vims_url = 'http://sp.int3.sonata-nfv.eu:32001/api/v2';
                   var logs_url = 'http://logs.sonata-nfv.eu:12900/logs';
@@ -93,6 +100,7 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
                         'logs':logs_url+'/search/universal/relative?',
                         'vims':vims_url+'/vims',
                         'wims':vims_url+'/wims',
+                        'monitoring_data':gk_url+'/kpis/collected',
                         'gatekeeper':{
                           'services' :gk_url+'/services',
                           'complex_services':gk_url+'/complex-services',
@@ -111,7 +119,7 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer '+$rootScope.getStorage('sonata-token')
               };
-                     $scope.checkTokenValidity();
+                     $rootScope.checkTokenValidity();
            }
 
     $rootScope.getGKHeaders = function(){
@@ -132,7 +140,25 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
 
     }
 
+
+$rootScope.checkTokenValidity = function(){     
+
+          $http({
+              method  : 'GET',
+                url: $scope.apis.gatekeeper.users,
+                headers : $rootScope.getGKHeaders()
+          }).then(function successCallback(response) {
+            console.log("TOKEN is Valid");
+          }, function errorCallback(response) {
+            console.log("The token is not valid");
+            console.log(response);
+            $rootScope.logout();
+          });
+      }
+
+
     $scope.checkAuthorization = function(){
+
       if($rootScope.is_user_logged_in==false){
         $rootScope.logout();
       }
@@ -168,23 +194,15 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
             console.log("The token is not valid");
             console.log(response);
             $rootScope.logout();
-          });
-
-
-
       }
-
-
-
-
-
-
+    }
 
 $scope.alerts_visibility = 0;
 
 
 $rootScope.FixTimestamp = function(timestamp){
 
+    timestamp = timestamp.toString();
     timestamp = timestamp.replace('.','');
 
     if(timestamp.length==12)
@@ -196,6 +214,7 @@ $rootScope.FixTimestamp = function(timestamp){
     else if(timestamp.length==9)
       timestamp = timestamp+'0000';
 
+    timestamp = parseInt(timestamp);
     return timestamp;
 }
 

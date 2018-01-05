@@ -41,17 +41,33 @@ SonataApp.run(function($rootScope, $route, $location){
    $rootScope.$on('$locationChangeSuccess', function() {
         $rootScope.actualLocation = $location.path();
 		
+		if($rootScope.actualLocation!='/signup' && $rootScope.actualLocation!='/login')
+			$rootScope.checkTokenValidity();
     });        
 
    $rootScope.$watch(function () {return $location.path()}, function (newLocation, oldLocation) {
         
         if($rootScope.actualLocation === newLocation) {
 			$('.lean-overlay').hide();
+			
            /* $('.modal').each(function(m){
             	$(m).modal('close');
             })*/
         }
     });
+});
+SonataApp.directive('myEnter', function () {
+    return function (scope, element, attrs) {
+        element.bind("keydown keypress", function (event) {
+            if(event.which === 13) {
+                scope.$apply(function (){
+                    scope.$eval(attrs.myEnter);
+                });
+
+                event.preventDefault();
+            }
+        });
+    };
 });
 
 SonataApp.config(function($routeProvider) {

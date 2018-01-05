@@ -74,7 +74,14 @@ partner consortium (www.sonata-nfv.eu).
                     <td ng-if="vim.vim_type != 'Kubernetes'">{{vim.core_used}}/{{vim.core_total}}</td>
                     <td ng-if="vim.vim_type == 'Kubernetes'">{{vim.core_total / 1000}} Cores (Load: {{vim.core_used / 1000}})</td>
                     <td>{{vim.memory_used}}MiB / {{vim.memory_total}}MiB</td>
-                    <td><a ng-click="getVimDetails(vim)" class="modal-trigger waves-effect waves-light"><i class="material-icons left">library_add</i></a></td>
+                      <td>
+                          <a ng-click="getVimDetails(vim)" class="modal-trigger waves-effect waves-light">
+                              <i class="material-icons left">visibility</i>
+                          </a>
+                          <a ng-click="deleteVim(vim)" class="modal-trigger waves-effect waves-light">
+                              <i class="material-icons">delete_forever</i>
+                          </a>
+                      </td>
                   </tr>
                    <tr ng-show="zero_vims">
                     <td colspan="6" class="center" ng-show="zero_vims">There are no vims</td>
@@ -94,6 +101,7 @@ partner consortium (www.sonata-nfv.eu).
               <div class="col s12">
                   <a class="waves-effect blue-grey darken-3 btn right m-l" ng-click="regetWims()"><i class="material-icons left">replay</i>Refresh</a>
                   <a class="modal-trigger waves-effect waves-light btn right m-l" href="#new_wim" style="margin-right: 5px"><i class="material-icons left">library_add</i>Add a WIM</a>
+
               </div>
             </div>
             <div class="row">
@@ -125,7 +133,14 @@ partner consortium (www.sonata-nfv.eu).
                   <tr ng-repeat="wim in wims" ng-show="wims.length>0 && !loading_wims" >                    
                     <td>{{wim.name}}</td>
                     <td>{{wim.uuid}}</td>
-                    <td><a ng-click="getWimDetails(wim)" class="modal-trigger waves-effect waves-light"><i class="material-icons left">library_add</i></a></td>
+                    <td>
+                      <a ng-click="getWimDetails(wim)" class="modal-trigger waves-effect waves-light">
+                          <i class="material-icons left">visibility</i>
+                      </a>
+                      <a ng-click="deleteWim(vim)" class="modal-trigger waves-effect waves-light">
+                            <i class="material-icons">delete_forever</i>
+                        </a>
+                    </td>
                   </tr>
                   <tr ng-hide="wims.length>0">
                     <td colspan="3" class="center" ng-show="!zero_wims">There are no wims</td>
@@ -171,7 +186,9 @@ partner consortium (www.sonata-nfv.eu).
       <div class="col s12"><strong>Memory Used:</strong> {{selected_vim.memory_used}}</div>
       <div class="col s12"><strong>Vim City:</strong> {{selected_vim.vim_city}}</div>
       <div class="col s12"><strong>Vim EndPoint:</strong> {{selected_vim.vim_endpoint}}</div>
+      <div class="col s12"><strong>Vim Name:</strong> {{selected_vim.vim_name}}</div>
       <div class="col s12"><strong>Vim UUID:</strong> {{selected_vim.vim_uuid}}</div>
+      <div class="col s12"><strong>Domain:</strong> {{selected_vim.vim_domain}}</div>
 
   </div>
 
@@ -279,6 +296,11 @@ partner consortium (www.sonata-nfv.eu).
                       <input id="compute_configurationpassword" ng-model="new_vim.compute_configuration.pass"
                              type="password" class="validate">
                       <label for="compute_configurationpassword">Password</label>
+                  </div>
+
+                  <div class="input-field col s12">
+                      <input id="compute_configurationdomain" ng-model="new_vim.compute_configuration.domain" type="text" class="validate">
+                      <label for="compute_configurationdomain">Domain</label>
                   </div>
               </div>
 

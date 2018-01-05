@@ -29,38 +29,68 @@ partner consortium (www.sonata-nfv.eu).
  <div class="row" ng-controller="UserSettingsController">
         <div class="col s12 m12">
           <div class=" red accent-1" style="padding: 10px;text-align: center;color: white;font-weight: bold;" ng-show="error_message_view">{{error_message_text}}</div>
+          <div class="teal darken-1" style="padding: 10px;text-align: center;color: white;font-weight: bold;" ng-show="success_message_view">{{success_message_text}}</div>
           <div class="card grey lighten-5">
             <div class="card-content">
               <div class="row">
                 <div class="input-field col s12 m4">
-                  <input id="first_name" ng-model="info.first_name" type="text" class="validate">
+                  <input id="first_name" ng-model="thisuser.first_name" type="text" class="validate">
                   <label for="first_name">First Name</label>
                 </div>
                 <div class="input-field col s12 m4">
-                  <input id="last_name" ng-model="info.last_name"  type="text" class="validate">
+                  <input id="last_name" ng-model="thisuser.last_name"  type="text" class="validate">
                   <label for="last_name">Last Name</label>
                 </div>
                  <div class="input-field col s4">
-                  <input id="email"  ng-model="info.email" type="text" class="validate">
+                  <input id="email"  ng-model="thisuser.email" type="text" class="validate">
                   <label for="email">Email</label>
                 </div>
               </div>
-              <div class="row">
+              <div class="row" ng-show="change_password_request">
                 
                 <div class="input-field col s12 m4">
-                  <input id="password_one"  ng-model="info.password_one" type="text" class="validate">
+                  <input id="password_one"  ng-model="thisuser.password_one" type="password" class="validate">
                   <label for="password_one">Password</label>
                 </div>
                 <div class="input-field col s12 m4">
-                  <input id="password_two"  ng-model="info.password_two" type="text" class="validate">
+                  <input id="password_two"  ng-model="thisuser.password_two" type="password" class="validate">
                   <label for="password_two">Repeat Password</label>
                 </div>
                
               </div>
               
-              <div class="row text-right">
-                <a class="waves-effect waves-light btn right" ng-click="saveUserInfo()"><i class="material-icons right">send</i>SAVE</a>
+              <div class="row">
+                <div class="text-right">
+                  <a class="waves-effect waves-light btn right" ng-click="saveUserInfo()"><i class="material-icons right">send</i>SAVE</a>
+                </div>
+                <div class="text-left">
+                  <a class="waves-effect waves-teal btn" ng-click="changePass()">Change Password</a>
+                </div>
               </div>
+            </div>      
+          </div>
+        </div>
+        <div class="col s12 m12" ng-hide="thisuser.user_type!='admin'">
+          <div class="card grey lighten-5">
+            <div class="card-content">
+              <table>
+                <thead>
+                      <td>Username</td>
+                      <td>Email</td>
+                      <td>Role</td>
+                      <td>SignUp Date</td>
+                      <td>Actions</td>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="user in users">
+                      <td>{{user.username}}</td>
+                      <td>{{user.email}}</td>
+                      <td>{{user.user_type}}</td>
+                      <td>{{user.created_at | date:'medium'}}</td>
+                      <td><a ng-hide="user.user_type=='admin'" class="waves-effect waves-teal btn" ng-click="delete_user(user)">Delete</a></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>      
           </div>
         </div>
@@ -72,6 +102,38 @@ partner consortium (www.sonata-nfv.eu).
             <div class="buttons">
               <div class="btn_flat" ng-click="logged_again_ok()">OK</div>
               <div class="btn_flat" ng-click="cancel_pressed()">Cancel</div>
+            </div>
+          </div>
+        </div>
+
+        
+        <div class="pop_one" ng-show="delete_user_popup_view"> 
+          <div class="box">
+            <h3 class="pop_h3">Delete user</h3>
+            <p class="pop_p">
+              You are going to delete the user: {{selected_for_delete_user.username}}. Please confirm.
+            </p>
+
+            <div class="buttons">
+              <div class="btn_flat" ng-click="delete_user_confirmed()">OK</div>
+              <div class="btn_flat" ng-click="delete_user_popup_view=false">Cancel</div>
+            </div>
+          </div>
+        </div>
+
+
+
+        <div class="pop_one" ng-show="password_field_popup"> 
+          <div class="box">
+            <h3 class="pop_h3">User Credentials Update</h3>
+            <p class="pop_p">
+              You are going to update your profile. Please enter your password.
+              <input type="password" name="" ng-model="thisuser.password_ma" placeholder="password" />
+            </p>
+
+            <div class="buttons">
+              <div class="btn_flat" ng-click="update_credentials()">OK</div>
+              <div class="btn_flat" ng-click="cancel_password_field_pressed()">Cancel</div>
             </div>
           </div>
         </div>

@@ -26,14 +26,16 @@ acknowledge the contributions of their colleagues of the SONATA
 partner consortium (www.sonata-nfv.eu).
 */
 
-SonataApp.controller('VnfMonitoring',['$rootScope','$scope','$routeParams','$location','$http','$interval',function($rootScope,$scope, $routeParams, $location, $http,$interval){
-	
+SonataApp.controller('VnfMonitoring',['$rootScope','$scope','$routeParams','$location','$http','$interval','Monitoring',function($rootScope,$scope, $routeParams, $location, $http,$interval,Monitoring){
+  
   $scope.vnf = {};
   $scope.a_metrics = [];
   $scope.pagecharts = [];
   $scope.vnf.currentMemoryUsage = 0;
   $scope.vnf.currentCPUUsage = 0;
-	$scope.current_time = new Date();
+  $scope.view_details = false;
+  $scope.btn_details_view = false;
+  $scope.current_time = new Date();
   $scope.ten_m_before = new Date($scope.current_time.getTime() - 15*60000);
   $scope.settings_modal = {};
   $scope.settings_modal.title = "Chart configuration";
@@ -57,21 +59,79 @@ SonataApp.controller('VnfMonitoring',['$rootScope','$scope','$routeParams','$loc
   $scope.potential_step.push({id:6,step:'10min',val:'10m'});
 
   
-
+  $scope.potential_graphs = [];
 
   $scope.boxes = [];
+
+
+
+
 
 $scope.newChartBtn = function(){
 
   var thebox = {
-    id:'box_'+parseInt(Math.random()*10000),
+    id:'box_'+parseInt($scope.custom_boxes.length+1)+"_"+parseInt(Math.random(10000)*100000),
     class:'col s12 m6',
     title:'',
     measurement_name:''
   };
-
-  $scope.boxes.push(thebox);
   $scope.configureBox(thebox);
+}
+
+
+
+$scope.configureBox = function(box){
+  $scope.selected_box = {};
+  $scope.selected_box = box;
+  $('#settings_modal').openModal();
+}
+
+
+$scope.saveBoxConfiguration = function(){
+  
+  $scope.selected_box.measurement = $scope.settings_modal.measurement;
+  $scope.selected_box.time_range  = $scope.settings_modal.time_range;
+  $scope.selected_box.step        = $scope.settings_modal.step;
+  //console.log("Save Box Configuration Thing");
+  $scope.addNewChart($scope.selected_box);
+}
+
+$scope.addNewChart = function(new_chart){
+
+  //Local Storage Feauture
+  $scope.custom_boxes.push(new_chart);
+  $scope.custom_boxes.forEach(function(e,i){
+    $scope.custom_boxes[i] = JSON.stringify($scope.custom_boxes[i]);
+  });
+  $rootScope.setStorage('sonata_custom_charts_vnf_'+$routeParams.name,JSON.stringify($scope.custom_boxes));
+  $scope.loadCustomBoxes();
+  //End Local Storage Feaute
+}  
+
+
+$scope.loadCustomBoxes = function(){
+      console.log("Load Custom Boxes");
+      $scope.custom_boxes = [];
+      $scope.custom_boxes = $rootScope.getStorage('sonata_custom_charts_vnf_'+$routeParams.name);
+      $scope.custom_boxes = JSON.parse($scope.custom_boxes);
+      //console.log($scope.custom_boxes);
+      
+      if(!$rootScope.checkIfNull($scope.custom_boxes) && $scope.custom_boxes.length>0){
+        
+        $scope.custom_boxes.forEach(function(e,i){
+          $scope.custom_boxes[i] = JSON.parse(e);
+        });
+        $scope.appearCustomCharts();
+      }else{
+        $scope.custom_boxes = [];
+      }
+}
+
+$scope.appearCustomCharts = function(){
+  console.log("appearCustomCharts");
+  $scope.custom_boxes.forEach(function(e,i){
+    $scope.fillnewBox(e);
+  })
 }
 
 $scope.configureBox = function(box){
@@ -83,90 +143,170 @@ $scope.updateBox = function(box){
   $scope.fillnewBox(box);
 }
 $scope.removeBox = function(box){
-  /*$scope.getObjById($scope.boxes, parseInt(box.id));*/
 
-  for (var i =0; i < $scope.boxes.length; i++)
-   if ($scope.boxes[i].id === box.id) {
+  for (var i =0; i < $scope.boxes.length; i++){
+    
+    if($scope.boxes[i].id === box.id) {
       $scope.boxes.splice(i,1);
       break;
    }
+  }
+   for (var i =0; i < $scope.custom_boxes.length; i++){
+    
+    if ($scope.custom_boxes[i].id === box.id) {
+      $scope.custom_boxes.splice(i,1);
+      $scope.custom_boxes.forEach(function(e,i){
+        $scope.custom_boxes[i] = JSON.stringify($scope.custom_boxes[i]);
+      });
+      $rootScope.setStorage('sonata_custom_charts_vnf_'+$routeParams.name,JSON.stringify($scope.custom_boxes));
+      $scope.loadCustomBoxes();
+   }
+   }
+   
 
 }
 
-$scope.saveBoxConfiguration = function(){
-  $scope.selected_box.measurement = $scope.settings_modal.measurement;
-  $scope.selected_box.time_range  = $scope.settings_modal.time_range;
-  $scope.selected_box.step        = $scope.settings_modal.step;
-  $scope.fillnewBox($scope.selected_box);
-}
 
+ $scope.getRecords = function(){
+      
 
+                var m = Monitoring.getRecords();
+                m.then(function(data){
+                  console.log("getRecord");
+                  //console.log(data);
 
+                  data.data.forEach(function(r,i){
+                    // console.log("Record");
+                    // console.log(r);
+                    var this_i = i;
 
+                    r.virtual_deployment_units.forEach(function(vdu,x){
+                     
+                      vdu.vnfc_instance.forEach(function(vnfc,y){
+                        if(vnfc.vc_id==$routeParams.name){
+                          $scope.btn_details_view = true;
+                         
+                          $scope.connection_points = vnfc.connection_points;
+                          $scope.getDescriptor(r.descriptor_reference);
+                          // console.log("virtual_deployment_units:"+i);
+                          // console.log(r.virtual_deployment_units);
+                          console.log(this_i);
+                          console.log(vnfc.vc_id);
+                          console.log("virtual_deployment_units");
+                          console.log(r.virtual_deployment_units);
+                          angular.forEach(r.virtual_deployment_units,function(d){
+                            angular.forEach(d.monitoring_parameters,function(mp){
+                              $scope.potential_graphs.push(mp);
+                            });
+                          });
+                        }
+                      })
+                    })
+                  })
+                  if($scope.potential_graphs.length==0){
+                            $scope.addAlternativeParameters();
+                  }
+                });
+    }
+    $scope.getRecords();
 
-$scope.getAllPotentialMeasurements = function(){
+    $scope.getDescriptor = function(descriptor_reference){
+      $scope.descriptor = {}
+      $scope.descriptor.vnfd = {};
+      $scope.descriptor.vnfd.monitoring_rules = [];
+      $scope.descriptor.vnfd.monitoring_rules.push({"description":"Trigger events if CPU load is above 10 percent.","duration":"10","duration_unit":"s","condition":"vdu01:vm_cpu_perc > 10"});
+      $scope.descriptor.vnfd.monitoring_rules.push({"description":"Trigger events if CPU load is above 10 percent.","duration":"10","duration_unit":"s","condition":"vdu01:vm_cpu_perc > 10"});
+
+            $http({
+                method  : 'GET',
+                url     : $scope.apis.gatekeeper.functions,
+                headers : $rootScope.getGKHeaders()
+               })
+                .success(function(data) {
+                  angular.forEach(data,function(d){
+                      if(descriptor_reference==d.uuid){
+                        $scope.descriptor = d;
+                      }
+                  });
+
+                })
+                .error(function(data){
+                  console.error('Get functions Failed. Get Url: '+$scope.apis.gatekeeper.functions);
+                  console.error(data);
+                })
+    }
+    $scope.toggleDetails = function(){
+      $scope.view_details = !$scope.view_details;
+    }
+    $scope.addAlternativeParameters = function(){
   
-  $http({
-          method  : 'GET',
-          url     : $scope.apis.monitoring_list,
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
-           $scope.potential_graphs = data.metrics;
-            
-          });
-}
-$scope.getAllPotentialMeasurements();
+        $http({
+                method  : 'GET',
+                url     : $scope.apis.monitoring_list,
+                headers : { 'Content-Type': 'application/json' }
+               })
+                .success(function(data) {
+                  data.metrics.forEach(function(metric,index){
+                    if(metric.startsWith('vm_')){
+                      var x = {};
+                      x.name = metric;
+                      
+                      $scope.potential_graphs.push(x);
+                    }
 
+                      
+                  })
+                 
+                  
+                });
+}
 
 
 $scope.fillnewBox = function(box){
+      
+        var tt = $scope.getObjById($scope.potential_timeranges, parseInt(box.time_range));              
+        var st = $scope.getObjById($scope.potential_step, parseInt(box.step));
+        var start = new Date(new Date().getTime() - parseInt(tt.val)*60000).toISOString();
+        var end   = new Date().toISOString();
+        var name  = box.measurement;
+        var step  = st.val;
 
+        var url = $rootScope.apis.monitoring_data+
+                  "?end="+end+
+                  "&start="+start+
+                  "&name="+name+
+                  "&step="+step+
+                  "&labels[][labelid]="+$routeParams.name+
+                  "&labels[][labeltag]=id";
 
-  var tt = $scope.getObjById($scope.potential_timeranges, parseInt(box.time_range));              
-  var st = $scope.getObjById($scope.potential_step, parseInt(box.step));
-
-
-$http({
-                method  : 'POST',
-                url     : $scope.apis.monitoring,
-                data:  {
-                        "name": box.measurement,
-                        "start": ""+ new Date(new Date().getTime() - parseInt(tt.val)*60000).toISOString(),
-                        "end": ""+new Date().toISOString(),
-                        "step": st.val,
-                        "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
-                          },
-                headers : { 'Content-Type': 'application/json' }
-              })
-                .success(function(datas) {
-                    $scope.data = [];
-                    if(datas.metrics.result[0]){
-                     datas.metrics.result[0].values.forEach(function(element, index) {
+        var m = Monitoring.getData(encodeURI(url));
+        m.then(function(datas){
           
-                            var timestamp = element[0].toString();
-                            timestamp = timestamp.replace('.','');
-                            if(timestamp.length==12)
-                                        timestamp=timestamp+'0';
-                                else if(timestamp.length==11)
-                                      timestamp = timestamp+'00';
-                                else if(timestamp.length==10)
-                                      timestamp = timestamp+'000';
-                                else if(timestamp.length==9)
-                                      timestamp = timestamp+'0000';
-                                else if(timestamp.length==8)
-                                      timestamp = timestamp+'00000';
-                            timestamp = parseInt(timestamp);
+                    $scope.data = [];
+                    if(datas.data[0]){
+                     datas.data[0].values.forEach(function(element, index) {
+
+                            var timestamp = $rootScope.FixTimestamp(element[0]);
                             $scope.data.push([timestamp,parseFloat(element[1])]);
                          
                        });
 
 
-                     $scope.g_charts.push(Highcharts.chart(box.id, {
+                     console.log("I will check");
+                     if($scope.data.length>0){
+                      console.log("NAI EXW:"+$scope.data);
+                      console.log($scope.data);
+                      $scope.g_charts.push(Highcharts.stockChart(box.id, {
                               chart: {
                                   zoomType: 'x'
                               },
                               animation:false,
+                              rangeSelector: {
+                                  enabled: false
+                              },
+                              navigator: {
+                                  enabled: false
+                              },
                               title: {
                                   text: box.measurement
                               },
@@ -199,7 +339,7 @@ $http({
                                           },
                                           stops: [
                                               [0, '#262B33'],
-                                              [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                                              [1, '#FFFFFF']
                                           ]
                                       },
                                       marker: {
@@ -216,21 +356,22 @@ $http({
                               },
 
                               series: [{
-                                  type: 'area',
+                                  type: 'line',
                                   color: '#454e5d',
                                   name: box.measurement,
                                   data: $scope.data
                               }]
                           }));
+                     }else{
+                      
+                      $('#'+box.id).html('No data available');
+                     }
 
-
-
-                    }
-
-
-
-
-
+                    }else{
+                      
+                      $('#'+box.id).html('No data available for '+box.measurement);
+                     
+                     }
 
                 });
 
@@ -256,23 +397,6 @@ $scope.getObjById = function(arr, id) {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 $scope.addPoints = function () {
@@ -307,91 +431,28 @@ $scope.addPoints = function () {
     
 
 $scope.getVM = function(){
-  $http({
-          method  : 'POST',
-          url     : $scope.apis.monitoring,
-          data:  {
-                  "name": "vm_mem_perc",
-                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "10m",
-                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
-                    },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
+        var start = new Date(new Date().getTime() - 20*60000).toISOString()
+        var end   = new Date().toISOString();
+        var name  = 'vm_mem_perc';
+        var step  = "10m";
 
-           $scope.vnf.exported_instance = data.metrics.result[0].metric.exported_instance;
-           $scope.vnf.instance          = data.metrics.result[0].metric.instance;
-           $scope.vnf.group             = data.metrics.result[0].metric.group;
-           $scope.vnf.id                = data.metrics.result[0].metric.id;
-            
-          });
-}
+        var url = $rootScope.apis.monitoring_data+
+                  "?end="+end+
+                  "&start="+start+
+                  "&name="+name+
+                  "&step="+step+
+                  "&labels[][labelid]=vnf"+
+                  "&labels[][labeltag]=exported_job"+
+                  "&labels[][labelid]="+$routeParams.name+
+                  "&labels[][labeltag]=id";
 
-$scope.getCurrentMemory = function(){
-  
-   /*$http({
-          method  : 'POST',
-          url     : $scope.apis.monitoring,
-          data:  {
-                  "name": "vm_mem_perc",
-                  "start": ""+ new Date().toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "10m",
-                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
-                    },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
-        
-           $scope.vnf.currentMemoryUsage = 100-data.metrics.result[0].values[0][1];
-           
-           
-            
-          });*/
-}
+        var m = Monitoring.getData(encodeURI(url));
+        m.then(function(data){
 
-$scope.getCurrentCPU = function(){
-  
-   $http({
-          method  : 'POST',
-          url     : $scope.apis.monitoring,
-          data:  {
-                  "name": "vm_cpu_perc",
-                  "start": ""+ new Date().toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "1m",
-                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
-                    },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
-            
-            $scope.vnf.currentCPUUsage = data.metrics.result[0].values[0][1];
-           
-            
-          });
-}
-
-
-$scope.getCPU_History = function(){
-  
-   $http({
-          method  : 'POST',
-          url     : $scope.apis.monitoring,
-          data:  {
-                  "name": "vm_cpu_perc",
-
-                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "10s",
-                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
-                    },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
-       
+           $scope.vnf.exported_instance = data.data[0].metric.exported_instance;
+           $scope.vnf.instance          = data.data[0].metric.instance;
+           $scope.vnf.group             = data.data[0].metric.group;
+           $scope.vnf.id                = data.data[0].metric.id;
             
           });
 }
@@ -416,18 +477,7 @@ $scope.drawGaugesRAM = function(){
         };
 
         var chart = new google.visualization.Gauge(document.getElementById('vRAMschart'));
-
         chart.draw(data, options);
-
-     /*   $scope.intervals.push($interval(function() {
-          $scope.getCurrentMemory();   
-          data.setValue(0, 1, parseFloat($scope.vnf.currentMemoryUsage));
-          chart.draw(data, options);       
-          
-        }, 4000));*/
-
-       
-       
       }
 }
 
@@ -451,12 +501,6 @@ $scope.drawGauges = function(){
 
         chart.draw(data, options);
 
-
-       /* $scope.intervals.push($interval(function() {
-          $scope.getCurrentCPU(); 
-          data.setValue(0, 1, parseFloat($scope.vnf.currentCPUUsage));
-          chart.draw(data, options);
-        }, 4000));*/
        
       }
 }
@@ -471,164 +515,56 @@ $scope.drawTheChart = function(data_array,options,element){
 
 }
 
-/*
-$scope.cpuChart = function(){
-  var chart = {
-        chart: {
-          events: {load: function () {}},
-          type: 'line',
-          zoomType: 'x',
-          spacingRight: 20,
-          renderTo: 'cpu_chart_new_vnf'
-        },
-        title: {
-          text: 'CPU'
-        },
-        xAxis: {
-          type: 'datetime',
-          dateTimeLabelFormats: {
-            month: '%e. %b',
-            year: '%b'
-          }
-        },
-        credits: {
-          enabled: false
-        },
-         navigator:{enabled:true},
-         options: {
-            chart: {
-                type: 'line',
-                zoomType: 'x'
-            },
-            navigator: {enabled:true}
-        },
-        credits: {
-          enabled: false
-        },
-        series: [{
-
-        name: 'CPU',
-        data: (function () {
-
-              var tdata = [];
-
-            $http({
-                method  : 'POST',
-                url     : $scope.apis.monitoring,
-                 data:  {
-                  "name": "vm_cpu_perc",
-                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "10s",
-                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
-                    },
-                headers : { 'Content-Type': 'application/json' }
-              }).then(function successCallback(response) {
-                  console.log(response);
-                   response.metrics.result[0].values.forEach( function(element, index) {
-                      console.log(element);
-                        var timestamp = element[0].toString();
-                        timestamp = timestamp.replace('.','');
-                        if(timestamp.length==12)
-                                        timestamp=timestamp+'0';
-                                else if(timestamp.length==11)
-                                      timestamp = timestamp+'00';
-                                else if(timestamp.length==10)
-                                      timestamp = timestamp+'000';
-                                else if(timestamp.length==9)
-                                      timestamp = timestamp+'0000';
-                                else if(timestamp.length==8)
-                                      timestamp = timestamp+'00000';
-
-                        timestamp = parseInt(timestamp);                        
-                        tdata.push([timestamp,parseFloat(element[1])]);
-
-                       if(index==data.metrics.result[0].values.length-1){
-                         console.log('data');
-                         console.log(data);
-                         return tdata; 
-                        }
-
-                    });
-
-
-
-                  }, function errorCallback(response) {
-    
-                      console.log(response);
-              });
-               
-                                  
-            console.log(data);
-          })
-    }]
-  };
-
-      
-      
-      setTimeout(function() {
-         console.log(chart);
-         var chartObj = new Highcharts.Chart(chart);
-      }, 4000);
-}*/
-
-
 
 $scope.historyRAM = function(){
 
 
-        $http({
-          method  : 'POST',
-          url     : $scope.apis.monitoring,
-          data:  {
+        var start = new Date(new Date().getTime() - 20*60000).toISOString();
+        var end   = new Date().toISOString();
+        var name  = "vm_mem_perc";
+        var step  = "10s";
 
+        var url = $rootScope.apis.monitoring_data+
+                  "?end="+end+
+                  "&start="+start+
+                  "&name="+name+
+                  "&step="+step+
+                  "&labels[][labelid]=vnf"+
+                  "&labels[][labeltag]=exported_job"+
+                  "&labels[][labelid]="+$routeParams.name+
+                  "&labels[][labeltag]=id";
 
-     
-                  "name": "vm_mem_perc",
-                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "10s",
-                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
-                    },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
+        var m = Monitoring.getData(encodeURI(url));
+        m.then(function(datas){
 
-            console.log('RAM SUccess');
-            console.log(data);
+          $scope.ramdata = [];
+          $scope.vnf.currentMemoryUsage = 100-datas.data[0].values[datas.data[0].values.length-1][1];
+           datas.data[0].values.forEach(function(element, index) {
 
-
-            $scope.ramdata = [];
-           $scope.vnf.currentMemoryUsage = 100-data.metrics.result[0].values[data.metrics.result[0].values.length-1][1];
-           data.metrics.result[0].values.forEach(function(element, index) {
-
-                  var timestamp = element[0].toString();
-                  timestamp = timestamp.replace('.','');
-                  timestamp = timestamp.replace('.','');
-                  
-                  if(timestamp.length==12)
-                          timestamp=timestamp+'0';
-                  else if(timestamp.length==11)
-                        timestamp = timestamp+'00';
-                  else if(timestamp.length==10)
-                        timestamp = timestamp+'000';
-                  else if(timestamp.length==9)
-                        timestamp = timestamp+'0000';
-                  else if(timestamp.length==8)
-                        timestamp = timestamp+'00000';
-
-
-                  timestamp = parseInt(timestamp);
+                  var timestamp = $rootScope.FixTimestamp(element[0]);
                   $scope.ramdata.push([timestamp,parseFloat(100-element[1])]);
                   
+
+                if(index==datas.data[0].values.length-1){
+                  
+                  $scope.vnf.currentMemoryUsage = parseFloat(100-element[1]);
+                  $scope.drawGauges();
+                }
 
              });
 
 
 
-                $scope.g_charts.push(Highcharts.chart('ram_chart_new_vnf', {
+                $scope.g_charts.push(Highcharts.stockChart('ram_chart_new_vnf', {
                               chart: {
-                                  zoomType: 'x',
+                                zoomType: 'x',
+                                animation:false,
+                                  rangeSelector: {
+                                    enabled: false
+                                  },
+                                  navigator: {
+                                    enabled: false
+                                  },
                                   animation:false,
                                   events: {
                                       load: function () {
@@ -637,45 +573,32 @@ $scope.historyRAM = function(){
                                           var series = this.series[0];
                                           $scope.intervals.push($interval(function () {
 
-                                          $http({
-                                                  method  : 'POST',
-                                                  url     : $scope.apis.monitoring,
-                                                  data:  {                                             
-                                                          "name": "vm_mem_perc",
-                                                          "start": ""+ new Date().toISOString(),
-                                                          "end": ""+new Date().toISOString(),
-                                                          "step": "10s",
-                                                          "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
-                                                            },
-                                                  headers : { 'Content-Type': 'application/json' }
-                                                 })
-                                                  .success(function(data) {
-                                                    console.log(data);
+                                          var start = new Date().toISOString();
+                                            var end   = new Date().toISOString();
+                                            var name  = "vm_mem_perc";
+                                            var step  = "10s";
+
+                                            var url = $rootScope.apis.monitoring_data+
+                                                      "?end="+end+
+                                                      "&start="+start+
+                                                      "&name="+name+
+                                                      "&step="+step+
+                                                      "&labels[][labelid]=vnf"+
+                                                      "&labels[][labeltag]=exported_job"+
+                                                      "&labels[][labelid]="+$routeParams.name+
+                                                      "&labels[][labeltag]=id";
+
+                                            var m = Monitoring.getData(encodeURI(url));
+                                            m.then(function(data){
                                                     
-                                                    var y = data.metrics.result[0].values[0][1];
-                                                    var x = data.metrics.result[0].values[0][0];
-                                                    var timestamp = x.toString();
-                                                        timestamp = timestamp.replace('.','');
-
-                                                        if(timestamp.length==12)
-                                                                timestamp=timestamp+'0';
-                                                        else if(timestamp.length==11)
-                                                              timestamp = timestamp+'00';
-                                                        else if(timestamp.length==10)
-                                                              timestamp = timestamp+'000';
-                                                        else if(timestamp.length==9)
-                                                              timestamp = timestamp+'0000';
-                                                        else if(timestamp.length==8)
-                                                              timestamp = timestamp+'00000';
-
-
-                                                        timestamp = parseInt(timestamp);
-                                                      
+                                                    var y = data.data[0].values[0][1];
+                                                    var x = data.data[0].values[0][0];
+                                                    var timestamp = $rootScope.FixTimestamp(x);
                                                       series.addPoint([timestamp, parseFloat(100-y)], true, true);
                                                       $scope.vnf.currentMemoryUsage = 100-y;
                                                       $scope.drawGaugesRAM();
 
-                                                  })                                          
+                                                  })                                  
 
 
 
@@ -703,6 +626,13 @@ $scope.historyRAM = function(){
                                       text: 'RAM %'
                                   }
                               },
+                              animation:false,
+                                  rangeSelector: {
+                                    enabled: false
+                                  },
+                                  navigator: {
+                                    enabled: false
+                                  },
                               legend: {
                                   enabled: false
                               },
@@ -711,7 +641,7 @@ $scope.historyRAM = function(){
                               },
                               plotOptions: {
                                   area: {
-                                      fillColor: {
+                                      /*fillColor: {
                                           linearGradient: {
                                               x1: 0,
                                               y1: 0,
@@ -722,9 +652,9 @@ $scope.historyRAM = function(){
                                               [0, '#262B33'],
                                               [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
                                           ]
-                                      },
+                                      },*/
                                       marker: {
-                                          radius: 2
+                                          radius: 1
                                       },
                                       lineWidth: 1,
                                       states: {
@@ -737,7 +667,7 @@ $scope.historyRAM = function(){
                               },
 
                               series: [{
-                                  type: 'area',
+                                  type: 'line',
                                   color: '#454e5d',
                                   name: 'RAM',
                                   data: $scope.ramdata
@@ -753,47 +683,44 @@ $scope.historyRAM = function(){
 
 $scope.historyCPU = function(){
 
- $http({
-          method  : 'POST',
-          url     : $scope.apis.monitoring,
-          data:  {
-                  "name": "vm_cpu_perc",
-                  "start": ""+ new Date(new Date().getTime() - 20*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "10s",
-                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
-                    },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
+ var start = new Date(new Date().getTime() - 20*60000).toISOString();
+          var end   = new Date().toISOString();
+          var name  = "vm_cpu_perc";
+          var step  = "10s";
 
-            $scope.prdata = [];          
-            //cpu manos          
-            $scope.vnf.currentCPUUsage = data.metrics.result[0].values[data.metrics.result[0].values.length-1][1];                    
-            data.metrics.result[0].values.forEach(function(element, index) {
+          var url = $rootScope.apis.monitoring_data+
+                    "?end="+end+
+                    "&start="+start+
+                    "&name="+name+
+                    "&step="+step+
+                    "&labels[][labelid]=vnf"+
+                    "&labels[][labeltag]=exported_job"+
+                    "&labels[][labelid]="+$routeParams.name+
+                    "&labels[][labeltag]=id";
 
-                  var timestamp = element[0].toString();
-                  timestamp = timestamp.replace('.','');
-                  if(timestamp.length==12)
-                                        timestamp=timestamp+'0';
-                                else if(timestamp.length==11)
-                                      timestamp = timestamp+'00';
-                                else if(timestamp.length==10)
-                                      timestamp = timestamp+'000';
-                                else if(timestamp.length==9)
-                                      timestamp = timestamp+'0000';
-                                else if(timestamp.length==8)
-                                      timestamp = timestamp+'00000';
-                  timestamp = parseInt(timestamp);
+          var m = Monitoring.getData(encodeURI(url));
+          m.then(function(data){
+
+            $scope.prdata = [];               
+            $scope.vnf.currentCPUUsage = data.data[0].values[data.data[0].values.length-1][1];                    
+            data.data[0].values.forEach(function(element, index) {
+
+                  var timestamp = $rootScope.FixTimestamp(element[0]);
                   $scope.prdata.push([timestamp,parseFloat(element[1])]);
             
 
              });
 
-                       $scope.g_charts.push(Highcharts.chart('cpu_chart_new_vnf', {
+                       $scope.g_charts.push(Highcharts.stockChart('cpu_chart_new_vnf', {
                               chart: {
                                   zoomType: 'x',
                                   animation:false,
+                                  rangeSelector: {
+                                    enabled: false
+                                  },
+                                  navigator: {
+                                    enabled: false
+                                  },
                                   events: {
                                       load: function () {
 
@@ -801,39 +728,28 @@ $scope.historyCPU = function(){
                                           var series = this.series[0];
                                           $scope.intervals.push($interval(function () {
 
-                                          $http({
-                                                  method  : 'POST',
-                                                  url     : $scope.apis.monitoring,
-                                                  data:  {
-                                                        "name": "vm_cpu_perc",
-                                                        "start": ""+ new Date().toISOString(),
-                                                        "end": ""+new Date().toISOString(),
-                                                        "step": "10s",
-                                                        "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
-                                                            },
-                                                  headers : { 'Content-Type': 'application/json' }
-                                                 })
-                                                  .success(function(data) {
+                                          var start = new Date().toISOString();
+                                          var end   = new Date().toISOString();
+                                          var name  = "vm_cpu_perc";
+                                          var step  = "10s";
+
+                                          var url = $rootScope.apis.monitoring_data+
+                                                    "?end="+end+
+                                                    "&start="+start+
+                                                    "&name="+name+
+                                                    "&step="+step+
+                                                    "&labels[][labelid]=vnf"+
+                                                    "&labels[][labeltag]=exported_job"+
+                                                    "&labels[][labelid]="+$routeParams.name+
+                                                    "&labels[][labeltag]=id";
+
+                                          var m = Monitoring.getData(encodeURI(url));
+                                          m.then(function(data){
+                                          
                                                     
-                                                    var y = data.metrics.result[0].values[0][1];
-                                                    var x = data.metrics.result[0].values[0][0];
-                                                    var timestamp = x.toString();
-                                                        timestamp = timestamp.replace('.','');
-
-                                                        if(timestamp.length==12)
-                                                                timestamp=timestamp+'0';
-                                                        else if(timestamp.length==11)
-                                                              timestamp = timestamp+'00';
-                                                        else if(timestamp.length==10)
-                                                              timestamp = timestamp+'000';
-                                                        else if(timestamp.length==9)
-                                                              timestamp = timestamp+'0000';
-                                                        else if(timestamp.length==8)
-                                                              timestamp = timestamp+'00000';
-
-                                                            
-                                                        timestamp = parseInt(timestamp);
-                                                      
+                                                    var y = data.data[0].values[0][1];
+                                                    var x = data.data[0].values[0][0];
+                                                    var timestamp = $rootScope.FixTimestamp(x);                                                      
                                                       series.addPoint([timestamp, parseFloat(y)], true, true);
                                                       $scope.vnf.currentCPUUsage = parseFloat(y);
                                                       $scope.drawGauges();
@@ -863,46 +779,100 @@ $scope.historyCPU = function(){
                                       text: 'CPU %'
                                   }
                               },
+                              animation:false,
+                                  rangeSelector: {
+                                    enabled: false
+                                  },
+                                  navigator: {
+                                    enabled: false
+                                  },
                               legend: {
                                   enabled: false
                               },
                               credits: {
                                 enabled: false
                               },
-                              plotOptions: {
-                                  area: {
-                                      fillColor: {
-                                          linearGradient: {
-                                              x1: 0,
-                                              y1: 0,
-                                              x2: 0,
-                                              y2: 1
-                                          },
-                                          stops: [
-                                              [0, '#262B33'],
-                                              [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                                          ]
-                                      },
-                                      marker: {
-                                          radius: 2
-                                      },
-                                      lineWidth: 1,
-                                      states: {
-                                          hover: {
-                                              lineWidth: 1
-                                          }
-                                      },
-                                      threshold: null
-                                  }
-                              },
-
                               series: [{
-                                  type: 'area',
+                                  type: 'line',
                                   color: '#454e5d',
                                   name: 'CPU',
                                   data: $scope.prdata
                               }]
                           }));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
           });
 
 }
@@ -911,66 +881,77 @@ $scope.historyCPU = function(){
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 $scope.historyHardDisk = function(){
 
-        $http({
-          method  : 'POST',
-          url     : $scope.apis.monitoring,
-          data:  {
-                  "name": "vm_disk_usage_perc",
-                  "start": ""+ new Date(new Date().getTime() - 15*60000).toISOString(),
-                  "end": ""+new Date().toISOString(),
-                  "step": "1m",
-                  "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
-                    },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
+
+
+
+        var start = new Date(new Date().getTime() - 15*60000).toISOString();
+        var end   = new Date().toISOString();
+        var name  = "vm_disk_usage_perc";
+        var step  = "1m";
+
+        var url = $rootScope.apis.monitoring_data+
+                  "?end="+end+
+                  "&start="+start+
+                  "&name="+name+
+                  "&step="+step+
+                  "&labels[][labelid]=vnf"+
+                  "&labels[][labeltag]=exported_job"+
+                  "&labels[][labelid]="+$routeParams.name+
+                  "&labels[][labeltag]=id";
+
+        var m = Monitoring.getData(encodeURI(url));
+        m.then(function(data){
+
 
             $scope.vnf.disk_total = 0;
-            data.metrics.result.forEach( function(element, index) {
+            data.data.forEach( function(element, index) {
               var m= element.metric.file_system;
               if(m.startsWith("/dev")){
 
                 $scope.vnf.disk_total = parseFloat(element.values[0][1]);
 
+                var start = new Date(new Date().getTime() - 15*60000).toISOString();
+                var end   = new Date().toISOString();
+                var name  = "vm_disk_usage_perc";
+                var step  = "1m";
 
-                 $http({
-                    method  : 'POST',
-                    url     : $scope.apis.monitoring,
-                    data:  {
-                            "name": "vm_disk_usage_perc",
-                            "start": ""+ new Date(new Date().getTime() - 15*60000).toISOString(),
-                            "end": ""+new Date().toISOString(),
-                            "step": "1m",
-                            "labels": [{"labeltag":'exported_job','labelid':'vnf'},{"labeltag":"id","labelid":$routeParams.name}]
-                              },
-                    headers : { 'Content-Type': 'application/json' }
-                   })
-                    .success(function(data) {
-                      
+                var url = $rootScope.apis.monitoring_data+
+                          "?end="+end+
+                          "&start="+start+
+                          "&name="+name+
+                          "&step="+step+
+                          "&labels[][labelid]=vnf"+
+                          "&labels[][labeltag]=exported_job"+
+                          "&labels[][labelid]="+$routeParams.name+
+                          "&labels[][labeltag]=id";
+
+                var m = Monitoring.getData(encodeURI(url));
+                m.then(function(data){
                     
-                    data.metrics.result.forEach( function(element, index) {
+                    data.data.forEach(function(element, index) {
                         var m= element.metric.file_system;
                         if(m.startsWith("/dev")){
                           $scope.kam_disk = [];
                           element.values.forEach( function(value, index) {
 
-                              var timestamp = value[0].toString();
-                              timestamp = timestamp.replace('.','');
-                               if(timestamp.length==12)
-                                        timestamp=timestamp+'0';
-                                else if(timestamp.length==11)
-                                      timestamp = timestamp+'00';
-                                else if(timestamp.length==10)
-                                      timestamp = timestamp+'000';
-                                else if(timestamp.length==9)
-                                      timestamp = timestamp+'0000';
-                                else if(timestamp.length==8)
-                                      timestamp = timestamp+'00000';
-
-                              timestamp = parseInt(timestamp);
-
+                              var timestamp = $rootScope.FixTimestamp(value[0]);
                               $scope.kam_disk.push([timestamp,parseFloat(value[1])]);
                           });
 
@@ -978,10 +959,20 @@ $scope.historyHardDisk = function(){
                       
                       });
                   
+
             
-              $scope.g_charts.push(Highcharts.chart('disk_chart_new_vnf', {
+
+
+
+              $scope.g_charts.push(Highcharts.stockChart('disk_chart_new_vnf', {
                               chart: {
                                   zoomType: 'x',
+                              },
+                              rangeSelector: {
+                                  enabled: false
+                              },
+                              navigator: {
+                                  enabled: false
                               },
                               animation:false,
                               title: {
@@ -1005,35 +996,8 @@ $scope.historyHardDisk = function(){
                               credits: {
                                 enabled: false
                               },
-                              plotOptions: {
-                                  area: {
-                                      fillColor: {
-                                          linearGradient: {
-                                              x1: 0,
-                                              y1: 0,
-                                              x2: 0,
-                                              y2: 1
-                                          },
-                                          stops: [
-                                              [0, '#262B33'],
-                                              [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                                          ]
-                                      },
-                                      marker: {
-                                          radius: 2
-                                      },
-                                      lineWidth: 1,
-                                      states: {
-                                          hover: {
-                                              lineWidth: 1
-                                          }
-                                      },
-                                      threshold: null
-                                  }
-                              },
-
                               series:[{
-                                  type: 'area', 
+                                  type: 'line', 
                                   color: '#454e5d',
                                   name: 'Disk',
                                   data: $scope.kam_disk
@@ -1060,34 +1024,84 @@ $scope.historyHardDisk = function(){
 
 
 }
+$scope.getCurrentCPU = function(){
+  
+        var start = new Date().toISOString();
+        var end   = new Date().toISOString();
+        var name  = "vm_cpu_perc";
+        var step  = "1m";
 
+        var url = $rootScope.apis.monitoring_data+
+                  "?end="+end+
+                  "&start="+start+
+                  "&name="+name+
+                  "&step="+step+
+                  "&labels[][labelid]=vnf"+
+                  "&labels[][labeltag]=exported_job"+
+                  "&labels[][labelid]="+$routeParams.name+
+                  "&labels[][labeltag]=id";
 
+        var m = Monitoring.getData(encodeURI(url));
+        m.then(function(data){
 
-
-
-
-    
-    $scope.getContainers = function(){
-      
-
-      $http({
-          method  : 'POST',
-          url     : $scope.apis.monitoring,
-          data:  {
-                  "name": "cnt_mem_perc",
-                  "start": ""+ $scope.ten_m_before.toISOString(),
-                  "end": ""+$scope.current_time.toISOString(),
-                  "step": "20m",
-                  "labels": [{"labeltag":"exported_job", "labelid":"containers"},{"labeltag":"id","labelid":$routeParams.name}]
-                    },
-          headers : { 'Content-Type': 'application/json' }
-         })
-          .success(function(data) {
-            $scope.containers = data.metrics.result;
+            $scope.vnf.currentCPUUsage = data.data[0].values[0][1];
+            
           });
+}
 
 
 
+
+    $scope.getRecords = function(){
+      
+    
+
+                var m = Monitoring.getRecords();
+                m.then(function(data){
+                  console.log("getRecord");
+                  console.log(data);
+                  data.data.forEach(function(r,i){
+               
+                    r.virtual_deployment_units.forEach(function(vdu,x){
+                     
+                      vdu.vnfc_instance.forEach(function(vnfc,y){
+                        if(vnfc.vc_id==$routeParams.name){
+                          console.log("Found R:"+i);
+                          console.log("Found VDU:"+x);
+                          console.log(r.virtual_deployment_units[i]);
+                          console.log("I found it "+vnfc.vc_id);
+                          console.log(vnfc);
+                          $scope.connection_points = vnfc.connection_points;
+                        }
+                      })
+                    })
+                    
+                    
+                  })
+                });
+    }
+    $scope.getRecords();
+    
+     $scope.getContainers = function(){
+                var start = new Date(new Date().getTime() - 15*60000).toISOString();
+                var end   = new Date().toISOString();
+                var name  = "vm_disk_usage_perc";
+                var step  = "1m";
+
+                var url = $rootScope.apis.monitoring_data+
+                          "?end="+end+
+                          "&start="+start+
+                          "&name="+name+
+                          "&step="+step+
+                          "&labels[][labelid]=containers"+
+                          "&labels[][labeltag]=exported_job"+
+                          "&labels[][labelid]="+$routeParams.name+
+                          "&labels[][labeltag]=id";
+
+                var m = Monitoring.getData(encodeURI(url));
+                m.then(function(data){
+                  $scope.containers = data.data;
+                });
     }
 
 
@@ -1107,7 +1121,8 @@ $scope.historyHardDisk = function(){
       $scope.historyRAM();
       $scope.historyHardDisk();
       $scope.getContainers();
-    	
+      $scope.loadCustomBoxes();
+      
     }
 
 
@@ -1116,7 +1131,7 @@ $scope.historyHardDisk = function(){
         $('.highcharts-container').each(function(c){$(this).empty();});
 
         $scope.g_charts.forEach(function(chart){
-          chart.destroy();
+          //chart.destroy();
           chart = null;
         });
         $scope.g_charts = [];

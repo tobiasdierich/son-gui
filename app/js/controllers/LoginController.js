@@ -77,10 +77,6 @@ SonataApp.controller('LoginController',['$rootScope','$http','$scope','$routePar
               })
               .done(function(data, textStatus, jqXHR) {
                   
-                  console.log($rootScope.token);
-                  console.log(data);
-                  console.log(textStatus);
-                  console.log(jqXHR);
                   $scope.loading=0;
                   $rootScope.resp=1;
                   $rootScope.token = data.token.access_token;

@@ -26,8 +26,16 @@ acknowledge the contributions of their colleagues of the SONATA
 partner consortium (www.sonata-nfv.eu).
 */
 
-SonataApp.controller('UserSettingsController', function($scope, $routeParams, $location, $http,$rootScope) {
+SonataApp.controller('UserSettingsController', function($scope, $routeParams, $location, $http,$rootScope,$filter) {
 
+		$scope.change_password_request = false;
+		$scope.single_user = true;
+		$scope.password_field_popup = false;
+		$scope.delete_user_popup_view = false;
+
+		$scope.changePass = function(){
+			$scope.change_password_request = true;
+		}
 		$scope.cancel_pressed = function(){
 			$scope.pop_one_view = 0;
 		}
@@ -41,54 +49,92 @@ SonataApp.controller('UserSettingsController', function($scope, $routeParams, $l
                 url: $scope.apis.gatekeeper.users+'?username='+$rootScope.username,
                 headers : $rootScope.getGKHeaders(),
                 data:{
-                	'username':$scope.info.username,
-                	'password':$scope.info.password_one,
-                	'email':$scope.info.email,
-                	'user_type':'developer',
-                	'last_name':$scope.info.last_name,
-                	'first_name':$scope.info.first_name
+                	'username'	:$rootScope.username,
+                	'password'	:$scope.thisuser.password_one,
+                	'email'		:$scope.thisuser.email,
+                	'user_type'	:$scope.thisuser.user_type,
+                	'last_name'	:$scope.thisuser.last_name,
+                	'first_name':$scope.thisuser.first_name
                 }
               })
 	       .success(function(datas) {
-	       	
 	       		$rootScope.logout();	        	
 
 	        });
-
 			
 		}
+		$scope.openModalForPassword = function(){
+			$scope.password_field_popup = true;
+		}
+		$scope.cancel_password_field_pressed = function(){
+			$scope.password_field_popup = false;
+		}
+
+		$scope.delete_user = function(user){
+			console.log(user);
+			$scope.selected_for_delete_user = user;
+			$scope.delete_user_popup_view = true;
+		}
+		$scope.delete_user_confirmed = function(){
+			$http({
+                method  : 'DELETE',
+                url: $scope.apis.gatekeeper.users+'?username='+$scope.selected_for_delete_user.username,
+                headers : $rootScope.getGKHeaders(),
+                
+              })
+	       .then(function(datas) {
+	       		$scope.success_message_view = 1;
+				$scope.success_message_text = "The user has been deleted";
+
+	        },function(e){
+	        	$scope.error_message_view = 1;
+				$scope.error_message_text = e.data.error.message;
+	        });
+		}
+		$scope.update_credentials = function(){
+			$scope.password_field_popup = false;
+			var data = {
+			                	'username'	:$rootScope.username,
+			                	'email' 	:$scope.thisuser.email,
+			                	'user_type'	:$scope.thisuser.user_type,
+			                	'last_name'	:$scope.thisuser.last_name,
+			                	'first_name':$scope.thisuser.first_name,
+			                	'password'	:$scope.thisuser.password_ma
+			                }
+						$http({
+			                method  : 'PUT',
+			                url: $scope.apis.gatekeeper.users+'?username='+$rootScope.username,
+			                headers : $rootScope.getGKHeaders(),
+			                data:data
+			              })
+				       .then(function(datas) {
+				       		$scope.success_message_view = 1;
+				       		$scope.success_message_text = "The user profile has been updated correctly";
+				       		$scope.pop_up_view = 1;
+				       		$scope.pop_up_h3 = 'User Profile Updated';
+				       		$scope.pop_up_p = 'The user profile has been updated correctly';
+				        },function(e){
+				        	$scope.error_message_view = 1;
+							$scope.error_message_text = e.data.error.message;
+							console.log(e);
+				        });
+		}
 		$scope.saveUserInfo = function(){
-			console.log($scope.info.password_one);
+
 			$scope.error_message_view = 0;
 			$scope.pop_one_view = 0;
 
-			if($scope.info.password_one != $scope.info.password_two){
+			if($scope.thisuser.password_one != $scope.thisuser.password_two){
 				$scope.error_message_view = 1;
 				$scope.error_message_text = "Password fields are not equal. Please check the password you will set";
 			}else{
 
-				if($scope.info.password_one!='' && $scope.info.password_one!='undefined' && $scope.info.password_one!=undefined){
+				if($scope.thisuser.password_one!='' && $scope.thisuser.password_one!='undefined' && $scope.thisuser.password_one!=undefined){
 					$scope.pop_one_view = 1;
 				
 				}else{
-					$http({
-			                method  : 'PUT',
-			                url: $scope.apis.gatekeeper.users+'?username='+$rootScope.username,
-			                headers : $rootScope.getGKHeaders(),
-			                data:{
-			                	'username':$rootScope.username,
-			                	'password':$rootScope.password,
-			                	'email':$scope.info.email,
-			                	'user_type':'developer',
-			                	'last_name':$scope.info.last_name,
-			                	'first_name':$scope.info.first_name
-			                }
-			              })
-				       .success(function(datas) {
-				       		$scope.pop_up_view = 1;
-				       		$scope.pop_up_h3 = 'User Profile Updated';
-				       		$scope.pop_up_p = 'The user profile has been updated correctly';
-				        });
+					
+					$scope.openModalForPassword();
 				}
 
 			}
@@ -102,9 +148,22 @@ SonataApp.controller('UserSettingsController', function($scope, $routeParams, $l
                 headers : $rootScope.getGKHeaders()
               })
 	       .success(function(datas) {
-	       		console.log("GET User INFO");
-	       		console.log(datas);
-	       		$scope.info= datas;
+	       		
+	       		if(datas.length>0){
+	       			$scope.single_user = false;
+	       			$scope.users = datas;
+
+	       			$scope.users.forEach(function(user,index){
+	       				if(user.username==$rootScope.username){
+	       					$scope.thisuser = user;
+	       					$scope.thisuser.password_ma = "";
+	       				}
+	       					
+	       			})
+	       		}else{
+	       			$scope.thisuser = datas;	
+	       		}
+	       		
 	        })
 
    		}
