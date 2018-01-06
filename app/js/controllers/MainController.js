@@ -194,7 +194,7 @@ $rootScope.checkTokenValidity = function(){
             console.log("The token is not valid");
             console.log(response);
             $rootScope.logout();
-      }
+      });
     }
 
 $scope.alerts_visibility = 0;
